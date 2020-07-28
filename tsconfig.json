@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.build.json",
+
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@last-rev/adapter-contentful": ["lastrev-adapter-contentful/src"],
+      "@lasxt-rev/integration-contentful": ["lastrev-integration-contentful/src"]
+    }
+  }
+}

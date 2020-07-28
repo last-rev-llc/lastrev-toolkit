@@ -1,0 +1,177 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@last-rev/integration-contentful</title>
+	<meta name="description" content="Documentation for @last-rev/integration-contentful">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@last-rev/integration-contentful</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>@last-rev/integration-contentful</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#lastrev-contentful-integration" id="lastrev-contentful-integration" style="color: inherit; text-decoration: none;">
+					<h1>LastRev Contentful Integration</h1>
+				</a>
+				<p>This module provides a set of useful funtions for querying data from Contentful, and adapting that data to LastRev structured websites.</p>
+				<a href="#environment-variables" id="environment-variables" style="color: inherit; text-decoration: none;">
+					<h2>Environment variables</h2>
+				</a>
+				<p>This module expects the following environment variables:</p>
+				<ul>
+					<li><code>CONTENTFUL_SPACE_ID</code> = The spaceId from contentful</li>
+					<li><code>CONTENTFUL_ENV</code> - Contentful environment</li>
+					<li><code>CONTENTFUL_ACCESSTOKEN</code> - Contentful API access token</li>
+					<li><code>CONTENTFUL_HOST</code> - Contentful Host</li>
+					<li><code>CONTENTFUL_SETTINGS_ID</code> - The ID of the <code>settingsGlobal</code> content item to use</li>
+				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>usage</h2>
+				</a>
+				<p>The module can be used one of two ways. First you can call the methods directly, which will give you the raw Contentful data:</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { getPageBySlug } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@last-rev/integration-contentful&#x27;</span>;
+
+getPageBySlug(id, contentType).then(<span class="hljs-function">(<span class="hljs-params">raw</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(raw);
+  <span class="hljs-comment">/*
+  {
+    sys: {
+      id: &#x27;1234&#x27;,
+      contentType: {
+        sys: {
+          id: &#x27;moduleCardGeneral&#x27;
+        }
+      }
+    },
+    fields: {
+      title: &#x27;My Title&#x27;,
+      image: ...
+    }
+  }
+  */</span>
+});</code></pre>
+				<p>The other way to use it is to initialise the default export with a configuration for the <code>@last-rev/adapter/contentful</code> <a href="https://github.com/last-rev-llc/lastrev-adapter-contentful">adapter</a>. The resulting functions will then be adapted to the shape expected by LastRev components:</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> Contentful <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@last-rev/integration-contentful&#x27;</span>;
+
+<span class="hljs-keyword">const</span> urlMap = {
+  <span class="hljs-attr">pageGeneral</span>: {
+    <span class="hljs-attr">url</span>: <span class="hljs-string">&#x27;/[key]&#x27;</span>,
+    <span class="hljs-attr">key</span>: <span class="hljs-string">&#x27;slug&#x27;</span>
+  },
+  <span class="hljs-attr">pageBlog</span>: {
+    <span class="hljs-attr">url</span>: <span class="hljs-string">&#x27;/[key]&#x27;</span>,
+    <span class="hljs-attr">key</span>: <span class="hljs-string">&#x27;blogId&#x27;</span>
+  }
+};
+
+<span class="hljs-keyword">const</span> linkContentType = <span class="hljs-string">&#x27;ctaLink&#x27;</span>;
+
+<span class="hljs-keyword">const</span> { getPageBySlug } = Contentful({ urlMap, linkContentType });
+
+getPageBySlug(id, contentType).then(<span class="hljs-function">(<span class="hljs-params">clean</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(clean);
+  <span class="hljs-comment">/*
+  {
+    id: &#x27;1234&#x27;,
+    contentTypeId: &#x27;moduleCardGeneral&#x27;,
+    title: &#x27;My Title&#x27;,
+    image: ...
+  }
+  */</span>
+});</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_constants_.html">&quot;constants&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_index_.html">&quot;index&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
