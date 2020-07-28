@@ -1,0 +1,1 @@
+{"version":3,"file":"getContentTypes.d.ts","sourceRoot":"","sources":["../../../../packages/lastrev-integration-contentful/src/getContentTypes/getContentTypes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,qBAAqB,EAAE,MAAM,YAAY,CAAC;AAExE,QAAA,MAAM,eAAe,WAAY,mBAAmB,WAAe,OAAO,CAAC,qBAAqB,CAE/F,CAAC;AAEF,eAAe,eAAe,CAAC"}

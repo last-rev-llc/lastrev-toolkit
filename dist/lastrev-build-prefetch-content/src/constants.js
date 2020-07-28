@@ -1,0 +1,24 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DEFAULT_LOCALES_OUTPUT_PATH = exports.DEFAULT_RAW_PAGES_DIR = exports.DEFAULT_LOCALIZATION_LOOKUP_FIELD_NAME = exports.I18N_JSON_FILE = exports.SETTINGS_TEMPLATE = exports.MAPPING_TEMPLATE = exports.ADAPTER_CONFIG_FILE = exports.COMPONENT_MAPPING_FILE = exports.SETTINGS_FILE = exports.PATHS_FILE = exports.COMPONENTS_DIR = exports.SETTINGS_TEMPLATE_FILE = exports.MAPPING_TEMPLATE_FILE = exports.CONTENT_DIR = exports.PROJECT_ROOT = void 0;
+var fs_1 = require("fs");
+var path_1 = require("path");
+var findProjectRoot_1 = __importDefault(require("./helpers/findProjectRoot"));
+exports.PROJECT_ROOT = findProjectRoot_1.default();
+exports.CONTENT_DIR = path_1.resolve(exports.PROJECT_ROOT, './src/buildArtifacts');
+exports.MAPPING_TEMPLATE_FILE = path_1.resolve(__dirname, '../templates/mapping.js.hbs');
+exports.SETTINGS_TEMPLATE_FILE = path_1.resolve(__dirname, '../templates/settings.js.hbs');
+exports.COMPONENTS_DIR = path_1.resolve(exports.PROJECT_ROOT, './src/components');
+exports.PATHS_FILE = path_1.join(exports.CONTENT_DIR, 'paths.js');
+exports.SETTINGS_FILE = path_1.join(exports.CONTENT_DIR, 'settings.js');
+exports.COMPONENT_MAPPING_FILE = path_1.join(exports.CONTENT_DIR, 'mapping.js');
+exports.ADAPTER_CONFIG_FILE = path_1.join(exports.CONTENT_DIR, 'adapterConfig.js');
+exports.MAPPING_TEMPLATE = fs_1.readFileSync(exports.MAPPING_TEMPLATE_FILE, 'utf-8');
+exports.SETTINGS_TEMPLATE = fs_1.readFileSync(exports.SETTINGS_TEMPLATE_FILE, 'utf-8');
+exports.I18N_JSON_FILE = path_1.resolve(exports.PROJECT_ROOT, './i18n.json');
+exports.DEFAULT_LOCALIZATION_LOOKUP_FIELD_NAME = 'localizationLookup';
+exports.DEFAULT_RAW_PAGES_DIR = 'src/_pages';
+exports.DEFAULT_LOCALES_OUTPUT_PATH = 'locales';

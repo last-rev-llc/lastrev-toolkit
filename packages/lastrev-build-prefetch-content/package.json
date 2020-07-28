@@ -1,0 +1,53 @@
+{
+  "name": "@last-rev/build-prefetch-content",
+  "version": "3.0.1",
+  "description": "Prefetches global settings, path, and content mapping data",
+  "main": "dist/index.js",
+  "bin": {
+    "lr-prefetch": "bin/lr-prefetch"
+  },
+  "scripts": {
+    "install:local": "yarn global remove @last-rev/build-prefetch-content; yarn run build && yarn global add file:$PWD",
+    "build": "yarn run clean && yarn run compile",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc -p tsconfig.build.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint",
+    "prepublishOnly": "yarn run lint && yarn run build",
+    "prepare": "yarn run build",
+    "preversion": "yarn run lint",
+    "version": "yarn run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "author": "Jaime Morales",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^26.0.4",
+    "@types/lodash": "^4.14.157",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
+    "eslint": "^7.3.1",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-airbnb-typescript": "^8.0.2",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.5",
+    "jest": "^26.1.0",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.3",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "@last-rev/adapter-contentful": "2.0.0",
+    "@last-rev/integration-contentful": "3.1.5",
+    "dotenv": "^8.2.0",
+    "handlebars": "^4.7.6",
+    "lodash": "^4.17.15",
+    "slash": "^3.0.0"
+  }
+}

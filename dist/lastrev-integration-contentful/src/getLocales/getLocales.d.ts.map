@@ -1,0 +1,1 @@
+{"version":3,"file":"getLocales.d.ts","sourceRoot":"","sources":["../../../../packages/lastrev-integration-contentful/src/getLocales/getLocales.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,EAAE,MAAM,YAAY,CAAC;AAEzD,QAAA,MAAM,iBAAiB,WAAY,mBAAmB,WAAe,OAAO,CAAC,MAAM,EAAE,CAIpF,CAAC;AAEF,eAAe,iBAAiB,CAAC"}

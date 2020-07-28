@@ -1,0 +1,17 @@
+import _ from 'lodash';
+
+const localeToSettingsMap = {
+  {{#each settingsByLocale}}
+  "{{this.locale}}": {
+    isDefault: {{this.isDefault}},
+    settings: {{{this.settingsJson}}}
+  }{{#unless @last}},{{/unless}}
+  {{/each}}
+};
+
+function getSettings(locale) {
+  const obj = _.get(localeToSettingsMap, locale) || _.find(localeToSettingsMap, 'isDefault');
+  return _.get(obj, 'settings');
+}
+
+export default getSettings;

@@ -1,0 +1,9 @@
+{{#each mappings}}
+import {{this}} from '{{../componentsDir}}/{{this}}';
+{{/each}}
+
+export default {
+{{#each mappings}}
+  {{@key}}: {{this}}{{#unless @last}},{{/unless}}
+{{/each}}
+};

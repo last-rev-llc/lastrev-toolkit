@@ -1,0 +1,95 @@
+# LastRev Content Prefetcher
+
+The purpose of this command line tool is to pre-fetch content for LastRev projects prior to running the next build (or any other build). This saves build time on frequently accessed objects such as global settings. The script also generates some useful files such as the adapter config and component mappings.
+
+## Usage
+
+```bash
+npm install --save-dev @last-rev/build-content-prefetcher
+npx lr-prefetch
+```
+
+or, in an npm script:
+
+```json
+{
+  //...
+  "scripts": {
+    "build:content": "lr-prefetch"
+  }
+}
+```
+
+## Configuration
+
+The project is configured via the JSON syntaxed `.lastrevrc` file in the root of your project.
+
+| Property                            | Type                  | Function                                                                                                                                                                                |
+| ----------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| useAdapter                          | boolean               | Whether to use the adapter to transform the data fetched from contentful. If this is true, another property at the root of the file should be configured for the adapter config to use. |
+| writeMappings                       | boolean               | Whether to write the component mappings file.                                                                                                                                           |
+| writeSettings                       | boolean               | Whether to write the settings file.                                                                                                                                                     |
+| writeAdapterConfig                  | boolean               | Whether to write the adapter config file.                                                                                                                                               |
+| writePaths                          | boolean               | Whether to write the paths file.                                                                                                                                                        |
+| writeLocaleData                     | boolean               | Whether to write the i18n.json and locale lookup files.                                                                                                                                 |
+| settingsInclude                     | number                | the levels of depth to grab in the GlobalSettings object                                                                                                                                |
+| settingsContentType                 | string                | The contentTypeId of the GlobalSettings type                                                                                                                                            |
+| mappings                            | object                | Configure the component mapper. See below.                                                                                                                                              |
+| mappings.overrides                  | Record<string,string> | Key value pair of content type id to component name, overriding the default pascalCase lookup of component.                                                                             |
+| mappings.exclude                    | string[]              | An array of component names to exclude form the mappings. This is useful to avoid circular dependencies, which will break storybook functionality                                       |
+| locales                             | object                | Configure the locales data writer. See below.                                                                                                                                           |
+| locales.localizationLookupFieldName | string                | The name of the localizationLookup field in the global settings object                                                                                                                  |
+| locales.lrawPagesDir                | string                | The name of the un-translated pages directory                                                                                                                                           |
+| locales.loutputPath                 | string                | The name of the locales directory                                                                                                                                                       |
+
+example
+
+```json
+{
+  "build": {
+    "useAdapter": true,
+    "writeSettings": true,
+    "writeAdapterConfig": true,
+    "writePaths": true,
+    "writeLocaleData": true,
+    "writeMappings": true,
+    "settingsInclude": 10,
+    "paths": {
+      "pageGeneral": "slug",
+      "pageRecipe": "slug"
+    },
+    "mappings": {
+      "exclude": ["PageGeneral"],
+      "overrides": {
+        "settingsGlobal": "Layout",
+        "globalFooter": "Footer"
+      }
+    }
+  },
+  "adapter": {
+    "urlMap": {
+      "pageGeneral": {
+        "url": "/[key]",
+        "key": "slug"
+      },
+      "pageRecipe": {
+        "url": "recipes/[key]",
+        "key": "slug"
+      }
+    }
+  }
+}
+```
+
+## Output
+
+The following files will be generated into the `src/buildArtifacts` directory, which will allow them to be built along with other project resources. Please remember to add this directory toyour `.gitignore` file.
+
+```
+src
+├── buildArtifacts
+│   ├── adapterConfig.js
+│   ├── mapping.js
+│   ├── paths.js
+│   └── settings.js
+```

@@ -12,7 +12,8 @@
     "build": "lerna run build",
     "pub": "lerna publish --independent",
     "test": "jest",
-    "test:watch": "jest --watch:"
+    "test:watch": "jest --watch:",
+    "install:local": "lerna run install:local"
   },
   "devDependencies": {
     "lerna": "^3.22.1"

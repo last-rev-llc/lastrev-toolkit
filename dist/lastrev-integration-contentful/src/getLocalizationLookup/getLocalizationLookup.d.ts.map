@@ -1,0 +1,1 @@
+{"version":3,"file":"getLocalizationLookup.d.ts","sourceRoot":"","sources":["../../../../packages/lastrev-integration-contentful/src/getLocalizationLookup/getLocalizationLookup.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,yBAAyB,EAAE,MAAM,UAAU,CAAC;AAErD,QAAA,MAAM,qBAAqB;kCAIK,MAAM;oBACpB,MAAM;MACpB,OAAO,CAAC,yBAAyB,CA8BpC,CAAC;AAEF,eAAe,qBAAqB,CAAC"}
