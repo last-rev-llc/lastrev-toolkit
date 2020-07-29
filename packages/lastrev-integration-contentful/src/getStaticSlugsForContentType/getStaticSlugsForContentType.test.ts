@@ -1,8 +1,8 @@
 import faker from 'faker';
 import _ from 'lodash';
 
-import getStaticSlugsForContentTypeCreator from './getStaticSlugsForContentType';
 import { createClient } from 'contentful';
+import getStaticSlugsForContentTypeCreator from './getStaticSlugsForContentType';
 
 const client = createClient({
   space: 'something',
@@ -13,7 +13,7 @@ const client = createClient({
 
 const getStaticSlugsForContentType = getStaticSlugsForContentTypeCreator(client);
 
-const slugs = [];
+const slugs: string[] = [];
 for (let i = 0; i < 1250; i++) {
   slugs.push(faker.random.word());
 }
@@ -75,5 +75,21 @@ describe('getStaticSlugsForContentType', () => {
     });
 
     expect(staticSlugs).toEqual(['hi']);
+  });
+  test('returns zero items', async () => {
+    client.getEntries = jest.fn().mockImplementationOnce(() => {
+      return Promise.resolve({
+        items: [],
+        skip: 0,
+        total: 0,
+        limit: 100
+      });
+    });
+
+    const staticSlugs = await getStaticSlugsForContentType({
+      contentTypeId: 'someType'
+    });
+
+    expect(staticSlugs).toEqual([]);
   });
 });

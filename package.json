@@ -14,7 +14,7 @@
     "pub:minor": "lerna publish minor",
     "pub:major": "lerna publish major",
     "test": "jest",
-    "test:watch": "jest --watch:",
+    "test:watch": "jest --watch",
     "install:local": "lerna run install:local"
   },
   "devDependencies": {
