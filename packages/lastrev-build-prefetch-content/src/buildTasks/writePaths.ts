@@ -41,7 +41,6 @@ const writePaths: BuildTask = async (buildConfig): Promise<void> => {
   const [...typeSlugTuples]: [...TypeSlugsTuple[]] = (await Promise.all([...staticSlugFunctions])) as [
     ...TypeSlugsTuple[]
   ];
-
   await writePathsJs(buildConfig, ...typeSlugTuples);
 };
 

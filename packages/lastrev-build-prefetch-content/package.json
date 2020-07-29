@@ -7,7 +7,6 @@
     "lr-prefetch": "bin/lr-prefetch"
   },
   "scripts": {
-    "install:local": "yarn global remove @last-rev/build-prefetch-content; yarn run build && yarn global add file:$PWD",
     "build": "yarn run clean && yarn run compile",
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json",
@@ -44,7 +43,7 @@
   },
   "dependencies": {
     "@last-rev/adapter-contentful": "^3.0.0",
-    "@last-rev/integration-contentful": "^4.0.0",
+    "@last-rev/integration-contentful": "4.0.0",
     "dotenv": "^8.2.0",
     "handlebars": "^4.7.6",
     "lodash": "^4.17.15",

@@ -7,6 +7,8 @@ import { PROJECT_ROOT } from './constants';
 import getBuildTasks from './buildTasks';
 import { BuildTask, BuildConfig } from './types';
 
+console.log('project root', PROJECT_ROOT);
+
 const { adapter: adapterConfig, build: buildConfig } = JSON.parse(
   readFileSync(resolve(PROJECT_ROOT, './.lastrevrc'), 'utf-8')
 ) as { adapter: AdapterConfig; build: BuildConfig };

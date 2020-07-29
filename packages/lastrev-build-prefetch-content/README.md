@@ -15,7 +15,7 @@ or, in an npm script:
 {
   //...
   "scripts": {
-    "build:content": "lr-prefetch"
+    "build:pre": "lr-prefetch"
   }
 }
 ```

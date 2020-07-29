@@ -1,5 +1,6 @@
 import { ContentfulClientApi } from 'contentful';
 import _ from 'lodash';
+import { Entry } from '@last-rev/adapter-contentful';
 import { DEFAULT_SLUG_FIELD_NAME, DEFAULT_ORDER_PARAM } from '../constants';
 
 const getStaticSlugsForContentTypeCreator = (client: ContentfulClientApi) => async ({
@@ -11,15 +12,16 @@ const getStaticSlugsForContentTypeCreator = (client: ContentfulClientApi) => asy
   slugFieldName?: string;
   order?: string;
 }): Promise<string[]> => {
-  const slugs = [];
+  const slugs: string[] = [];
 
   let skip = 0;
   let limit = 1000;
   let total;
-  let items = [];
+  let items: Entry<unknown>[] = [];
   let count = 0;
 
-  while (!total || total > count) {
+  while (total === undefined || total > count) {
+    // eslint-disable-next-line no-await-in-loop
     const queryResults = await client.getEntries({
       content_type: contentTypeId,
       select: `fields.${slugFieldName}`,

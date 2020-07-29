@@ -28,4 +28,14 @@ This monorepo uses [Lerna](https://github.com/lerna/lerna) and [Yarn Workspaces]
 - `yarn run pub:patch` - Determines which packages have changed, increments the patch version number, and publishes to NPM.
 - `yarn run pub:minor` - Determines which packages have changed, increments the minor version number, and publishes to NPM.
 - `yarn run pub:major` - Determines which packages have changed, increments the major version number, and publishes to NPM.
-- `yarn run install:local` - For any binaries, removes the previously installed versions, and installs the current build from your workspace. Useful for testing changes locally.
+
+## Testing CLIs locally
+
+To test a CLI locally, simply build the monorepo as usual, and instead of calling the global executable, call node with the path of the local executable:
+
+```bash
+cd ~/dev/lastrev-toolkit
+yarn run build
+cd ../SomeOtherProject
+node ../lastrev-toolkit/packages/lastrev-build-prefetch-content/bin/lr-prefetch
+```
