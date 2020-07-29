@@ -22,7 +22,7 @@ This monorepo uses [Lerna](https://github.com/lerna/lerna) and [Yarn Workspaces]
 
 ### commands
 
-- `yarn run build` - Cleans and builds each package in dependency order.
+- `yarn run build` - Cleans and builds each package in dependency order. We use [Typescript](https://www.typescriptlang.org/) to build the projects, as it allows for much safer code, and improved [intellisense in VS Code](https://code.visualstudio.com/docs/editor/intellisense)
 - `yarn run test` - Runs all of the tests across all projects. We use [Jest](https://jestjs.io/) as our testing library.
 - `yarn run test:watch` - Runs tests in watch mode.
 - `yarn run pub:patch` - Determines which packages have changed, increments the patch version number, and publishes to NPM.
