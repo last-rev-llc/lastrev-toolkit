@@ -10,9 +10,9 @@
   "scripts": {
     "clean": "lerna run clean",
     "build": "lerna run build",
-    "pub:patch": "lerna publish patch --independent",
-    "pub:minor": "lerna publish minor --independent",
-    "pub:major": "lerna publish major --independent",
+    "pub:patch": "lerna publish patch",
+    "pub:minor": "lerna publish minor",
+    "pub:major": "lerna publish major",
     "test": "jest",
     "test:watch": "jest --watch:",
     "install:local": "lerna run install:local"
