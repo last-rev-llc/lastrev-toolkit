@@ -2,13 +2,6 @@ import _ from 'lodash';
 import parseEntry from '../entryParser';
 import { UrlMap, Entry, Asset } from '../types';
 
-const getUrl = (mapping, slug) => {
-  return {
-    href: mapping.url.replace('[key]', `[${mapping.key}]`),
-    as: mapping.url.replace('[key]', `${slug}`)
-  };
-};
-
 export declare type LinkParserConfig = {
   newWindowActionText: string;
   sameWindowActionText: string;
@@ -37,15 +30,15 @@ export default ({
   assetRefTypeText,
   fields,
   urlMap
-}: LinkParserConfig) => {
+}: LinkParserConfig): Record<string, unknown> => {
   const { action, destinationType, manualUrl, contentReference, assetReference } = fields;
 
   const isModal = action === modalActionText;
   const download = action === downloadActionText;
   const target = action === newWindowActionText ? '_blank' : null;
 
-  let href = null;
-  let as = null;
+  let href: string = null;
+  let as: string = null;
 
   switch (destinationType) {
     case manualEntryTypeText:

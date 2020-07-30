@@ -15,12 +15,27 @@
     "pub:major": "lerna publish major",
     "test": "jest",
     "test:watch": "jest --watch",
-    "install:local": "lerna run install:local"
+    "format": "lerna run format",
+    "lint": "lerna run lint"
   },
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "husky": "^4.2.5",
+    "lerna": "^3.22.1",
+    "lint-staged": "^10.2.11"
   },
   "resolutions": {
     "dot-prop": "5.1.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn run test"
+    }
+  },
+  "lint-staged": {
+    "packages/*src/**/*.{js,jsx,json,css,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   }
 }
