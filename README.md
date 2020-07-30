@@ -20,6 +20,35 @@ The [LastRev Content Prefetcher](packages/lastrev-build-prefetch-content) is a b
 
 This monorepo uses [Lerna](https://github.com/lerna/lerna) and [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) to manage the packages. Scripts are executed with [Yarn](https://yarnpkg.com/). In general, run scripts from the workspace root to run accross all packages.
 
+### Getting Started
+
+1. Install yarn globally
+
+```bash
+npm install -g yarn
+```
+
+2. Run yarn install on the project
+
+```bash
+yarn install
+```
+
+3. When adding new dependencies, add them to the workspace from the root, or CD into the package and add them to the package
+
+```bash
+yarn workspace @last-rev/integration-contentful add lodash
+# or
+cd packages/lastrev-integration-contentful
+yarn add lodash
+```
+
+### How it works
+
+yarn workspaces ensures that all modules are installed at the package root, and that package references are linked, meaning that if package-a depends on package-b, and you make changes to package-b, locally, package-a can see those changes immediately.
+
+Lerna ensures that all packages that changed, plus those depending on them are versioned and published. Versions are independent.
+
 ### commands
 
 - `yarn run build` - Cleans and builds each package in dependency order. We use [Typescript](https://www.typescriptlang.org/) to build the projects, as it allows for much safer code, and improved [intellisense in VS Code](https://code.visualstudio.com/docs/editor/intellisense)
