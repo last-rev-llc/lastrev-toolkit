@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { extractContentTypeId, extractId, extractSlug } from '../helpers';
-import { Entry, UrlMap, ParsedEntry } from '../types';
+import { Entry, UrlMap, ParsedEntry, UrlMapping } from '../types';
 
-const getUrl = (mapping, slug) => {
+const getUrl = (mapping: UrlMapping, slug: string) => {
   return [mapping.url.replace('[key]', `[${mapping.key}]`), mapping.url.replace('[key]', `${slug}`)];
 };
 
@@ -21,6 +21,7 @@ export default (obj: Entry<Record<string, unknown>>, urlMap: UrlMap): ParsedEntr
       _href,
       _as
     },
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     _.identity
   ) as ParsedEntry;
 };

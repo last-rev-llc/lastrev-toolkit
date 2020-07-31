@@ -29,13 +29,12 @@ export type Asset = {
   };
 };
 
-export type UrlMap = Record<
-  string,
-  {
-    url: string;
-    key: string;
-  }
->;
+export type UrlMapping = {
+  url: string;
+  key: string;
+};
+
+export type UrlMap = Record<string, UrlMapping>;
 
 export type ParsedEntry = {
   _id: string;
@@ -62,4 +61,13 @@ export type AdapterConfig = {
   assetRefTypeText?: string;
 };
 
-export type Transform = (data: any) => Record<string, unknown>;
+export type LinkFields = {
+  action: string;
+  destinationType: string;
+  linkText?: string;
+  manualUrl?: string;
+  contentReference?: Entry<{ slug: string }>;
+  assetReference?: Asset;
+};
+
+export type Transform = (data: unknown) => Record<string, unknown>;

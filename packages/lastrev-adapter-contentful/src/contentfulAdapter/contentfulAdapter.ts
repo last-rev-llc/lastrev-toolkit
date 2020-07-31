@@ -1,9 +1,10 @@
 import _ from 'lodash';
+import { Entry } from 'contentful';
 import parseLink from '../linkParser';
 import parseAsset from '../assetParser';
 import parseEntry from '../entryParser';
 import { isEntry, isAsset, isLink } from '../helpers';
-import { AdapterConfig, Transform } from '../types';
+import { AdapterConfig, Transform, LinkFields } from '../types';
 
 const Adapter = ({
   urlMap = {},
@@ -16,9 +17,9 @@ const Adapter = ({
   contentRefTypeText = 'Content reference',
   assetRefTypeText = 'Asset reference'
 }: AdapterConfig): Transform => (data) => {
-  const traverse = (obj) => {
+  const traverse = (obj: unknown) => {
     if (_.isArray(obj)) {
-      return _.map(obj, traverse);
+      return _.map(obj, traverse) as unknown[];
     }
     if (isLink(obj, linkContentType)) {
       return parseLink({
@@ -29,13 +30,16 @@ const Adapter = ({
         manualEntryTypeText,
         contentRefTypeText,
         assetRefTypeText,
-        fields: obj.fields,
+        fields: (obj as Entry<LinkFields>).fields,
         urlMap
       });
     }
     if (isEntry(obj)) {
-      const parsed = parseEntry(obj, urlMap);
-      const parsedFields = _.mapValues(obj.fields, traverse);
+      const parsed = parseEntry(obj as Entry<Record<string, unknown>>, urlMap);
+      const parsedFields: Record<string, unknown> = _.mapValues(
+        (obj as Entry<Record<string, unknown>>).fields,
+        traverse
+      );
       return {
         ...parsed,
         ...parsedFields
@@ -51,7 +55,7 @@ const Adapter = ({
     return obj;
   };
 
-  return traverse(data);
+  return traverse(data) as Record<string, unknown>;
 };
 
 export default Adapter;

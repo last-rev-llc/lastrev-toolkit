@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import parseEntry from '../entryParser';
-import { UrlMap, Entry, Asset } from '../types';
+import { UrlMap, Entry, Asset, LinkFields } from '../types';
 
 export declare type LinkParserConfig = {
   newWindowActionText: string;
@@ -10,14 +10,7 @@ export declare type LinkParserConfig = {
   manualEntryTypeText: string;
   contentRefTypeText: string;
   assetRefTypeText: string;
-  fields: {
-    action: string;
-    destinationType: string;
-    linkText?: string;
-    manualUrl?: string;
-    contentReference?: Entry<{ slug: string }>;
-    assetReference?: Asset;
-  };
+  fields: LinkFields;
   urlMap?: UrlMap;
 };
 
