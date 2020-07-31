@@ -41,6 +41,7 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "dot-prop": "5.2.0",
+    "lodash": "^4.17.19"
   }
 }

@@ -46,7 +46,7 @@
     "@last-rev/integration-contentful": "^4.0.1",
     "dotenv": "^8.2.0",
     "handlebars": "^4.7.6",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "slash": "^3.0.0"
   }
 }
