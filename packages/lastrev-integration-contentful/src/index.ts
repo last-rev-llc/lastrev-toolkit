@@ -1,5 +1,4 @@
-import { createClient, Entry } from 'contentful';
-import _ from 'lodash';
+import { createClient } from 'contentful';
 import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
 import getPageBySlugCreator from './getPageBySlug';
 import getFullContentByIdCreator from './getFullContentById';
@@ -38,11 +37,12 @@ export declare type WrappedContentful = {
 const Contentful = (config: AdapterConfig): WrappedContentful => {
   const transform = Adapter(config);
   return {
-    getPageBySlug: async (getPageBySlugConfig: GetPageBySlugConfig) => transform(getPageBySlug(getPageBySlugConfig)),
+    getPageBySlug: async (getPageBySlugConfig: GetPageBySlugConfig) =>
+      transform(await getPageBySlug(getPageBySlugConfig)),
     getFullContentById: async (getFullContentByIdConfig: GetFullContentByIdConfig) =>
-      transform(getFullContentById(getFullContentByIdConfig)),
+      transform(await getFullContentById(getFullContentByIdConfig)),
     getGlobalSettings: async (getGlobalSettingsConfig: GetGlobalSettingsConfig) =>
-      transform(getGlobalSettings(getGlobalSettingsConfig))
+      transform(await getGlobalSettings(getGlobalSettingsConfig))
   };
 };
 
