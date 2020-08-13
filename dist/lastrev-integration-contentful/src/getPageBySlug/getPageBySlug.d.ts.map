@@ -1,1 +1,0 @@
-{"version":3,"file":"getPageBySlug.d.ts","sourceRoot":"","sources":["../../../../packages/lastrev-integration-contentful/src/getPageBySlug/getPageBySlug.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,mBAAmB,EAAE,KAAK,EAAE,MAAM,YAAY,CAAC;AACxD,OAAO,EAAE,mBAAmB,EAAE,MAAM,UAAU,CAAC;AAE/C,QAAA,MAAM,oBAAoB,WAAY,mBAAmB,kEAMtD,mBAAmB,sBAWrB,CAAC;AAEF,eAAe,oBAAoB,CAAC"}

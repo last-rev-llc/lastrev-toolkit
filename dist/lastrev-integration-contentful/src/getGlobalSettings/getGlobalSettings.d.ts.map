@@ -1,1 +1,0 @@
-{"version":3,"file":"getGlobalSettings.d.ts","sourceRoot":"","sources":["../../../../packages/lastrev-integration-contentful/src/getGlobalSettings/getGlobalSettings.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,KAAK,EAAE,MAAM,YAAY,CAAC;AAIxD,OAAO,EAAE,uBAAuB,EAAE,MAAM,UAAU,CAAC;AAEnD,QAAA,MAAM,iBAAiB,WAAY,mBAAmB,6CAInD,uBAAuB,sBAQzB,CAAC;AAEF,eAAe,iBAAiB,CAAC"}
