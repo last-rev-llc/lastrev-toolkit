@@ -20,7 +20,11 @@ type PathsRepresentationTuple = [string, PathsRepresentation];
 const writePathsJs = async (buildConfig: BuildConfig, ...typeSlugsTuples: PathsRepresentationTuple[]) => {
   const paths = {};
   _.each(typeSlugsTuples, ([type, pathsRepresentation]) => {
-    paths[type] = pathsRepresentation;
+    paths[type] = pathsRepresentation.map((params) => {
+      return {
+        params
+      };
+    });
   });
 
   const out = `export default ${JSON.stringify(paths, null, 2)};`;
