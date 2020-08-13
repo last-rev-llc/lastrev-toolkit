@@ -1,8 +1,12 @@
-export declare type SafeEntryCollection = {
+import { Entry } from 'contentful';
+
+export { Entry } from 'contentful';
+
+export type SafeEntryCollection = {
   items: Record<string, unknown>[];
 };
 
-export declare type GetPageBySlugConfig = {
+export type GetPageBySlugConfig = {
   slug: string;
   contentTypeId: string;
   locale?: string;
@@ -10,17 +14,19 @@ export declare type GetPageBySlugConfig = {
   slugFieldName?: string;
 };
 
-export declare type GetFullContentByIdConfig = {
+export type GetFullContentByIdConfig = {
   contentTypeId: string;
   id: string;
   locale?: string;
   include: number;
 };
 
-export declare type GetGlobalSettingsConfig = {
+export type GetGlobalSettingsConfig = {
   locale?: string;
   include?: number;
   contentTypeId?: string;
 };
 
-export declare type LocalizationLookupMapping = Record<string, Record<string, string>>;
+export type LocalizationLookupMapping = Record<string, Record<string, string>>;
+
+export type StaticSlugResult = string | [string, Entry<unknown>[]];

@@ -56,7 +56,15 @@ example
     "settingsInclude": 10,
     "paths": {
       "pageGeneral": "slug",
-      "pageRecipe": "slug"
+      "pageRecipe": "slug",
+      "nestedPageRecipeStep": {
+        "param": "slug",
+        "contentType": "recipe",
+        "children": {
+          "param": "stepslug",
+          "fieldName": "steps"
+        }
+      }
     },
     "mappings": {
       "exclude": ["PageGeneral"],
@@ -75,6 +83,39 @@ example
       "pageRecipe": {
         "url": "recipes/[key]",
         "key": "slug"
+      }
+    }
+  }
+}
+```
+
+### Configuring paths
+
+Paths can either be a mapping of sontentType to parameter:
+
+```json
+{
+  "paths": {
+    "pageRecipe": "slug"
+  }
+}
+```
+
+or a more complex object where children parameters can be defined:
+
+```json
+{
+  "paths": {
+    "nestedPageRecipeStep": {
+      "param": "slug",
+      "contentType": "recipe",
+      "children": {
+        "param": "stepslug",
+        "fieldName": "steps",
+        "children": {
+          // param:...
+          // fieldName:...
+        }
       }
     }
   }

@@ -9,10 +9,24 @@ export type LocalesConfig = {
   outputPath?: string;
 };
 
+export type PathChildrenConfig = {
+  param: string;
+  fieldName: string;
+  children?: PathChildrenConfig;
+};
+
+export type SimplePathConfig = string;
+
+export type ComplexPathConfig = {
+  param: string;
+  contentType: string;
+  children?: PathChildrenConfig;
+};
+
 export type BuildConfig = {
   useAdapter?: boolean;
   mappings?: MappingConfig;
-  paths?: Record<string, string>;
+  paths?: Record<string, SimplePathConfig | ComplexPathConfig>;
   settingsInclude?: number;
   locales?: LocalesConfig;
   settingsContentType?: string;
@@ -24,5 +38,3 @@ export type BuildConfig = {
 };
 
 export type BuildTask = (buildConfig: BuildConfig, other: Record<string, unknown>) => Promise<void>;
-
-export type TypeSlugsTuple = [string, string[]];
