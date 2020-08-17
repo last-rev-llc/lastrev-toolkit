@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { ContentfulClientApi, Entry } from 'contentful';
 import { GetFullContentByIdConfig } from '../types';
+import removeCircularRefs from '../helpers/removeCircularRefs';
 
 const getFullContentByIdCreator = (client: ContentfulClientApi) => async <T>({
   contentTypeId,
@@ -8,14 +9,14 @@ const getFullContentByIdCreator = (client: ContentfulClientApi) => async <T>({
   locale,
   include
 }: GetFullContentByIdConfig): Promise<Entry<T>> => {
-  const { items } = await client.getEntries({
+  const entries = await client.getEntries({
     'content_type': contentTypeId,
     'sys.id': id,
     'include': include,
     'locale': locale
   });
 
-  return _.head(items) as Entry<T>;
+  return _.head(removeCircularRefs(entries).items) as Entry<T>;
 };
 
 export default getFullContentByIdCreator;
