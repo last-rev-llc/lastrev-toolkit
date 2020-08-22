@@ -8,7 +8,13 @@ import getLocalizationLookupCreator from './getLocalizationLookup';
 import getGlobalSettingsCreator from './getGlobalSettings';
 import getContentTypesCreator from './getContentTypes';
 import getContentTypeCreator from './getContentType';
-import { GetPageBySlugConfig, GetFullContentByIdConfig, GetGlobalSettingsConfig } from './types';
+import getAllContentItemsForContentTypeCreator from './getAllContentItemsForContentType';
+import {
+  GetPageBySlugConfig,
+  GetFullContentByIdConfig,
+  GetGlobalSettingsConfig,
+  GetAllContentItemsByContentTypeConfig
+} from './types';
 
 export * from './types';
 
@@ -27,11 +33,15 @@ export const getLocalizationLookup = getLocalizationLookupCreator(client);
 export const getGlobalSettings = getGlobalSettingsCreator(client);
 export const getContentTypes = getContentTypesCreator(client);
 export const getContentType = getContentTypeCreator(client);
+export const getAllContentItemsForContentType = getAllContentItemsForContentTypeCreator(client);
 
 export declare type WrappedContentful = {
   getPageBySlug(getPageBySlugConfig: GetPageBySlugConfig): Promise<Record<string, unknown>>;
   getFullContentById(getFullContentByIdConfig: GetFullContentByIdConfig): Promise<Record<string, unknown>>;
   getGlobalSettings(getGlobalSettingsConfig: GetGlobalSettingsConfig): Promise<Record<string, unknown>>;
+  getAllContentItemsForContentType(
+    getAllContentItemsByContentTypeConfig: GetAllContentItemsByContentTypeConfig
+  ): Promise<Record<string, unknown>>;
 };
 
 const Contentful = (config: AdapterConfig): WrappedContentful => {
@@ -42,7 +52,10 @@ const Contentful = (config: AdapterConfig): WrappedContentful => {
     getFullContentById: async (getFullContentByIdConfig: GetFullContentByIdConfig) =>
       transform(await getFullContentById(getFullContentByIdConfig)),
     getGlobalSettings: async (getGlobalSettingsConfig: GetGlobalSettingsConfig) =>
-      transform(await getGlobalSettings(getGlobalSettingsConfig))
+      transform(await getGlobalSettings(getGlobalSettingsConfig)),
+    getAllContentItemsForContentType: async (
+      getAllContentItemsForContentTypeConfig: GetAllContentItemsByContentTypeConfig
+    ) => transform(await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig))
   };
 };
 

@@ -13,6 +13,7 @@
     "pub:patch": "lerna publish patch",
     "pub:minor": "lerna publish minor",
     "pub:major": "lerna publish major",
+    "pub:prerelease": "lerna publish prerelease",
     "test": "jest",
     "test:watch": "jest --watch",
     "format": "lerna run format",

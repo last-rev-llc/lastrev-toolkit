@@ -27,6 +27,14 @@ export type GetGlobalSettingsConfig = {
   contentTypeId?: string;
 };
 
+export type GetAllContentItemsByContentTypeConfig = {
+  contentTypeId: string;
+  fields?: string[];
+  order?: string;
+  nestedFieldName?: string;
+  include?: number;
+};
+
 export type LocalizationLookupMapping = Record<string, Record<string, string>>;
 
 export type StaticSlugResult = string | [string, Entry<unknown>[]];
