@@ -30,7 +30,7 @@ const getStaticSlugsForContentTypeCreator = (client: ContentfulClientApi) => asy
   const select = fields.length
     ? map(fields, (field) => {
         return `fields.${field}`;
-      }).join(', ')
+      }).join(',')
     : null;
 
   while (total === undefined || total > count) {
