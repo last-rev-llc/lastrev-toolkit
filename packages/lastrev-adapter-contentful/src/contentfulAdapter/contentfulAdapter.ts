@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Entry } from 'contentful';
+import { Entry, Asset } from 'contentful';
 import parseLink from '../linkParser';
 import parseAsset from '../assetParser';
 import parseEntry from '../entryParser';
@@ -46,7 +46,7 @@ const Adapter = ({
       };
     }
     if (isAsset(obj)) {
-      return parseAsset(obj);
+      return parseAsset(obj as Asset);
     }
     if (_.isObject(obj)) {
       return _.mapValues(obj, traverse);

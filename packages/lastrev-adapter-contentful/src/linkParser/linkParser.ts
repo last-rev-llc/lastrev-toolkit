@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import parseEntry from '../entryParser';
-import { UrlMap, Entry, Asset, LinkFields } from '../types';
+import { UrlMap, LinkFields } from '../types';
 
 export declare type LinkParserConfig = {
   newWindowActionText: string;

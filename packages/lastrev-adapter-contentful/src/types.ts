@@ -1,3 +1,5 @@
+import { Asset } from 'contentful';
+
 export type LinkTextTypes = {
   newWindowActionText: string;
   modalActionText: string;
@@ -19,16 +21,6 @@ export type Entry<T> = {
   fields: T;
 };
 
-export type Asset = {
-  fields: {
-    title: string;
-    description?: string;
-    file: {
-      url: string;
-    };
-  };
-};
-
 export type UrlMapping = {
   url: string;
   key: string;
@@ -41,6 +33,17 @@ export type ParsedEntry = {
   _contentTypeId: string;
   _href?: string;
   _as?: string;
+};
+
+export type ParsedAsset = {
+  title: string;
+  description?: string;
+  url: string;
+  size: number;
+  width?: number;
+  height?: number;
+  filename?: string;
+  contentType: string;
 };
 
 export type AdapterConfig = {
