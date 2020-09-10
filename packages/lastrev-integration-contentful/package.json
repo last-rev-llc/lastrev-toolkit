@@ -1,6 +1,6 @@
 {
   "name": "@last-rev/integration-contentful",
-  "version": "4.1.2-alpha.4",
+  "version": "4.1.2-alpha.5",
   "description": "Contentful integration for lastrev projects",
   "main": "dist/index.js",
   "files": [
@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.10.4",
-    "@last-rev/adapter-contentful": "^3.0.2-alpha.2",
+    "@last-rev/adapter-contentful": "^3.0.2-alpha.3",
     "@types/faker": "^4.1.12",
     "contentful": "^7.14.5",
     "lodash": "^4.17.19"
