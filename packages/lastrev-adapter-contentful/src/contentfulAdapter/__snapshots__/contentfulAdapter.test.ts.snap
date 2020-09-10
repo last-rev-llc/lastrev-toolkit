@@ -16,6 +16,8 @@ Object {
   },
   "footerSocialLinks": Array [
     Object {
+      "_contentTypeId": "uieCta",
+      "_id": "37SQAoRR9kW7Qe9PVYPpXE",
       "action": "Open in a new window",
       "as": null,
       "destinationType": "Manual URL",
@@ -30,6 +32,8 @@ Object {
     },
   ],
   "footerUtilityNavCta": Object {
+    "_contentTypeId": "uieCta",
+    "_id": "mock_UIE-CTA",
     "action": "Open a modal",
     "as": "/testslug",
     "contentReference": Object {
@@ -91,6 +95,8 @@ Object {
       "_id": "mock_settingsGlobal-baselineCta",
       "internalTitle": "Healthfacts - Nav Link",
       "mainLink": Object {
+        "_contentTypeId": "uieCta",
+        "_id": "mock_UIE-CTA",
         "action": "Open in the same window",
         "as": null,
         "destinationType": "Manual URL",
@@ -109,6 +115,8 @@ Object {
       "_id": "mock_settingsGlobal-baselineMainLinks",
       "internalTitle": "Healthwise - Nav Link",
       "mainLink": Object {
+        "_contentTypeId": "uieCta",
+        "_id": "mock_UIE-CTA",
         "action": "Download",
         "as": null,
         "destinationType": "Manual URL",
@@ -128,6 +136,8 @@ Object {
       "_id": "mock_Element-NavLink",
       "internalTitle": "Kids Health - Nav Link",
       "mainLink": Object {
+        "_contentTypeId": "uieCta",
+        "_id": "mock_UIE-CTA",
         "action": "Open in a new window",
         "as": null,
         "assetReference": Object {
@@ -177,6 +187,8 @@ Object {
     "_id": "mock_settingsGlobal-headerUtilityNavSiteNameLink",
     "internalTitle": "Mock headerUtilityNavSiteNameLink for Settings - Global",
     "mainLink": Object {
+      "_contentTypeId": "uieCta",
+      "_id": "mock_UIE-CTA",
       "action": "Open in the same window",
       "as": null,
       "destinationType": "Manual URL",

@@ -31,6 +31,8 @@ const Adapter = ({
         contentRefTypeText,
         assetRefTypeText,
         fields: (obj as Entry<LinkFields>).fields,
+        id: _.get(obj, 'sys.id') as string,
+        contentTypeId: linkContentType,
         urlMap
       });
     }

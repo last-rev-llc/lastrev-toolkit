@@ -9,34 +9,36 @@ const urlMap = {
   }
 };
 
+const mock = mockEntry();
+
 describe('entryParser.js', () => {
   test('parses all fields correctly when mapping exists', () => {
-    const out = parseEntry(mockEntry, urlMap);
+    const out = parseEntry(mock, urlMap);
     expect(out).toEqual({
-      _id: _.get(mockEntry, 'sys.id'),
-      _contentTypeId: _.get(mockEntry, 'sys.contentType.sys.id'),
+      _id: mock.sys.id,
+      _contentTypeId: mock.sys.contentType.sys.id,
       _href: `/test/[slug]`,
-      _as: `/test/${_.get(mockEntry, 'fields.slug')}`
+      _as: `/test/${mock.fields.slug}`
     });
   });
   test('parses all fields correctly when mapping does not exist', () => {
-    const out = parseEntry(mockEntry, {});
+    const out = parseEntry(mock, {});
     expect(out).toEqual({
-      _id: _.get(mockEntry, 'sys.id'),
-      _contentTypeId: _.get(mockEntry, 'sys.contentType.sys.id')
+      _id: mock.sys.id,
+      _contentTypeId: mock.sys.contentType.sys.id
     });
   });
   test('returns empty object when not a contentful item', () => {
-    const obj = _.set(_.assign({}, mockEntry), 'sys', {});
+    const obj = _.set(_.assign({}, mock), 'sys', {});
     const out = parseEntry(obj, urlMap);
     expect(out).toEqual({});
   });
   test('returns no _href or as _as properties when slug not found', () => {
-    const obj = _.set(_.assign({}, mockEntry), 'fields', { notaSlug: 'hello' });
+    const obj = _.set(_.assign({}, mock), 'fields', { notaSlug: 'hello' });
     const out = parseEntry(obj, urlMap);
     expect(out).toEqual({
-      _id: _.get(mockEntry, 'sys.id'),
-      _contentTypeId: _.get(mockEntry, 'sys.contentType.sys.id')
+      _id: mock.sys.id,
+      _contentTypeId: mock.sys.contentType.sys.id
     });
   });
 });

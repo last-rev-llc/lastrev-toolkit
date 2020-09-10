@@ -10,6 +10,8 @@ export declare type LinkParserConfig = {
   contentRefTypeText: string;
   assetRefTypeText: string;
   fields: LinkFields;
+  id: string;
+  contentTypeId: string;
   urlMap?: UrlMap;
 };
 
@@ -21,6 +23,8 @@ export default ({
   contentRefTypeText,
   assetRefTypeText,
   fields,
+  id,
+  contentTypeId,
   urlMap
 }: LinkParserConfig): Record<string, unknown> => {
   const { action, destinationType, manualUrl, contentReference, assetReference } = fields;
@@ -66,6 +70,8 @@ export default ({
 
   return {
     ...fields,
+    _id: id,
+    _contentTypeId: contentTypeId,
     href,
     as,
     target,
