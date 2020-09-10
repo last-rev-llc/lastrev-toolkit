@@ -3,7 +3,7 @@ import { Entry, Asset } from 'contentful';
 import parseLink from '../linkParser';
 import parseAsset from '../assetParser';
 import parseEntry from '../entryParser';
-import { isEntry, isAsset, isLink } from '../helpers';
+import { isEntry, isAsset, isLink, isBadContentfulObject } from '../helpers';
 import { AdapterConfig, Transform, LinkFields } from '../types';
 
 const Adapter = ({
@@ -18,6 +18,9 @@ const Adapter = ({
   assetRefTypeText = 'Asset reference'
 }: AdapterConfig): Transform => (data) => {
   const traverse = (obj: unknown) => {
+    if (isBadContentfulObject(obj)) {
+      return null;
+    }
     if (_.isArray(obj)) {
       return _.map(obj, traverse) as unknown[];
     }
