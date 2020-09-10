@@ -1,5 +1,6 @@
+import { has } from 'lodash';
 import parseEntry from '../entryParser';
-import { UrlMap, LinkFields } from '../types';
+import { UrlMap, LinkFields, ParsedEntry } from '../types';
 
 export declare type LinkParserConfig = {
   newWindowActionText: string;
@@ -13,6 +14,7 @@ export declare type LinkParserConfig = {
   id: string;
   contentTypeId: string;
   urlMap?: UrlMap;
+  parsedEntries: Record<string, ParsedEntry>;
 };
 
 export default ({
@@ -25,7 +27,8 @@ export default ({
   fields,
   id,
   contentTypeId,
-  urlMap
+  urlMap,
+  parsedEntries
 }: LinkParserConfig): Record<string, unknown> => {
   const { action, destinationType, manualUrl, contentReference, assetReference } = fields;
 
@@ -47,7 +50,11 @@ export default ({
       if (!contentReference) {
         throw Error(`DestinationType is ${contentRefTypeText}, but no content reference is selected`);
       }
-      const { _href, _as, _contentTypeId } = parseEntry(contentReference, urlMap);
+      const parsed = has(parsedEntries, contentReference.sys.id)
+        ? parsedEntries[contentReference.sys.id]
+        : parseEntry(contentReference, urlMap);
+      const { _href, _as, _contentTypeId } = parsed;
+
       if (!_href || !_as) {
         throw Error(`urlMap does not contain entry for ${_contentTypeId}`);
       }

@@ -4,7 +4,7 @@ import parseLink from '../linkParser';
 import parseAsset from '../assetParser';
 import parseEntry from '../entryParser';
 import { isEntry, isAsset, isLink, isBadContentfulObject } from '../helpers';
-import { AdapterConfig, Transform, LinkFields } from '../types';
+import { AdapterConfig, Transform, LinkFields, ParsedEntry } from '../types';
 
 const Adapter = ({
   urlMap = {},
@@ -17,6 +17,8 @@ const Adapter = ({
   contentRefTypeText = 'Content reference',
   assetRefTypeText = 'Asset reference'
 }: AdapterConfig): Transform => (data) => {
+  const parsedEntries: Record<string, ParsedEntry> = {};
+
   const traverse = (obj: unknown) => {
     if (isBadContentfulObject(obj)) {
       return null;
@@ -36,11 +38,13 @@ const Adapter = ({
         fields: (obj as Entry<LinkFields>).fields,
         id: _.get(obj, 'sys.id') as string,
         contentTypeId: linkContentType,
-        urlMap
+        urlMap,
+        parsedEntries
       });
     }
     if (isEntry(obj)) {
       const parsed = parseEntry(obj as Entry<Record<string, unknown>>, urlMap);
+      parsedEntries[parsed._id] = parsed;
       const parsedFields: Record<string, unknown> = _.mapValues(
         (obj as Entry<Record<string, unknown>>).fields,
         traverse

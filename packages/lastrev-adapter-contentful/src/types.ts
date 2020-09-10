@@ -64,12 +64,21 @@ export type AdapterConfig = {
   assetRefTypeText?: string;
 };
 
+export type CircularReference = {
+  sys: {
+    type: 'Link';
+    linkType: 'Entry';
+    id: string;
+    circular: true;
+  };
+};
+
 export type LinkFields = {
   action: string;
   destinationType: string;
   linkText?: string;
   manualUrl?: string;
-  contentReference?: Entry<{ slug: string }>;
+  contentReference?: Entry<{ slug: string }> | CircularReference;
   assetReference?: Asset;
 };
 
