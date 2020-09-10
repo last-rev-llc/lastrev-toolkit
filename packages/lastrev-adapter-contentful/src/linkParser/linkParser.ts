@@ -1,4 +1,5 @@
 import { has } from 'lodash';
+import { Entry } from 'contentful';
 import parseEntry from '../entryParser';
 import { UrlMap, LinkFields, ParsedEntry } from '../types';
 
@@ -52,7 +53,7 @@ export default ({
       }
       const parsed = has(parsedEntries, contentReference.sys.id)
         ? parsedEntries[contentReference.sys.id]
-        : parseEntry(contentReference, urlMap);
+        : parseEntry(contentReference as Entry<{ slug: string }>, urlMap);
       const { _href, _as, _contentTypeId } = parsed;
 
       if (!_href || !_as) {
