@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { map, isArray, mapValues, get, isObject, compact } from 'lodash';
 import { Entry, Asset } from 'contentful';
 import parseLink from '../linkParser';
 import parseAsset from '../assetParser';
@@ -23,8 +23,8 @@ const Adapter = ({
     if (isBadContentfulObject(obj)) {
       return null;
     }
-    if (_.isArray(obj)) {
-      return _.map(obj, traverse) as unknown[];
+    if (isArray(obj)) {
+      return compact(map(obj, traverse)) as unknown[];
     }
     if (isLink(obj, linkContentType)) {
       return parseLink({
@@ -36,7 +36,7 @@ const Adapter = ({
         contentRefTypeText,
         assetRefTypeText,
         fields: (obj as Entry<LinkFields>).fields,
-        id: _.get(obj, 'sys.id') as string,
+        id: get(obj, 'sys.id') as string,
         contentTypeId: linkContentType,
         urlMap,
         parsedEntries
@@ -45,10 +45,7 @@ const Adapter = ({
     if (isEntry(obj)) {
       const parsed = parseEntry(obj as Entry<Record<string, unknown>>, urlMap);
       parsedEntries[parsed._id] = parsed;
-      const parsedFields: Record<string, unknown> = _.mapValues(
-        (obj as Entry<Record<string, unknown>>).fields,
-        traverse
-      );
+      const parsedFields: Record<string, unknown> = mapValues((obj as Entry<Record<string, unknown>>).fields, traverse);
       return {
         ...parsed,
         ...parsedFields
@@ -57,8 +54,8 @@ const Adapter = ({
     if (isAsset(obj)) {
       return parseAsset(obj as Asset);
     }
-    if (_.isObject(obj)) {
-      return _.mapValues(obj, traverse);
+    if (isObject(obj)) {
+      return mapValues(obj, traverse);
     }
     // most likely a simple value field
     return obj;

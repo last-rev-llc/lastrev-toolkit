@@ -1,4 +1,13 @@
-import { isEntry, isAsset, isContentfulObject, extractContentTypeId, extractSlug, extractId, isLink } from './helpers';
+import {
+  isEntry,
+  isAsset,
+  isContentfulObject,
+  extractContentTypeId,
+  extractSlug,
+  extractId,
+  isLink,
+  isBadContentfulObject
+} from './helpers';
 
 describe('helpers.js', () => {
   describe('isEntry', () => {
@@ -144,6 +153,52 @@ describe('helpers.js', () => {
         }
       ];
       expect(isContentfulObject(obj)).toBe(false);
+    });
+  });
+
+  describe('isBadContentfulObject', () => {
+    it('returns false when the object is a contentful object', () => {
+      const obj = {
+        sys: {
+          type: 'Asset'
+        },
+        fields: {
+          a: 1,
+          b: 2
+        }
+      };
+      expect(isBadContentfulObject(obj)).toBe(false);
+    });
+    it('returns false if no sys property', () => {
+      const obj = {
+        fields: {
+          a: 1,
+          b: 2
+        }
+      };
+      expect(isBadContentfulObject(obj)).toBe(false);
+    });
+    it('returns true if no fields property', () => {
+      const obj = {
+        sys: {
+          type: 'Entry'
+        }
+      };
+      expect(isBadContentfulObject(obj)).toBe(true);
+    });
+    it('returns false when the object is an array', () => {
+      const obj = [
+        {
+          sys: {
+            type: 'Asset'
+          },
+          fields: {
+            a: 1,
+            b: 2
+          }
+        }
+      ];
+      expect(isBadContentfulObject(obj)).toBe(false);
     });
   });
 
