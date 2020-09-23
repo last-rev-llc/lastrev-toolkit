@@ -25,6 +25,18 @@ const baseData = {
 
 const mock = mockContent();
 
+const spyError = jest.spyOn(console, 'error');
+const spyWarn = jest.spyOn(console, 'warn');
+
+beforeEach(() => {
+  spyError.mockReset();
+  spyWarn.mockReset();
+});
+
+afterEach(() => {
+  expect(spyError).not.toHaveBeenCalled();
+});
+
 describe('linkParser', () => {
   describe('destination type: manualUrl', () => {
     test('action: open in the same window', () => {
@@ -45,6 +57,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: open in a new window', () => {
@@ -65,6 +78,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: open in a modal', () => {
@@ -85,6 +99,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: Download', () => {
@@ -105,6 +120,24 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(true);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
+    });
+
+    test('no manual URL entered returns null href and as', () => {
+      const parsed = parse({
+        ...baseData,
+        fields: {
+          ...mock.fields,
+          destinationType: 'Manual text entry',
+          manualUrl: undefined
+        }
+      });
+
+      expect(parsed.href).toBe(null);
+      expect(parsed.as).toBe(null);
+      expect(spyWarn).toHaveBeenCalledWith(
+        'Bad content for elementLink: DestinationType is Manual text entry, but no URL has been entered'
+      );
     });
   });
 
@@ -127,6 +160,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: open in a new window', () => {
@@ -147,6 +181,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: open in a modal', () => {
@@ -167,6 +202,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: Download', () => {
@@ -187,6 +223,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(true);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('circular reference, action: open in the same window', () => {
@@ -226,6 +263,24 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
+    });
+
+    test('no content reference entered returns null href and as', () => {
+      const parsed = parse({
+        ...baseData,
+        fields: {
+          ...mock.fields,
+          destinationType: 'Content reference',
+          contentReference: null
+        }
+      });
+
+      expect(parsed.href).toBe(null);
+      expect(parsed.as).toBe(null);
+      expect(spyWarn).toHaveBeenCalledWith(
+        'Bad content for elementLink: DestinationType is Content reference, but no content reference is selected'
+      );
     });
   });
 
@@ -248,6 +303,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: open in a new window', () => {
@@ -268,6 +324,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: open in a modal', () => {
@@ -288,6 +345,7 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(false);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
     });
 
     test('action: Download', () => {
@@ -308,6 +366,24 @@ describe('linkParser', () => {
       expect(parsed.download).toBe(true);
       expect(parsed._id).toBe(baseData.id);
       expect(parsed._contentTypeId).toBe(baseData.contentTypeId);
+      expect(spyWarn).not.toHaveBeenCalled();
+    });
+
+    test('no asset reference entered returns null href and as', () => {
+      const parsed = parse({
+        ...baseData,
+        fields: {
+          ...mock.fields,
+          destinationType: 'Asset reference',
+          assetReference: undefined
+        }
+      });
+
+      expect(parsed.href).toBe(null);
+      expect(parsed.as).toBe(null);
+      expect(spyWarn).toHaveBeenCalledWith(
+        'Bad content for elementLink: DestinationType is Asset reference, but no asset is selected'
+      );
     });
   });
 });

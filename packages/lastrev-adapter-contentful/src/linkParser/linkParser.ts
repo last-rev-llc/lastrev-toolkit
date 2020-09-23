@@ -43,13 +43,19 @@ export default ({
   switch (destinationType) {
     case manualEntryTypeText:
       if (!manualUrl) {
-        throw Error(`DestinationType is ${manualEntryTypeText}, but no URL has been entered`);
+        console.warn(
+          `Bad content for ${contentTypeId}: DestinationType is ${manualEntryTypeText}, but no URL has been entered`
+        );
+        break;
       }
       href = manualUrl;
       break;
     case contentRefTypeText: {
       if (!contentReference) {
-        throw Error(`DestinationType is ${contentRefTypeText}, but no content reference is selected`);
+        console.warn(
+          `Bad content for ${contentTypeId}: DestinationType is ${contentRefTypeText}, but no content reference is selected`
+        );
+        break;
       }
       const parsed = has(parsedEntries, contentReference.sys.id)
         ? parsedEntries[contentReference.sys.id]
@@ -64,7 +70,10 @@ export default ({
     }
     case assetRefTypeText:
       if (!assetReference) {
-        throw Error(`DestinationType is ${assetRefTypeText}, but no asset is selected`);
+        console.warn(
+          `Bad content for ${contentTypeId}: DestinationType is ${assetRefTypeText}, but no asset is selected`
+        );
+        break;
       }
       ({
         fields: {
