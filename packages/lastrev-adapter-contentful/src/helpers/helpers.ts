@@ -20,6 +20,10 @@ export const extractContentTypeId = (obj: unknown): string | null => {
   return ((isEntry(obj) && _.get(obj, 'sys.contentType.sys.id')) as string) || null;
 };
 
+export const extractModifiedDate = (obj: unknown): Date | null => {
+  return ((isEntry(obj) && _.get(obj, 'sys.updatedAt')) as Date) || null;
+};
+
 export const extractId = (obj: unknown): string | null => {
   return ((isEntry(obj) && _.get(obj, 'sys.id')) as string) || null;
 };

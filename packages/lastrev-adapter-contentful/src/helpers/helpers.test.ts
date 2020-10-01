@@ -6,7 +6,8 @@ import {
   extractSlug,
   extractId,
   isLink,
-  isBadContentfulObject
+  isBadContentfulObject,
+  extractModifiedDate
 } from './helpers';
 
 describe('helpers.js', () => {
@@ -233,6 +234,7 @@ describe('helpers.js', () => {
     it('returns null if no contentTypeId exists', () => {
       const obj = {
         sys: {
+          type: 'Entry',
           contentType: {
             some: 'other'
           }
@@ -243,6 +245,47 @@ describe('helpers.js', () => {
         }
       };
       expect(extractContentTypeId(obj)).toBe(null);
+    });
+  });
+
+  describe('extractModifiedDate', () => {
+    it('returns the modified date from a contentful object', () => {
+      const expected = new Date();
+      const obj = {
+        sys: {
+          type: 'Entry',
+          updatedAt: expected
+        },
+        fields: {
+          a: 1,
+          b: 2
+        }
+      };
+      expect(extractModifiedDate(obj)).toBe(expected);
+    });
+    it('returns null if not a contentful object', () => {
+      const obj = {
+        fields: {
+          a: 1,
+          b: 2
+        }
+      };
+      expect(extractModifiedDate(obj)).toBe(null);
+    });
+    it('returns null if no updatedAt exists', () => {
+      const obj = {
+        sys: {
+          type: 'Entry',
+          contentType: {
+            some: 'other'
+          }
+        },
+        fields: {
+          a: 1,
+          b: 2
+        }
+      };
+      expect(extractModifiedDate(obj)).toBe(null);
     });
   });
 

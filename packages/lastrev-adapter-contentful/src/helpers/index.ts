@@ -6,5 +6,6 @@ export {
   isLink,
   extractId,
   extractSlug,
-  isBadContentfulObject
+  isBadContentfulObject,
+  extractModifiedDate
 } from './helpers';

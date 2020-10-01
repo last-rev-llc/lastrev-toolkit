@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { extractContentTypeId, extractId, extractSlug } from '../helpers';
+import { extractContentTypeId, extractId, extractSlug, extractModifiedDate } from '../helpers';
 import { Entry, UrlMap, ParsedEntry, UrlMapping } from '../types';
 
 const getUrl = (mapping: UrlMapping, slug: string) => {
@@ -9,6 +9,7 @@ const getUrl = (mapping: UrlMapping, slug: string) => {
 export default (obj: Entry<Record<string, unknown>>, urlMap: UrlMap): ParsedEntry => {
   const _id = extractId(obj);
   const _contentTypeId = extractContentTypeId(obj);
+  const _modifiedDate = extractModifiedDate(obj);
   const slug = extractSlug(obj);
 
   const mapped = _.get(urlMap, _contentTypeId);
@@ -19,7 +20,8 @@ export default (obj: Entry<Record<string, unknown>>, urlMap: UrlMap): ParsedEntr
       _id,
       _contentTypeId,
       _href,
-      _as
+      _as,
+      _modifiedDate
     },
     // eslint-disable-next-line @typescript-eslint/unbound-method
     _.identity

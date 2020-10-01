@@ -18,14 +18,16 @@ describe('entryParser.js', () => {
       _id: mock.sys.id,
       _contentTypeId: mock.sys.contentType.sys.id,
       _href: `/test/[slug]`,
-      _as: `/test/${mock.fields.slug}`
+      _as: `/test/${mock.fields.slug}`,
+      _modifiedDate: mock.sys.updatedAt
     });
   });
   test('parses all fields correctly when mapping does not exist', () => {
     const out = parseEntry(mock, {});
     expect(out).toEqual({
       _id: mock.sys.id,
-      _contentTypeId: mock.sys.contentType.sys.id
+      _contentTypeId: mock.sys.contentType.sys.id,
+      _modifiedDate: mock.sys.updatedAt
     });
   });
   test('returns empty object when not a contentful item', () => {
@@ -38,7 +40,8 @@ describe('entryParser.js', () => {
     const out = parseEntry(obj, urlMap);
     expect(out).toEqual({
       _id: mock.sys.id,
-      _contentTypeId: mock.sys.contentType.sys.id
+      _contentTypeId: mock.sys.contentType.sys.id,
+      _modifiedDate: mock.sys.updatedAt
     });
   });
 });

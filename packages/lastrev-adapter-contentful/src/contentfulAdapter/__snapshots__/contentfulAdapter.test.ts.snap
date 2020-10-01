@@ -93,6 +93,7 @@ Object {
     Object {
       "_contentTypeId": "elementNavLink",
       "_id": "mock_settingsGlobal-baselineCta",
+      "_modifiedDate": "2020-06-17T19:39:13.522Z",
       "internalTitle": "Healthfacts - Nav Link",
       "mainLink": Object {
         "_contentTypeId": "uieCta",
@@ -113,6 +114,7 @@ Object {
     Object {
       "_contentTypeId": "elementNavLink",
       "_id": "mock_settingsGlobal-baselineMainLinks",
+      "_modifiedDate": "2020-06-17T19:39:26.301Z",
       "internalTitle": "Healthwise - Nav Link",
       "mainLink": Object {
         "_contentTypeId": "uieCta",
@@ -134,6 +136,7 @@ Object {
     Object {
       "_contentTypeId": "elementNavLink",
       "_id": "mock_Element-NavLink",
+      "_modifiedDate": "2020-06-17T19:42:15.908Z",
       "internalTitle": "Kids Health - Nav Link",
       "mainLink": Object {
         "_contentTypeId": "uieCta",
@@ -185,6 +188,7 @@ Object {
   "headerUtilityNavSiteNameLink": Object {
     "_contentTypeId": "elementNavLink",
     "_id": "mock_settingsGlobal-headerUtilityNavSiteNameLink",
+    "_modifiedDate": "2020-06-17T20:00:03.043Z",
     "internalTitle": "Mock headerUtilityNavSiteNameLink for Settings - Global",
     "mainLink": Object {
       "_contentTypeId": "uieCta",
@@ -212,6 +216,7 @@ exports[`Contentful Adapter parses plain json correctly 1`] = `
 Object {
   "_contentTypeId": "settingsGlobal",
   "_id": "1wmrGhKeCNbe3QssB6UNkN",
+  "_modifiedDate": "2020-07-06T23:50:58.713Z",
   "localizationLookup": Object {
     "createAccountDescription": "Earn rewards with each purchase. Save earth. Connect with other Impossible fans.",
     "createAccountLinkLabel": "Sign up for Taste Place here.",
