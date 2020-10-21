@@ -35,6 +35,7 @@ export type BuildConfig = {
   writeMappings?: boolean;
   writeAdapterConfig?: boolean;
   writeLocaleData?: boolean;
+  writeRedirects?: boolean;
 };
 
 export type BuildTask = (buildConfig: BuildConfig, other: Record<string, unknown>) => Promise<void>;

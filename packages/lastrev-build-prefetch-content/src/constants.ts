@@ -14,6 +14,7 @@ export const ADAPTER_CONFIG_FILE = join(CONTENT_DIR, 'adapterConfig.js');
 export const MAPPING_TEMPLATE = readFileSync(MAPPING_TEMPLATE_FILE, 'utf-8');
 export const SETTINGS_TEMPLATE = readFileSync(SETTINGS_TEMPLATE_FILE, 'utf-8');
 export const I18N_JSON_FILE = resolve(PROJECT_ROOT, './i18n.json');
+export const REDIRECTS_FILE = resolve(PROJECT_ROOT, './_redirects');
 export const DEFAULT_LOCALIZATION_LOOKUP_FIELD_NAME = 'localizationLookup';
 export const DEFAULT_RAW_PAGES_DIR = 'src/_pages';
 export const DEFAULT_LOCALES_OUTPUT_PATH = 'locales';
