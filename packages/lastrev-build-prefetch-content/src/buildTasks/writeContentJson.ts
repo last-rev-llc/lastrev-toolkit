@@ -13,10 +13,14 @@ const isEntry = (obj: Record<string, unknown> | Entry<unknown>): obj is Entry<un
 const fetchContentJsons = async ({
   buildConfig,
   contentTypeId,
+  limit = 20,
+  include = 10,
   adapterConfig
 }: {
   buildConfig: BuildConfig;
   contentTypeId: string;
+  limit?: number;
+  include?: number;
   adapterConfig: AdapterConfig;
 }): Promise<Record<string, Record<string, unknown> | Entry<unknown>>> => {
   const getContent = buildConfig.useAdapter
@@ -26,7 +30,8 @@ const fetchContentJsons = async ({
 
   const results = await getContent({
     contentTypeId,
-    include: 10
+    include,
+    limit
   });
 
   const out: Record<string, Record<string, unknown> | Entry<unknown>> = {};
@@ -42,6 +47,9 @@ const fetchContentJsons = async ({
 const writeContentJson: BuildTask = async (buildConfig: BuildConfig, { adapterConfig }): Promise<void> => {
   if (!buildConfig || !has(buildConfig, 'contentPrefetch.types')) return;
 
+  const limit = buildConfig.contentPrefetch.pageSize;
+  const { include } = buildConfig.contentPrefetch;
+
   await mkdirIfNotExists(CONTENT_DIR);
   await mkdirIfNotExists(CONTENT_JSON_DIR);
 
@@ -51,7 +59,9 @@ const writeContentJson: BuildTask = async (buildConfig: BuildConfig, { adapterCo
         const contentJsons = await fetchContentJsons({
           contentTypeId,
           buildConfig,
-          adapterConfig
+          adapterConfig,
+          limit,
+          include
         });
         const contentTypeDir = join(CONTENT_JSON_DIR, contentTypeId);
         await mkdirIfNotExists(contentTypeDir);

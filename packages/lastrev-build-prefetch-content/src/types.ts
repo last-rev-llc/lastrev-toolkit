@@ -25,6 +25,8 @@ export type ComplexPathConfig = {
 
 export type ContentPrefetchConfig = {
   types: string[];
+  pageSize?: number;
+  include?: number;
 };
 
 export type BuildConfig = {
