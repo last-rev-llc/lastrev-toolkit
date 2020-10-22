@@ -23,10 +23,15 @@ export type ComplexPathConfig = {
   children?: PathChildrenConfig;
 };
 
+export type ContentPrefetchConfig = {
+  types: string[];
+};
+
 export type BuildConfig = {
   useAdapter?: boolean;
   mappings?: MappingConfig;
   paths?: Record<string, SimplePathConfig | ComplexPathConfig>;
+  contentPrefetch?: ContentPrefetchConfig;
   settingsInclude?: number;
   locales?: LocalesConfig;
   settingsContentType?: string;
@@ -35,6 +40,7 @@ export type BuildConfig = {
   writeMappings?: boolean;
   writeAdapterConfig?: boolean;
   writeLocaleData?: boolean;
+  writeContentJson?: boolean;
 };
 
 export type BuildTask = (buildConfig: BuildConfig, other: Record<string, unknown>) => Promise<void>;

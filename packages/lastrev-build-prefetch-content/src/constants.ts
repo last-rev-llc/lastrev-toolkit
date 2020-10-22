@@ -9,6 +9,7 @@ export const SETTINGS_TEMPLATE_FILE = resolve(__dirname, '../templates/settings.
 export const COMPONENTS_DIR = resolve(PROJECT_ROOT, './src/components');
 export const PATHS_FILE = join(CONTENT_DIR, 'paths.js');
 export const SETTINGS_FILE = join(CONTENT_DIR, 'settings.js');
+export const CONTENT_JSON_DIR = join(CONTENT_DIR, 'contentJson');
 export const COMPONENT_MAPPING_FILE = join(CONTENT_DIR, 'mapping.js');
 export const ADAPTER_CONFIG_FILE = join(CONTENT_DIR, 'adapterConfig.js');
 export const MAPPING_TEMPLATE = readFileSync(MAPPING_TEMPLATE_FILE, 'utf-8');

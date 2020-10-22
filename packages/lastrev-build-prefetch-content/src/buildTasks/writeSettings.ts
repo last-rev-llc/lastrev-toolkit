@@ -19,6 +19,7 @@ const writeSettingsJs = async (settingsByLocale: LocalizedSettingsData[]) => {
 };
 
 const writeSettings: BuildTask = async (buildConfig, { adapterConfig }): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const getSettings = buildConfig.useAdapter ? Contentful(adapterConfig).getGlobalSettings : getGlobalSettings;
 
   await mkdirIfNotExists(CONTENT_DIR);
