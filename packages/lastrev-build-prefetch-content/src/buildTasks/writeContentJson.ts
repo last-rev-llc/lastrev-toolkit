@@ -47,7 +47,7 @@ const writeContentJson: BuildTask = async (buildConfig: BuildConfig, { adapterCo
 
   await Promise.all(
     map(buildConfig.contentPrefetch.types, (contentTypeId) => {
-      return async () => {
+      const toExec = async () => {
         const contentJsons = await fetchContentJsons({
           contentTypeId,
           buildConfig,
@@ -62,6 +62,7 @@ const writeContentJson: BuildTask = async (buildConfig: BuildConfig, { adapterCo
           })
         );
       };
+      return toExec();
     })
   );
 };
