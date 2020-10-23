@@ -43,7 +43,7 @@ const getStaticSlugsForContentTypeCreator = (client: ContentfulClientApi) => asy
     ({ skip, limit, total, items } = queryResults);
 
     count += items.length;
-    skip += count;
+    skip += items.length;
 
     items.forEach((item) => {
       if (nestedFieldName) {

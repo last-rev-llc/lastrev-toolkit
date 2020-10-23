@@ -61,7 +61,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
 
     count += items.length;
     // eslint-disable-next-line no-param-reassign
-    skip += count;
+    skip += items.length;
 
     entries.push(...items);
   }

@@ -36,9 +36,10 @@ const fetchContentJsons = async ({
 
   const out: Record<string, Record<string, unknown> | Entry<unknown>> = {};
 
-  each(results, (result: Record<string, unknown> | Entry<unknown>) => {
-    const id: string = isEntry(result) ? result.sys.id : (result._id as string);
-    out[id] = result;
+  each(results, (result: Record<string, unknown> | Entry<{ slug: string }>) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const slug: string = isEntry(result) ? result.fields.slug : (result.slug as string);
+    out[slug] = result;
   });
 
   return out;
