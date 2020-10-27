@@ -2,6 +2,7 @@ import { has } from 'lodash';
 import { Entry } from 'contentful';
 import parseEntry from '../entryParser';
 import { UrlMap, LinkFields, ParsedEntry } from '../types';
+import { warn } from '../helpers';
 
 export declare type LinkParserConfig = {
   newWindowActionText: string;
@@ -43,7 +44,7 @@ export default ({
   switch (destinationType) {
     case manualEntryTypeText:
       if (!manualUrl) {
-        console.warn(
+        warn(
           `Bad content for ${contentTypeId}: DestinationType is ${manualEntryTypeText}, but no URL has been entered`
         );
         break;
@@ -52,7 +53,7 @@ export default ({
       break;
     case contentRefTypeText: {
       if (!contentReference) {
-        console.warn(
+        warn(
           `Bad content for ${contentTypeId}: DestinationType is ${contentRefTypeText}, but no content reference is selected`
         );
         break;
@@ -60,10 +61,13 @@ export default ({
       const parsed = has(parsedEntries, contentReference.sys.id)
         ? parsedEntries[contentReference.sys.id]
         : parseEntry(contentReference as Entry<{ slug: string }>, urlMap);
-      const { _href, _as, _contentTypeId } = parsed;
+      const { _href, _as, _contentTypeId, _id } = parsed;
 
       if (!_href || !_as) {
-        throw Error(`urlMap does not contain entry for ${_contentTypeId}`);
+        warn(
+          `Bad content for ${contentTypeId}: Unable to parse href for ${_id}: Possible causes: ${_contentTypeId} does not have an entry in urlMap (in .lsatrevrc file), slug field is not populated, or content has been archived or deleted.`
+        );
+        break;
       }
       [href, as] = [_href, _as];
       break;

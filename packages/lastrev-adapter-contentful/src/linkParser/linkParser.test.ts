@@ -1,4 +1,4 @@
-import faker from 'faker';
+import faker, { fake } from 'faker';
 import parse from './linkParser';
 import mockContent from './linkParser.mock';
 import mockEntry from '../entryParser/entryParser.mock';
@@ -280,6 +280,45 @@ describe('linkParser', () => {
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
         'Bad content for elementLink: DestinationType is Content reference, but no content reference is selected'
+      );
+    });
+
+    test('bad content reference due to missing urlMap', () => {
+      const parsed = parse({
+        ...baseData,
+        urlMap: {},
+        fields: {
+          ...mock.fields,
+          destinationType: 'Content reference'
+        }
+      });
+
+      expect(parsed.href).toBe(null);
+      expect(parsed.as).toBe(null);
+      expect(spyWarn).toHaveBeenCalledWith(
+        `Bad content for elementLink: Unable to parse href for ${mock.fields.contentReference.sys.id}: Possible causes: ${mock.fields.contentReference.sys.contentType.sys.id} does not have an entry in urlMap (in .lsatrevrc file), slug field is not populated, or content has been archived or deleted.`
+      );
+    });
+
+    test('bad content reference due to missing slug', () => {
+      const parsed = parse({
+        ...baseData,
+        fields: {
+          ...mock.fields,
+          destinationType: 'Content reference',
+          contentReference: {
+            ...mock.fields.contentReference,
+            fields: {
+              slug: undefined
+            }
+          }
+        }
+      });
+
+      expect(parsed.href).toBe(null);
+      expect(parsed.as).toBe(null);
+      expect(spyWarn).toHaveBeenCalledWith(
+        `Bad content for elementLink: Unable to parse href for ${mock.fields.contentReference.sys.id}: Possible causes: ${mock.fields.contentReference.sys.contentType.sys.id} does not have an entry in urlMap (in .lsatrevrc file), slug field is not populated, or content has been archived or deleted.`
       );
     });
   });

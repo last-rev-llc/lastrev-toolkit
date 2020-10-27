@@ -7,5 +7,6 @@ export {
   extractId,
   extractSlug,
   isBadContentfulObject,
-  extractModifiedDate
+  extractModifiedDate,
+  warn
 } from './helpers';
