@@ -3,7 +3,7 @@ import { AdapterConfig } from '@last-rev/adapter-contentful';
 import { each, map, has } from 'lodash';
 import { join } from 'path';
 import { CONTENT_DIR, CONTENT_JSON_DIR } from '../constants';
-import writeFile from '../helpers/writeFile';
+import writeJsonFile from '../helpers/writeJsonFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 import { BuildConfig, BuildTask } from '../types';
 
@@ -69,7 +69,7 @@ const writeContentJson: BuildTask = async (buildConfig: BuildConfig, { adapterCo
 
         return Promise.all(
           map(contentJsons, (json, contentId) => {
-            return writeFile(join(contentTypeDir, `${contentId}.json`), JSON.stringify(json, null, 2));
+            return writeJsonFile(join(contentTypeDir, `${contentId}.json`), json);
           })
         );
       };
