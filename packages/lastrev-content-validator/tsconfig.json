@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es6", "dom"],
+    "jsx": "react"
+  },
+  "typedocOptions": {
+    "inputFiles": ["./src"],
+    "mode": "library",
+    "out": "docs"
+  }
+}

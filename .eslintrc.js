@@ -31,7 +31,8 @@ module.exports = {
         tsx: 'never',
         vue: 'never'
       }
-    ]
+    ],
+    'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }]
   },
   parserOptions: {
     project: 'tsconfig.json',
@@ -50,7 +51,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.js', '*.jsx'],
+      files: ['*.js', '*.jsx', , '*.tsx'],
       rules: {
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
