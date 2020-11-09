@@ -1,6 +1,5 @@
 {
   "name": "@last-rev/content-validator",
-  "private": true,
   "version": "0.0.1",
   "description": "Content validation heleprs for Contentful integration for lastrev projects",
   "main": "dist/index.js",
