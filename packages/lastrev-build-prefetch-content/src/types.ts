@@ -29,10 +29,16 @@ export type ContentPrefetchConfig = {
   include?: number;
 };
 
+export type WebsiteSectionPathsConfig = {
+  pageContentTypes: string[];
+}
+
 export type BuildConfig = {
   useAdapter?: boolean;
   mappings?: MappingConfig;
   paths?: Record<string, SimplePathConfig | ComplexPathConfig>;
+  websiteSectionPathsConfig: WebsiteSectionPathsConfig;
+  useWebsiteSectionPaths?: boolean;
   contentPrefetch?: ContentPrefetchConfig;
   settingsInclude?: number;
   locales?: LocalesConfig;
