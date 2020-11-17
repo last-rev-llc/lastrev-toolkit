@@ -39,3 +39,26 @@ export const fillRequiredProps = <P extends ContentValidationProps>({
   console.log('Component', { props, propTypes, newProps });
   return newProps;
 };
+
+export const checkPropTypes = <P extends ContentValidationProps>({
+  props,
+  propTypes
+}: {
+  props: P;
+  propTypes: ParsedPropTypes;
+}) => {
+  console.log('Errors', { props, propTypes });
+  const errors = {};
+  Object.keys(propTypes).forEach((key) => {
+    if (!propTypes[key]) return;
+    const {
+      required,
+      type: { name }
+    } = propTypes[key];
+    if (required && typeof props[key] == null) {
+      errors[key] = `The prop ${name} is missing.`;
+    }
+  });
+  console.log('Errors', { props, propTypes, errors });
+  if (Object.keys(errors).length) return errors;
+};

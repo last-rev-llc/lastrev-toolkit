@@ -1,8 +1,7 @@
 import * as React from 'react';
-import checkPropTypes from 'check-prop-types';
 import parsePropTypes from 'parse-prop-types';
 import { ValidationContext } from './ContextValidationProvider';
-import { ContentValidationProps, fillRequiredProps } from './getContent';
+import { ContentValidationProps, fillRequiredProps, checkPropTypes } from './getContent';
 
 export const withContentValidation = ({ logLevel }: { logLevel?: 'ERROR' | 'DEBUG' } = {}) => <
   P extends ContentValidationProps
@@ -11,20 +10,18 @@ export const withContentValidation = ({ logLevel }: { logLevel?: 'ERROR' | 'DEBU
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
   const { handleError } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
-  const result = React.useMemo(() => checkPropTypes(WrappedComponent.propTypes, props, 'prop', WrappedComponent.name), [
-    props
-  ]);
+  const errors = React.useMemo(() => checkPropTypes({ propTypes, props }), [props]);
   React.useEffect(() => {
-    if (result) {
+    if (errors) {
       handleError({
-        error: result,
+        errors,
         componentName: WrappedComponent.name,
         contentId: props._id,
         logLevel
       });
     }
-  }, [result]);
-  if (result) {
+  }, [errors]);
+  if (errors) {
     let cmp: React.ReactElement;
     try {
       cmp = WrappedComponent(
