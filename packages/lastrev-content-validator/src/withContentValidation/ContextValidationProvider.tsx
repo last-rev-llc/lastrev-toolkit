@@ -20,17 +20,15 @@ export const ValidationContext = React.createContext<Partial<ValidationContextIn
 export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
   const [errors, setErrors] = React.useState<ErrorInstance[]>([]);
   React.useEffect(() => {
-    const errorContainers = document.querySelectorAll('[data-csk-error=true] + *');
+    const errorMarkers = document.querySelectorAll('[data-csk-error=true]');
 
-    errorContainers.forEach((el) => {
-      const parentEl = el.parentElement.querySelector('[data-csk-error=true]') as HTMLElement;
-      if (parentEl instanceof HTMLElement && el instanceof HTMLElement) {
-        const contentId = parentEl.dataset.cskErrorId;
-        const error = errors.find((x) => x.contentId == contentId);
-        el.dataset.cskEntryId = contentId;
-        el.dataset.cskDisplayName = error.componentName;
-        el.dataset.cskError = JSON.stringify(error);
-      }
+    errorMarkers.forEach((marker: HTMLElement) => {
+      const el = marker.nextElementSibling as HTMLElement;
+      const contentId = marker.dataset.cskErrorId;
+      const error = errors.find((x) => x.contentId == contentId);
+      el.dataset.cskEntryId = contentId;
+      el.dataset.cskDisplayName = error.componentName;
+      el.dataset.cskError = JSON.stringify(error);
     });
     switch (logLevel) {
       case 'DEBUG':
