@@ -8,7 +8,7 @@ export const withContentValidation = ({ logLevel }: { logLevel?: 'ERROR' | 'DEBU
 >(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
-  const { handleError } = React.useContext(ValidationContext);
+  const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
   const errors = React.useMemo(() => checkPropTypes({ propTypes, props }), [props]);
   React.useEffect(() => {
