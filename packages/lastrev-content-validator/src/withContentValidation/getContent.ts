@@ -24,7 +24,6 @@ export const fillRequiredProps = <P extends ContentValidationProps>({
   props: P;
   propTypes: ParsedPropTypes;
 }) => {
-  console.log('Component', { props, propTypes });
   const newProps = { ...props };
   Object.keys(propTypes).forEach((key) => {
     if (!propTypes[key]) return;
@@ -36,7 +35,6 @@ export const fillRequiredProps = <P extends ContentValidationProps>({
       newProps[key] = newProps[key] ?? getContent(name);
     }
   });
-  console.log('Component', { props, propTypes, newProps });
   return newProps;
 };
 
@@ -47,7 +45,6 @@ export const checkPropTypes = <P extends ContentValidationProps>({
   props: P;
   propTypes: ParsedPropTypes;
 }) => {
-  console.log('Errors', { props, propTypes });
   const errors = {};
   Object.keys(propTypes).forEach((key) => {
     if (!propTypes[key]) return;
@@ -59,6 +56,5 @@ export const checkPropTypes = <P extends ContentValidationProps>({
       errors[key] = `The prop ${key} is marked as required but its missing`;
     }
   });
-  console.log('Errors', { props, propTypes, errors });
   if (Object.keys(errors).length) return errors;
 };
