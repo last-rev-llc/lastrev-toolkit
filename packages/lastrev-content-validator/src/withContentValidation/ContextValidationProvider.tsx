@@ -19,13 +19,15 @@ export const ValidationContext = React.createContext<Partial<ValidationContextIn
 
 export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
   const [errors, setErrors] = React.useState<ErrorInstance[]>([]);
+  const errorsById = React.useMemo(() => errors.reduce((accum, error) => ({ accum, [error.contentId]: error }), {}), [
+    errors.join('')
+  ]);
   React.useEffect(() => {
     const errorMarkers = document.querySelectorAll('[data-csk-error=true]');
-
     errorMarkers.forEach((marker: HTMLElement) => {
       const el = marker.nextElementSibling as HTMLElement;
       const contentId = marker.dataset.cskErrorId;
-      const error = errors.find((x) => x.contentId == contentId);
+      const error = errorsById[contentId];
       el.dataset.cskEntryId = contentId;
       el.dataset.cskDisplayName = error.componentName;
       el.dataset.cskError = JSON.stringify(error);
@@ -37,7 +39,7 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
       default:
         throw new Error(JSON.stringify(errors));
     }
-  }, [errors]);
+  }, [errorsById]);
 
   const handleError = ({ error, componentName, contentId, logLevel: instanceLogLevel }: ErrorInstance) => {
     setErrors((state) => [...state, { error, componentName, contentId, instanceLogLevel }]);
