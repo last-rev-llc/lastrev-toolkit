@@ -56,7 +56,7 @@ export const checkPropTypes = <P extends ContentValidationProps>({
       type: { name }
     } = propTypes[key];
     if (required && props[key] == null) {
-      errors[key] = `The prop ${name} is missing.`;
+      errors[key] = `The prop ${key} is marked as required but its missing`;
     }
   });
   console.log('Errors', { props, propTypes, errors });
