@@ -4,7 +4,9 @@ import parsePropTypes from 'parse-prop-types';
 import { ValidationContext } from './ContextValidationProvider';
 import { ContentValidationProps, fillRequiredProps } from './getContent';
 
-export const withContentValidation = ({ logLevel }) => <P extends ContentValidationProps>(
+export const withContentValidation = ({ logLevel }: { logLevel?: 'ERROR' | 'DEBUG' } = {}) => <
+  P extends ContentValidationProps
+>(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
   const { handleError } = React.useContext(ValidationContext);
@@ -34,7 +36,7 @@ export const withContentValidation = ({ logLevel }) => <P extends ContentValidat
 
     return (
       <React.Fragment>
-        <span data-csk-error="true" data-csk-error-id={props._id} />
+        <script data-csk-error="true" data-csk-error-id={props._id} />
         {cmp}
       </React.Fragment>
     );
