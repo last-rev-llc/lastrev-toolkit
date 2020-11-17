@@ -30,9 +30,11 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
       const el = marker.nextElementSibling as HTMLElement;
       const contentId = marker.dataset.cskErrorId;
       const error = errorsById[contentId];
-      el.dataset.cskEntryId = contentId;
-      el.dataset.cskDisplayName = error.componentName;
-      el.dataset.cskError = JSON.stringify(error);
+      if (error) {
+        el.dataset.cskEntryId = contentId;
+        el.dataset.cskDisplayName = error.componentName;
+        el.dataset.cskError = JSON.stringify(error);
+      }
     });
     switch (logLevel) {
       case 'DEBUG':
