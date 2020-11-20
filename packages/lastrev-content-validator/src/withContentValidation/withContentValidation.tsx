@@ -35,7 +35,7 @@ export const withContentValidation = ({ logLevel }: { logLevel?: 'ERROR' | 'DEBU
 
     return (
       <React.Fragment>
-        <script data-csk-error="true" data-csk-error-id={id} />
+        <span data-csk-error="true" data-csk-error-id={id} />
         {cmp}
       </React.Fragment>
     );
