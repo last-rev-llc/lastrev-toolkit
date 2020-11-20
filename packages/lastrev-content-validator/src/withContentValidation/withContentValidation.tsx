@@ -28,7 +28,6 @@ export const withContentValidation = ({ logLevel, schema }: Args) => <P extends 
   const [id] = React.useState(uniqueId());
   const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
-  // const errors = React.useMemo(() => checkPropTypes({ propTypes, props }), [props]);
   const errors = React.useMemo(() => getErrors({ props, schema }), [props, schema]);
   React.useEffect(() => {
     if (errors) {
