@@ -16,12 +16,17 @@ export const withContentValidation = ({ logLevel, schema }: Args) => <P extends 
   const [id] = React.useState(uniqueId());
   const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
-  const errors = React.useMemo(() => checkPropTypes({ propTypes, props }), [props]);
-  const schemaErrors = React.useMemo(() => {
+  // const errors = React.useMemo(() => checkPropTypes({ propTypes, props }), [props]);
+  const errors = React.useMemo(() => {
     try {
-      schema.validateSync(props);
-    } catch (errors) {
-      console.log('Errors');
+      schema.validateSync(props, { abortEarly: false });
+    } catch (error) {
+      const errors = {};
+      error.inner.forEach((e: yup.ValidationError) => {
+        const prop = e.path.split('.')[e.path.split('.').length - 1];
+        errors[prop] = e.message;
+      });
+      console.log('Errors', { error, errors });
       return errors;
     }
   }, [props, schema]);
