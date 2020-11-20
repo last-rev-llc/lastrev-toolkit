@@ -47,12 +47,12 @@ export const checkPropTypes = <P extends ContentValidationProps>({
 }) => {
   let errors = {};
   Object.keys(propTypes).forEach((key) => {
+    console.log('Check->', key, propTypes[key]);
     if (!propTypes[key]) return;
     const {
       required,
-      type: { name }
+      type: { name, value }
     } = propTypes[key];
-    console.log('Check->', key, propTypes[key]);
     if (required && props[key] == null) {
       errors[key] = `The prop ${key} is marked as required but its missing`;
     }
@@ -61,7 +61,7 @@ export const checkPropTypes = <P extends ContentValidationProps>({
         ...errors,
         ...checkPropTypes({
           props: props[key],
-          propTypes: propTypes[key].value
+          propTypes: value
         })
       };
     }
