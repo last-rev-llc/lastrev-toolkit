@@ -61,7 +61,7 @@ export const checkPropTypes = <P extends ContentValidationProps>({
         ...errors,
         ...checkPropTypes({
           props: props[key],
-          propTypes: propTypes[key]
+          propTypes: propTypes[key].value
         })
       };
     }
