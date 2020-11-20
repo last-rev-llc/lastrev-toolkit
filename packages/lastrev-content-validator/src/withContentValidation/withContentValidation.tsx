@@ -9,7 +9,19 @@ interface Args {
   logLevel?: 'ERROR' | 'DEBUG';
   schema: yup.ObjectSchema;
 }
-
+const getErrors = ({schema, props}) =>  {
+  try {
+    schema.validateSync(props, { abortEarly: false });
+  } catch (error) {
+    const errors = {};
+    error.inner.forEach((e: yup.ValidationError) => {
+      const prop = e.path.split('.')[e.path.split('.').length - 1];
+      errors[prop] = e.message;
+    });
+    console.log('Errors', { error, errors });
+    return errors;
+  }
+}
 export const withContentValidation = ({ logLevel, schema }: Args) => <P extends ContentValidationProps>(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
@@ -17,19 +29,7 @@ export const withContentValidation = ({ logLevel, schema }: Args) => <P extends 
   const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
   // const errors = React.useMemo(() => checkPropTypes({ propTypes, props }), [props]);
-  const errors = React.useMemo(() => {
-    try {
-      schema.validateSync(props, { abortEarly: false });
-    } catch (error) {
-      const errors = {};
-      error.inner.forEach((e: yup.ValidationError) => {
-        const prop = e.path.split('.')[e.path.split('.').length - 1];
-        errors[prop] = e.message;
-      });
-      console.log('Errors', { error, errors });
-      return errors;
-    }
-  }, [props, schema]);
+  const errors = React.useMemo(() => getErrors({ props, schema }), [props, schema]);
   React.useEffect(() => {
     if (errors) {
       handleError({
