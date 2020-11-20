@@ -38,7 +38,6 @@ export const fillRequiredProps = <P extends ContentValidationProps>({
   return newProps;
 };
 
-
 export const checkPropTypes = <P extends ContentValidationProps>({
   props,
   propTypes
@@ -57,14 +56,14 @@ export const checkPropTypes = <P extends ContentValidationProps>({
     if (required && props[key] == null) {
       errors[key] = `The prop ${key} is marked as required but its missing`;
     }
-    if(name === 'shape') {
-      errors = { 
+    if (name === 'shape') {
+      errors = {
         ...errors,
         ...checkPropTypes({
           props: props[key],
           propTypes: propTypes[key]
         })
-      }
+      };
     }
   });
   if (Object.keys(errors).length) return errors;
