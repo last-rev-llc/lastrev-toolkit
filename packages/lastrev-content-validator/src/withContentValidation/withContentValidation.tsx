@@ -2,21 +2,23 @@ import * as React from 'react';
 import parsePropTypes from 'parse-prop-types';
 import { ValidationContext } from './ContextValidationProvider';
 import { ContentValidationProps, fillRequiredProps, checkPropTypes } from './getContent';
+import { uniqueId } from 'lodash';
 
 export const withContentValidation = ({ logLevel }: { logLevel?: 'ERROR' | 'DEBUG' } = {}) => <
   P extends ContentValidationProps
 >(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
+  const [id] = React.useState(uniqueId());
   const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
   const errors = React.useMemo(() => checkPropTypes({ propTypes, props }), [props]);
   React.useEffect(() => {
     if (errors) {
       handleError({
+        id,
         errors,
         componentName: WrappedComponent.name,
-        contentId: props._id,
         logLevel
       });
     }
@@ -33,7 +35,7 @@ export const withContentValidation = ({ logLevel }: { logLevel?: 'ERROR' | 'DEBU
 
     return (
       <React.Fragment>
-        <script data-csk-error="true" data-csk-error-id={props._id} />
+        <script data-csk-error="true" data-csk-error-id={id} />
         {cmp}
       </React.Fragment>
     );

@@ -5,7 +5,7 @@ interface ErrorInstance {
     [key: string]: string;
   };
   componentName: string;
-  contentId: string;
+  id: string;
   logLevel?: 'ERROR' | 'DEBUG';
 }
 
@@ -21,18 +21,17 @@ export const ValidationContext = React.createContext<Partial<ValidationContextIn
 
 export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
   const [errors, setErrors] = React.useState<ErrorInstance[]>([]);
-  const errorsById = React.useMemo(() => errors.reduce((accum, error) => ({ accum, [error.contentId]: error }), {}), [
+  const errorsById = React.useMemo(() => errors.reduce((accum, error) => ({ accum, [error.id]: error }), {}), [
     errors.join('')
   ]);
   React.useEffect(() => {
     const errorMarkers = document.querySelectorAll('[data-csk-error=true]');
     errorMarkers.forEach((marker: HTMLElement) => {
       const el = marker.nextElementSibling as HTMLElement;
-      const contentId = marker.dataset.cskErrorId;
-      const error = errorsById[contentId];
+      const id = marker.dataset.cskErrorId;
+      const error = errorsById[id];
       if (error) {
-        el.dataset.cskEntryId = contentId;
-        el.dataset.cskDisplayName = error.componentName;
+        el.dataset.cskErrorId = id;
         el.dataset.cskError = JSON.stringify(error);
       }
     });
@@ -45,8 +44,8 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
     }
   }, [errorsById]);
 
-  const handleError = ({ errors, componentName, contentId, logLevel: instanceLogLevel }: ErrorInstance) => {
-    setErrors((state) => [...state, { errors, componentName, contentId, instanceLogLevel }]);
+  const handleError = ({ errors, componentName, id, logLevel: instanceLogLevel }: ErrorInstance) => {
+    setErrors((state) => [...state, { errors, componentName, id, instanceLogLevel }]);
   };
 
   return <ValidationContext.Provider value={{ handleError }}>{children}</ValidationContext.Provider>;
