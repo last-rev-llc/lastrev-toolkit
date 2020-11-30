@@ -5,12 +5,13 @@ import writeAdapterConfig from './writeAdapterConfig';
 import writeLocaleData from './writeLocaleData';
 import { BuildTask, BuildConfig } from '../types';
 import writeContentJson from './writeContentJson';
+import writeWebsiteSectionPaths from './writeWebsiteSectionPaths';
 
 const getBuildTasks = (buildConfig: BuildConfig): BuildTask[] => {
   const out: BuildTask[] = [];
 
   if (buildConfig.writeSettings) out.push(writeSettings);
-  if (buildConfig.writePaths) out.push(writePaths);
+  if (buildConfig.writePaths) out.push(buildConfig.useWebsiteSectionPaths ? writeWebsiteSectionPaths : writePaths);
   if (buildConfig.writeMappings) out.push(writeMappings);
   if (buildConfig.writeAdapterConfig) out.push(writeAdapterConfig);
   if (buildConfig.writeLocaleData) out.push(writeLocaleData);
