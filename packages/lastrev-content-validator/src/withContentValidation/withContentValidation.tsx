@@ -16,7 +16,7 @@ const getErrors = ({schema, props}) =>  {
     const errors = {};
     error.inner.forEach((e: yup.ValidationError) => {
       const prop = e.path.split('.')[e.path.split('.').length - 1];
-      errors[prop] = e.message;
+      errors[prop] = e;
     });
     console.log('Errors', { error, errors });
     return errors;

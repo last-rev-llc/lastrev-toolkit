@@ -2,16 +2,6 @@
 
 This module provides a set of useful components to catch Content validation errors and provides a DOM API to expose validation errors to extensions.
 
-## Environment variables
-
-This module expects the following environment variables:
-
-- `CONTENTFUL_SPACE_ID` = The spaceId from contentful
-- `CONTENTFUL_ENV` - Contentful environment
-- `CONTENTFUL_ACCESSTOKEN` - Contentful API access token
-- `CONTENTFUL_HOST` - Contentful Host
-- `CONTENTFUL_SETTINGS_ID` - The ID of the `settingsGlobal` content item to use
-
 ## usage
 
 First you'll need to setup the `ContentValidationProvider` by wrapping your root component with it.
@@ -32,10 +22,17 @@ You can use this module as a HOC by wrapping the default export with it:
 
 ```javascript
 //From
-export default ElementLink;
+export default SectionQuote;
 
 //To
-export default withContentValidation()(ElementLink);
+export default withContentValidation({
+  schema: yup.object({
+    content: yup.object({
+      quoteText: yup.string().required(),
+      attribution: yup.string().required(),
+    })
+  })
+})(SectionQuote);
 ```
 
 This will parse the propTypes of the component, check for any errors and TRY to render the component.
