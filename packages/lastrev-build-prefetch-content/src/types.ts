@@ -7,6 +7,7 @@ export type LocalesConfig = {
   localizationLookupFieldName?: string;
   rawPagesDir?: string;
   outputPath?: string;
+  useV1?: boolean;
 };
 
 export type PathChildrenConfig = {
@@ -31,7 +32,7 @@ export type ContentPrefetchConfig = {
 
 export type WebsiteSectionPathsConfig = {
   pageContentTypes: string[];
-}
+};
 
 export type BuildConfig = {
   useAdapter?: boolean;

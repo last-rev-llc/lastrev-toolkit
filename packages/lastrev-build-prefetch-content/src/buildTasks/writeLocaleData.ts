@@ -17,7 +17,8 @@ const writeI18nJson = async (
   locales: string[],
   defaultLanguage: string,
   currentPagesDir: string,
-  localesPath: string
+  localesPath: string,
+  useV1: boolean
 ) => {
   const i18nJson = {
     allLanguages: locales,
@@ -29,7 +30,14 @@ const writeI18nJson = async (
       '*': ['common']
     }
   };
-  const out = JSON.stringify(i18nJson, null, 2);
+  const v1I18nJson = {
+    locales,
+    defaultLocale: defaultLanguage,
+    pages: {
+      '*': ['common']
+    }
+  };
+  const out = JSON.stringify(useV1 ? v1I18nJson : i18nJson, null, 2);
   await writeFile(I18N_JSON_FILE, out);
 };
 
@@ -71,6 +79,8 @@ const writeLocales: BuildTask = async (buildConfig): Promise<void> => {
     ? buildConfig.locales.localizationLookupFieldName
     : undefined;
 
+  const useV1 = !!buildConfig.locales.useV1;
+
   const settingsContentType = _.has(buildConfig, 'settingsContentType') ? buildConfig.settingsContentType : undefined;
   const localesDir = resolve(PROJECT_ROOT, `./${localesPath}`);
 
@@ -87,7 +97,7 @@ const writeLocales: BuildTask = async (buildConfig): Promise<void> => {
   }).code;
 
   await Promise.all([
-    writeI18nJson(localeCodes, defaultLocale, currentPagesDir, localesPath),
+    writeI18nJson(localeCodes, defaultLocale, currentPagesDir, localesPath, useV1),
     writeLocaleFiles(localizationLookupMapping, localesDir)
   ]);
 };
