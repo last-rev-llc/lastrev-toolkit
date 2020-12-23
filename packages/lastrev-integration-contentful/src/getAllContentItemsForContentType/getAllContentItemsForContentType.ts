@@ -1,6 +1,6 @@
 import { ContentfulClientApi, Entry } from 'contentful';
 import { map } from 'lodash';
-import { DEFAULT_ORDER_PARAM } from '../constants';
+import { DEFAULT_ORDER_PARAM, DEFAULT_LOCALE_PARAM } from '../constants';
 import removeCircularRefs from '../helpers/removeCircularRefs';
 
 const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) => async <T>({
@@ -9,12 +9,14 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
   order = DEFAULT_ORDER_PARAM,
   include = 1,
   paginate = false,
+  locale = DEFAULT_LOCALE_PARAM,
   skip = 0,
   limit = 1000
 }: {
   contentTypeId: string;
   fields?: string[];
   order?: string;
+  locale?: string;
   include?: number;
   paginate?: boolean;
   skip?: number;
@@ -31,6 +33,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
       content_type: contentTypeId,
       select,
       order,
+      locale,
       limit,
       skip,
       include
@@ -50,6 +53,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
       content_type: contentTypeId,
       select,
       order,
+      locale,
       limit,
       skip,
       include
