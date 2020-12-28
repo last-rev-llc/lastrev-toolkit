@@ -17,7 +17,7 @@ const getLocalizationLookup = (client) => async ({
     commonTextQueries.push(
       client.getEntries({
         'content_type': contentTypeId,
-        'select': `sys,fields.${localizationLookupFieldName}`,
+        'select': `sys,fields.${localizationLookupFieldName}`, // Select sys so locale is returned in the object
         'sys.id': process.env.CONTENTFUL_SETTINGS_ID,
         'locale': code
       })
