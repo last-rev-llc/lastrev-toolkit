@@ -24,7 +24,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
 }): Promise<Entry<T>[]> => {
   const select = fields.length
     ? map(fields, (field) => {
-        return `fields.${field}`;
+        return `sys.contentType,fields.${field}`;
       }).join(',')
     : null;
 
