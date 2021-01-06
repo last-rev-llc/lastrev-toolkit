@@ -54,9 +54,9 @@ const websiteSectionVisitor = (
       componentId,
       contentId,
       contentTypeId,
-      isValid: every([domain, path, componentId, contentId, contentTypeId])
+      isValid: every([domain, path, componentId])
     };
-  } else if (!every([parent, slug, componentId, contentId, contentTypeId])) {
+  } else if (!every([parent, slug, componentId])) {
     // if we are not at the domain level, and there is no parent, or there are no associations, this is not a valid component.
     return { isValid: false };
   }
