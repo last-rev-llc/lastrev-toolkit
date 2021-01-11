@@ -1,6 +1,6 @@
 {
   "name": "@last-rev/build-prefetch-content",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "description": "Prefetches global settings, path, and content mapping data",
   "main": "dist/index.js",
   "bin": {
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@last-rev/adapter-contentful": "^3.0.4",
-    "@last-rev/integration-contentful": "^4.1.5",
+    "@last-rev/integration-contentful": "^4.1.6",
     "dotenv": "^8.2.0",
     "handlebars": "^4.7.6",
     "json-write": "^1.0.0",
