@@ -1,0 +1,72 @@
+#!/usr/bin/env node
+
+/* eslint-disable no-console */
+const program = require('commander');
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const { join, resolve } = require('path');
+const { lstatSync, readdirSync, readFileSync, existsSync } = require('fs');
+const { copySync } = require('fs-extra');
+
+const isDirectory = (source) => lstatSync(source).isDirectory();
+const getPackageDirectories = (source) =>
+  readdirSync(source)
+    .map((name) => join(source, name))
+    .filter(isDirectory);
+const getPackageName = (dir) => {
+  const pkgjson = join(dir, 'package.json');
+  const { name } = JSON.parse(readFileSync(pkgjson));
+  return name;
+};
+const getPackageNames = (dirs) => dirs.map((dir) => getPackageName(dir));
+
+const getOutputDirs = (proj, dirs) => {
+  const names = getPackageNames(dirs);
+  return names.map((name) => join(proj, 'node_modules', name));
+};
+
+const getDistDirs = (dirs) => dirs.map((dir) => join(dir, 'dist'));
+
+const copyDist = (distDir, outDir) => {
+  console.log(`copying ${distDir} to ${outDir}...`);
+  if (!existsSync(distDir)) {
+    console.log('skipping because no dist directory found');
+    return;
+  }
+  if (!existsSync(outDir)) {
+    console.log('skipping because no output directory found');
+    return;
+  }
+  copySync(distDir, join(outDir, 'dist'));
+  console.log('success!');
+};
+
+const copyDists = (distDirs, outputDirs) => {
+  const len = distDirs.length;
+  for (let i = 0; i < len; i++) {
+    copyDist(distDirs[i], outputDirs[i]);
+  }
+};
+
+const fail = (msg) => {
+  process.stderr.write(`${msg}\n`);
+  process.exit(1);
+};
+
+program.parse(process.argv);
+
+const { args } = program;
+if (!args || !args.length) {
+  fail('you must pass in a relative project directory\n');
+}
+
+const [project] = args;
+const projectDir = resolve(__dirname, project);
+if (!existsSync(projectDir)) {
+  fail(`unable to find project directory: ${projectDir}`);
+}
+const packages = join(__dirname, 'packages');
+const packageDirs = getPackageDirectories(packages);
+const outputDirs = getOutputDirs(projectDir, packageDirs);
+const distDirs = getDistDirs(packageDirs);
+
+copyDists(distDirs, outputDirs);
