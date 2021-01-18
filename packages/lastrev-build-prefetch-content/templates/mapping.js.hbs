@@ -1,5 +1,7 @@
+import dynamic from 'next/dynamic';
+
 {{#each mappings}}
-import {{this}} from '{{../componentsDir}}/{{this}}';
+const {{this}} = dynamic(() => import('{{../componentsDir}}/{{this}}'));
 {{/each}}
 
 export default {
