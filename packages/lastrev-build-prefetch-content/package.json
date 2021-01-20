@@ -44,10 +44,13 @@
   "dependencies": {
     "@last-rev/adapter-contentful": "^3.0.4",
     "@last-rev/integration-contentful": "^4.1.6",
+    "@types/ora": "^3.2.0",
+    "deepdash": "^5.3.2",
     "dotenv": "^8.2.0",
     "handlebars": "^4.7.6",
     "json-write": "^1.0.0",
     "lodash": "^4.17.19",
+    "ora": "^5.2.0",
     "slash": "^3.0.0"
   }
 }

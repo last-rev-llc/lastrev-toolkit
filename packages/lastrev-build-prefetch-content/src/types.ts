@@ -24,11 +24,15 @@ export type ComplexPathConfig = {
   children?: PathChildrenConfig;
 };
 
-export type ContentPrefetchConfig = {
-  types: string[];
-  pageSize?: number;
-  include?: number;
-};
+export type ContentPrefetchConfig = Record<
+  string,
+  {
+    include: number;
+    slugField?: string;
+    rootOmitFields?: string[];
+    childOmitFields?: string[];
+  }
+>;
 
 export type WebsiteSectionPathsConfig = {
   pageContentTypes: string[];

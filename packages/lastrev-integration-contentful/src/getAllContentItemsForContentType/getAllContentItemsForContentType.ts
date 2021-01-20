@@ -11,7 +11,8 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
   paginate = false,
   locale = DEFAULT_LOCALE_PARAM,
   skip = 0,
-  limit = 1000
+  limit = 1000,
+  omitFields = []
 }: {
   contentTypeId: string;
   fields?: string[];
@@ -21,11 +22,12 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
   paginate?: boolean;
   skip?: number;
   limit?: number;
+  omitFields?: string[];
 }): Promise<Entry<T>[]> => {
   const select = fields.length
-    ? map(fields, (field) => {
-        return `sys,fields.${field}`;
-      }).join(',')
+    ? `sys,${map(fields, (field) => {
+        return `fields.${field}`;
+      }).join(',')}`
     : null;
 
   if (paginate) {
@@ -39,7 +41,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
       include
     });
 
-    const { items } = removeCircularRefs(queryResults);
+    const { items } = removeCircularRefs(queryResults, omitFields);
     return items;
   }
   const entries: Entry<T>[] = [];
@@ -61,7 +63,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
 
     // eslint-disable-next-line no-param-reassign
     ({ skip, limit, total } = queryResults);
-    ({ items } = removeCircularRefs(queryResults));
+    ({ items } = removeCircularRefs(queryResults, omitFields));
 
     count += items.length;
     // eslint-disable-next-line no-param-reassign
