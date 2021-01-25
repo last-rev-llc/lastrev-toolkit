@@ -1,4 +1,4 @@
-import { has } from 'lodash';
+import { has, omitBy } from 'lodash';
 import { Entry } from 'contentful';
 import parseEntry from '../entryParser';
 import { UrlMap, LinkFields, ParsedEntry } from '../types';
@@ -89,8 +89,12 @@ export default ({
       break;
   }
 
+  const extraFields = omitBy(fields, (val) => {
+    return [action, destinationType, manualUrl, contentReference, assetReference].indexOf(val) > -1;
+  });
+
   return {
-    ...fields,
+    ...extraFields,
     _id: id,
     _contentTypeId: contentTypeId,
     href,
