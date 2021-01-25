@@ -1,7 +1,6 @@
 import faker, { fake } from 'faker';
 import parse from './linkParser';
 import mockContent from './linkParser.mock';
-import mockEntry from '../entryParser/entryParser.mock';
 import { ParsedEntry } from '../types';
 
 const baseData = {
