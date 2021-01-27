@@ -22,27 +22,27 @@ const compose = ({
 
   let killIt = false;
 
-  const traverse = (node, maxDepth) => {
+  const traverse = (node: any, maxDepth: number, isField: boolean) => {
     if (node === undefined || node === null) {
       return node;
     }
     if (isArray(node)) {
-      return map(without(node, undefined, null), (item) => traverse(item, maxDepth));
+      return map(without(node, undefined, null), (item) => traverse(item, maxDepth, false));
     }
     if (maxDepth > 0 && isUnexpandedEntryLink(node)) {
       const newNode = contentById[node.sys.id];
       // reference field, decrement maxDepth.
-      return traverse(newNode, maxDepth - 1);
+      return traverse(newNode, maxDepth - 1, false);
     }
     if (isUnexpandedAssetLink(node)) {
       const newNode = assetsById[node.sys.id];
-      return traverse(newNode, maxDepth);
+      return traverse(newNode, maxDepth, false);
     }
-    if (has(node, locale)) {
-      return traverse(node[locale], maxDepth);
+    if (isField && has(node, locale)) {
+      return traverse(node[locale], maxDepth, false);
     }
-    if (has(node, defaultLocale)) {
-      return traverse(node[defaultLocale], maxDepth);
+    if (isField && has(node, defaultLocale)) {
+      return traverse(node[defaultLocale], maxDepth, false);
     }
     if (isObject(node)) {
       return mapValues(omitBy(node, isNil), (v, k) => {
@@ -52,9 +52,9 @@ const compose = ({
         }
         if (k === 'fields') {
           // omit child fields
-          return traverse(omit(v, childOmitFields), maxDepth);
+          return mapValues(omit(v, childOmitFields), (field) => traverse(field, include, true));
         }
-        return traverse(v, maxDepth);
+        return traverse(v, maxDepth, false);
       });
     }
     return node;
@@ -63,7 +63,7 @@ const compose = ({
   const out = {
     sys: content.sys,
     fields: {
-      ...mapValues(omit(content.fields, rootOmitFields), (field) => traverse(field, include))
+      ...mapValues(omit(content.fields, rootOmitFields), (field) => traverse(field, include, true))
     }
   };
 
