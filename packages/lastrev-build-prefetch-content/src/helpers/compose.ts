@@ -52,7 +52,7 @@ const compose = ({
         }
         if (k === 'fields') {
           // omit child fields
-          return mapValues(omit(v, childOmitFields), (field) => traverse(field, include, true));
+          return mapValues(omit(v, childOmitFields), (field) => traverse(field, maxDepth, true));
         }
         return traverse(v, maxDepth, false);
       });
