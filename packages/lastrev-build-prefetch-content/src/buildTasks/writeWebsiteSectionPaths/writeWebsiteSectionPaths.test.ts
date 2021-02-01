@@ -30,14 +30,16 @@ describe('writeWebsiteSectionPaths.helpers', () => {
           [`/${detailPage.fields.targeting[0].fields.slug}/${detailPage.fields.slug}`]: {
             componentId: detailPage.fields.targeting[0].fields.childPageAssociations[DETAIL_PAGE_TYPE].id,
             contentId: detailPage.sys.id,
-            contentTypeId: DETAIL_PAGE_TYPE
+            contentTypeId: DETAIL_PAGE_TYPE,
+            websiteSectionId: detailPage.fields.targeting[0].sys.id
           }
         },
         [detailPage.fields.targeting[1].fields.parent.fields.domain]: {
           [`/${detailPage.fields.targeting[1].fields.slug}/${detailPage.fields.slug}`]: {
             componentId: detailPage.fields.targeting[1].fields.childPageAssociations[DETAIL_PAGE_TYPE].id,
             contentId: detailPage.sys.id,
-            contentTypeId: DETAIL_PAGE_TYPE
+            contentTypeId: DETAIL_PAGE_TYPE,
+            websiteSectionId: detailPage.fields.targeting[1].sys.id
           }
         }
       });
@@ -98,12 +100,14 @@ describe('writeWebsiteSectionPaths.helpers', () => {
           '/': {
             componentId: domainSection.fields.landingPageComponent.id,
             contentId: domainSection.fields.landingPage.sys.id,
-            contentTypeId: LANDING_PAGE_TYPE
+            contentTypeId: LANDING_PAGE_TYPE,
+            websiteSectionId: domainSection.sys.id
           },
           [`/${targetedSection.fields.slug}`]: {
             componentId: targetedSection.fields.landingPageComponent.id,
             contentId: targetedSection.fields.landingPage.sys.id,
-            contentTypeId: LANDING_PAGE_TYPE
+            contentTypeId: LANDING_PAGE_TYPE,
+            websiteSectionId: targetedSection.sys.id
           }
         };
       });
@@ -127,7 +131,8 @@ describe('writeWebsiteSectionPaths.helpers', () => {
           '/': {
             componentId: domainSection.fields.landingPageComponent.id,
             contentId: domainSection.fields.landingPage.sys.id,
-            contentTypeId: LANDING_PAGE_TYPE
+            contentTypeId: LANDING_PAGE_TYPE,
+            websiteSectionId: domainSection.sys.id
           }
         };
       });
