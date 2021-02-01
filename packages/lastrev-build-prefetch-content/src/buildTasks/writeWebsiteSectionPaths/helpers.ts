@@ -87,7 +87,12 @@ export const getDetailPagePaths = (paths, pages, websiteSections) => {
         websiteSections
       });
       if (!isWssValid) return;
-      set(paths, `['${domain}']['${finalPath}']`, { componentId, contentId, contentTypeId });
+      set(paths, `['${domain}']['${finalPath}']`, {
+        componentId,
+        contentId,
+        contentTypeId,
+        websiteSectionId: websiteSection.sys.id
+      });
     });
   });
 };
@@ -104,6 +109,11 @@ export const getLandingPagePaths = (paths, websiteSections) => {
       websiteSections
     });
     if (!isValid) return;
-    set(paths, `['${domain}']['${path}']`, { componentId, contentId, contentTypeId });
+    set(paths, `['${domain}']['${path}']`, {
+      componentId,
+      contentId,
+      contentTypeId,
+      websiteSectionId: websiteSection.sys.id
+    });
   });
 };
