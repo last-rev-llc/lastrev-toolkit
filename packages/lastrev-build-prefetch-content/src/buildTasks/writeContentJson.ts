@@ -40,7 +40,7 @@ const fetchAssets = async () => {
   return keyBy(results.assets, 'sys.id');
 };
 
-const fetchContentDataByContentType = async ({ contentTypeId, slugField, defaultLocale }) => {
+const fetchContentDataByContentType = async ({ contentTypeId, isPage, slugField, defaultLocale }) => {
   const results = await syncAllEntriesForContentType({
     contentTypeId
   });
@@ -49,15 +49,17 @@ const fetchContentDataByContentType = async ({ contentTypeId, slugField, default
   each(results.entries, (entry) => {
     const id = get(entry, 'sys.id');
     contentById[id] = entry;
-    const slug = get(entry, `fields['${slugField}']['${defaultLocale}']`);
-    if (slug) {
-      slugToId[slug] = id;
+    if (isPage) {
+      const slug = slugField ? get(entry, `fields['${slugField}']['${defaultLocale}']`) : id;
+      if (slug) {
+        slugToId[slug] = id;
+      }
     }
   });
 
   return {
     contentById,
-    slugToId: slugField ? slugToId : null
+    slugToId: isPage ? slugToId : null
   };
 };
 
@@ -88,10 +90,12 @@ const writeContentJson: BuildTask = async (
         await delay(index * 100);
 
         const currentConfig = get(contentPrefetchConfig, contentTypeId);
-        const slugField = currentConfig ? get(currentConfig, 'slugField', DEFAULT_SLUG_FIELD) : null;
+        const isPage = !!currentConfig;
+        const slugField = currentConfig ? get(currentConfig, 'slugField') : null;
 
         const { contentById, slugToId } = await fetchContentDataByContentType({
           contentTypeId,
+          isPage,
           slugField,
           defaultLocale
         });
