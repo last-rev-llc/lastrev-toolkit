@@ -3,7 +3,7 @@ import Handlebars from 'handlebars';
 import Contentful, { getGlobalSettings, getLocales } from '@last-rev/integration-contentful';
 
 import writeFile from '../helpers/writeFile';
-import { CONTENT_DIR, SETTINGS_FILE, SETTINGS_TEMPLATE } from '../constants';
+import { SETTINGS_TEMPLATE } from '../constants';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 import { BuildTask } from '../types';
 
@@ -13,16 +13,18 @@ type LocalizedSettingsData = {
   settingsJson: string;
 };
 
-const writeSettingsJs = async (settingsByLocale: LocalizedSettingsData[]) => {
+const writeSettingsJs = async (settingsFile: string, settingsByLocale: LocalizedSettingsData[]) => {
   const out = Handlebars.compile(SETTINGS_TEMPLATE)({ settingsByLocale });
-  await writeFile(SETTINGS_FILE, out);
+  await writeFile(settingsFile, out);
 };
 
 const writeSettings: BuildTask = async (buildConfig, { adapterConfig }): Promise<void> => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const getSettings = buildConfig.useAdapter ? Contentful(adapterConfig).getGlobalSettings : getGlobalSettings;
 
-  await mkdirIfNotExists(CONTENT_DIR);
+  const { outputDirectory, settingsFile } = buildConfig;
+
+  await mkdirIfNotExists(outputDirectory);
 
   const locales = await getLocales();
 
@@ -43,7 +45,7 @@ const writeSettings: BuildTask = async (buildConfig, { adapterConfig }): Promise
 
   const localeSettings = await Promise.all(promises);
 
-  await writeSettingsJs(localeSettings);
+  await writeSettingsJs(settingsFile, localeSettings);
 };
 
 export default writeSettings;

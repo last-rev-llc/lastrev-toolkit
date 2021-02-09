@@ -3,11 +3,11 @@ import writePaths from './writePaths';
 import writeMappings from './writeMappings';
 import writeAdapterConfig from './writeAdapterConfig';
 import writeLocaleData from './writeLocaleData';
-import { BuildTask, BuildConfig } from '../types';
+import { BuildTask, ResolvedBuildConfig } from '../types';
 import writeContentJson from './writeContentJson';
 import writeWebsiteSectionPaths from './writeWebsiteSectionPaths';
 
-const getBuildTasks = (buildConfig: BuildConfig): BuildTask[] => {
+const getBuildTasks = (buildConfig: ResolvedBuildConfig): BuildTask[] => {
   const out: BuildTask[] = [];
 
   if (buildConfig.writeSettings) out.push(writeSettings);

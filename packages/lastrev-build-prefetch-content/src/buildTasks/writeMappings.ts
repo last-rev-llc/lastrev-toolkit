@@ -4,31 +4,41 @@ import { readdir as r } from 'fs';
 import { relative } from 'path';
 import slash from 'slash';
 import Handlebars from 'handlebars';
-import { CONTENT_DIR, COMPONENT_MAPPING_FILE, MAPPING_TEMPLATE, COMPONENTS_DIR } from '../constants';
+import { MAPPING_TEMPLATE } from '../constants';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 import writeFile from '../helpers/writeFile';
 import getComponentMappings from '../getComponentMappings';
-import { BuildConfig, BuildTask } from '../types';
+import { BuildTask, MappingConfig } from '../types';
 
 const readdir = promisify(r);
 
-const writeMappingJs = async (mappings: Record<string, string>) => {
-  const componentsDir = slash(relative(CONTENT_DIR, COMPONENTS_DIR));
-  const out = Handlebars.compile(MAPPING_TEMPLATE)({ mappings, componentsDir });
-  await writeFile(COMPONENT_MAPPING_FILE, out);
+const writeMappingJs = async (
+  outputDir: string,
+  componentsDir: string,
+  mappingFile: string,
+  mappings: Record<string, string>
+) => {
+  const componentsDirRelative = slash(relative(outputDir, componentsDir));
+  const out = Handlebars.compile(MAPPING_TEMPLATE)({ mappings, componentsDir: componentsDirRelative });
+  await writeFile(mappingFile, out);
 };
 
-const getAndProcessComponentMappings = async (buildConfig: BuildConfig): Promise<Record<string, string>> => {
-  const [componentNames, queryResults] = await Promise.all([readdir(COMPONENTS_DIR), getContentTypes()]);
-  return getComponentMappings(componentNames, queryResults.items || [], buildConfig && buildConfig.mappings);
+const getAndProcessComponentMappings = async (
+  mappings: MappingConfig,
+  componentsDir: string
+): Promise<Record<string, string>> => {
+  const [componentNames, queryResults] = await Promise.all([readdir(componentsDir), getContentTypes()]);
+  return getComponentMappings(componentNames, queryResults.items || [], mappings);
 };
 
 const writeMappings: BuildTask = async (buildConfig): Promise<void> => {
-  await mkdirIfNotExists(CONTENT_DIR);
+  const { outputDirectory, mappingFile, componentsDirectory, mappings } = buildConfig;
 
-  const mappings = await getAndProcessComponentMappings(buildConfig);
+  await mkdirIfNotExists(outputDirectory);
 
-  await writeMappingJs(mappings);
+  const componentMappings = await getAndProcessComponentMappings(mappings, componentsDirectory);
+
+  await writeMappingJs(outputDirectory, componentsDirectory, mappingFile, componentMappings);
 };
 
 export default writeMappings;

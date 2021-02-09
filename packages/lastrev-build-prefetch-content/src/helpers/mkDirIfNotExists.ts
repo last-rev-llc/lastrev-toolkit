@@ -7,7 +7,7 @@ const mkdir = promisify(m);
 const mkdirIfNotExists = async (dir: string): Promise<void> => {
   try {
     if (!(await exists(dir))) {
-      await mkdir(dir);
+      await mkdir(dir, { recursive: true });
     }
   } catch (err) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

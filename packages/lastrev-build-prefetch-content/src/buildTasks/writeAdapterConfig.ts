@@ -1,18 +1,20 @@
 import { AdapterConfig } from '@last-rev/adapter-contentful';
-
 import writeFile from '../helpers/writeFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
-import { CONTENT_DIR, ADAPTER_CONFIG_FILE } from '../constants';
 import { BuildTask } from '../types';
 
-const writeAdapterConfigJs = async (adapterConfig: AdapterConfig) => {
+const writeAdapterConfigJs = async (adapterConfigFile: string, adapterConfig: AdapterConfig) => {
   const out = `export default ${JSON.stringify(adapterConfig, null, 2)};`;
-  await writeFile(ADAPTER_CONFIG_FILE, out);
+  await writeFile(adapterConfigFile, out);
 };
 
-const writeAdapterConfig: BuildTask = async (_, { adapterConfig }: { adapterConfig: AdapterConfig }): Promise<void> => {
-  await mkdirIfNotExists(CONTENT_DIR);
-  await writeAdapterConfigJs(adapterConfig);
+const writeAdapterConfig: BuildTask = async (
+  buildConfig,
+  { adapterConfig }: { adapterConfig: AdapterConfig }
+): Promise<void> => {
+  const { outputDirectory, adapterConfigFile } = buildConfig;
+  await mkdirIfNotExists(outputDirectory);
+  await writeAdapterConfigJs(adapterConfigFile, adapterConfig);
 };
 
 export default writeAdapterConfig;

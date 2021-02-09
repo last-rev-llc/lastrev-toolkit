@@ -1,6 +1,5 @@
 import { getAllContentItemsForContentType } from '@last-rev/integration-contentful';
 import { get, map, each } from 'lodash';
-import { CONTENT_DIR, PATHS_FILE } from '../../constants';
 import writeFile from '../../helpers/writeFile';
 import mkdirIfNotExists from '../../helpers/mkDirIfNotExists';
 import { BuildTask } from '../../types';
@@ -27,7 +26,7 @@ type PathObject = {
 };
 
 const writeWebsiteSectionPaths: BuildTask = async (buildConfig): Promise<void> => {
-  await mkdirIfNotExists(CONTENT_DIR);
+  await mkdirIfNotExists(buildConfig.outputDirectory);
 
   const pageContentTypes: string[] = get(buildConfig, 'websiteSectionPathsConfig.pageContentTypes', []);
 
@@ -50,7 +49,7 @@ const writeWebsiteSectionPaths: BuildTask = async (buildConfig): Promise<void> =
   each([...otherPageResults], (pages) => getDetailPagePaths(paths, pages, websiteSections));
   getLandingPagePaths(paths, websiteSections);
 
-  await writeFile(PATHS_FILE, `export default ${JSON.stringify(paths, null, 2)};`, {
+  await writeFile(buildConfig.pathsFile, `export default ${JSON.stringify(paths, null, 2)};`, {
     encoding: 'utf8',
     flag: 'w'
   });
