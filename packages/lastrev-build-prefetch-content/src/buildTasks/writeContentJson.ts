@@ -8,13 +8,12 @@ import {
   getLocales
 } from '@last-rev/integration-contentful';
 import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
+import { resolve } from 'path';
 import { each, map, get, keyBy, find } from 'lodash';
-import { join } from 'path';
 import writeJsonFile from '../helpers/writeJsonFile';
 import compose from '../helpers/compose';
-import { BuildConfig, BuildTask, ContentPrefetchConfig } from '../types';
+import { BuildTask } from '../types';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
-import { CONTENT_DIR, CONTENT_JSON_DIR, DEFAULT_SLUG_FIELD } from '../constants';
 import trackProcess from '../helpers/trackProcess';
 import delay from '../helpers/delay';
 import unlinkIfExists from '../helpers/unlinkIfExists';
@@ -64,11 +63,10 @@ const fetchContentDataByContentType = async ({ contentTypeId, isPage, slugField,
 };
 
 const writeContentJson: BuildTask = async (
-  { useAdapter, contentPrefetch: contentPrefetchConfig }: BuildConfig,
+  buildConfig,
   { adapterConfig }: { adapterConfig: AdapterConfig }
 ): Promise<void> => {
-  await mkdirIfNotExists(CONTENT_DIR);
-  await mkdirIfNotExists(CONTENT_JSON_DIR);
+  const { useAdapter, contentPrefetch: contentPrefetchConfig, contentJsonDirectory } = buildConfig;
 
   const beginTime = Date.now();
 
@@ -119,9 +117,7 @@ const writeContentJson: BuildTask = async (
   await Promise.all(
     map(locales, (locale) =>
       (async () => {
-        const localeDir = join(CONTENT_JSON_DIR, locale);
-
-        await mkdirIfNotExists(localeDir);
+        const localeDir = resolve(contentJsonDirectory, locale);
 
         await Promise.all(
           map(slugToIdByContentType, (slugToId, pageContentTypeId) =>
@@ -129,7 +125,7 @@ const writeContentJson: BuildTask = async (
               const cpfConfig = get(contentPrefetchConfig, pageContentTypeId);
               const { include = 1, rootOmitFields = [], childOmitFields = [] } = cpfConfig;
 
-              const pageContentTypeDir = join(localeDir, pageContentTypeId);
+              const pageContentTypeDir = resolve(localeDir, pageContentTypeId);
 
               await mkdirIfNotExists(pageContentTypeDir);
 
@@ -149,7 +145,7 @@ const writeContentJson: BuildTask = async (
 
                     const transformed = transform(JSON.parse(jsonStringifySafe(composed)));
 
-                    const filename = join(pageContentTypeDir, `${slug}.json`);
+                    const filename = resolve(pageContentTypeDir, `${slug}.json`);
 
                     await unlinkIfExists(filename);
 

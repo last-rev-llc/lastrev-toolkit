@@ -1,16 +1,9 @@
 import { getLocalizationLookup, getLocales, LocalizationLookupMapping } from '@last-rev/integration-contentful';
-import _ from 'lodash';
+import { each, find, get, map } from 'lodash';
 import { resolve } from 'path';
 
 import { BuildTask } from '../types';
 import writeFile from '../helpers/writeFile';
-import {
-  CONTENT_DIR,
-  I18N_JSON_FILE,
-  DEFAULT_RAW_PAGES_DIR,
-  PROJECT_ROOT,
-  DEFAULT_LOCALES_OUTPUT_PATH
-} from '../constants';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 
 const writeI18nJson = async (
@@ -18,7 +11,8 @@ const writeI18nJson = async (
   defaultLanguage: string,
   currentPagesDir: string,
   localesPath: string,
-  useV1: boolean
+  useV1: boolean,
+  i18nFile: string
 ) => {
   const i18nJson = {
     allLanguages: locales,
@@ -38,7 +32,7 @@ const writeI18nJson = async (
     }
   };
   const out = JSON.stringify(useV1 ? v1I18nJson : i18nJson, null, 2);
-  await writeFile(I18N_JSON_FILE, out);
+  await writeFile(i18nFile, out);
 };
 
 const writeLocaleFiles = async (
@@ -48,7 +42,7 @@ const writeLocaleFiles = async (
   const mkDirPromises = [];
   const dirMappings = [];
 
-  _.each(localizationLookupMapping, (mapping, localeCode) => {
+  each(localizationLookupMapping, (mapping, localeCode) => {
     const dir = resolve(localesDir, `./${localeCode}`);
 
     dirMappings.push([dir, mapping]);
@@ -60,7 +54,7 @@ const writeLocaleFiles = async (
 
   const writeFilePromises = [];
 
-  _.each(dirMappings, ([dir, mapping]) => {
+  each(dirMappings, ([dir, mapping]) => {
     const file = resolve(dir, './common.json');
     writeFilePromises.push(writeFile(file, JSON.stringify(mapping, null, 2)));
   });
@@ -69,36 +63,25 @@ const writeLocaleFiles = async (
 };
 
 const writeLocales: BuildTask = async (buildConfig): Promise<void> => {
-  const currentPagesDir = _.has(buildConfig, 'locales.rawPagesDir')
-    ? buildConfig.locales.rawPagesDir
-    : DEFAULT_RAW_PAGES_DIR;
-  const localesPath = _.has(buildConfig, 'locales.outputPath')
-    ? buildConfig.locales.outputPath
-    : DEFAULT_LOCALES_OUTPUT_PATH;
-  const localizationLookupFieldName = _.has(buildConfig, 'locales.localizationLookupFieldName')
-    ? buildConfig.locales.localizationLookupFieldName
-    : undefined;
+  const localizationLookupFieldName = get(buildConfig, 'locales.localizationLookupFieldName');
 
   const useV1 = !!buildConfig.locales.useV1;
 
-  const settingsContentType = _.has(buildConfig, 'settingsContentType') ? buildConfig.settingsContentType : undefined;
-  const localesDir = resolve(PROJECT_ROOT, `./${localesPath}`);
-
-  await Promise.all([mkdirIfNotExists(CONTENT_DIR), mkdirIfNotExists(localesDir)]);
+  const { settingsContentType, i18nFile, untranslatedPagesDirectory, localesOutputDirectory } = buildConfig;
 
   const [localizationLookupMapping, locales] = await Promise.all([
     getLocalizationLookup({ localizationLookupFieldName, contentTypeId: settingsContentType }),
     getLocales()
   ]);
 
-  const localeCodes = _.map(locales, 'code');
-  const defaultLocale = _.find(locales, (locale) => {
+  const localeCodes = map(locales, 'code');
+  const defaultLocale = find(locales, (locale) => {
     return locale.default;
   }).code;
 
   await Promise.all([
-    writeI18nJson(localeCodes, defaultLocale, currentPagesDir, localesPath, useV1),
-    writeLocaleFiles(localizationLookupMapping, localesDir)
+    writeI18nJson(localeCodes, defaultLocale, untranslatedPagesDirectory, localesOutputDirectory, useV1, i18nFile),
+    writeLocaleFiles(localizationLookupMapping, localesOutputDirectory)
   ]);
 };
 

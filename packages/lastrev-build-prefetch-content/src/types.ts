@@ -1,3 +1,5 @@
+import { AdapterConfig } from '@last-rev/adapter-contentful';
+
 export type MappingConfig = {
   overrides?: Record<string, string>;
   exclude?: string[];
@@ -5,7 +7,13 @@ export type MappingConfig = {
 
 export type LocalesConfig = {
   localizationLookupFieldName?: string;
+  /**
+   * @deprecated
+   */
   rawPagesDir?: string;
+  /**
+   * @deprecated
+   */
   outputPath?: string;
   useV1?: boolean;
 };
@@ -38,22 +46,49 @@ export type WebsiteSectionPathsConfig = {
   pageContentTypes: string[];
 };
 
-export type BuildConfig = {
-  useAdapter?: boolean;
+export type FileLocationsBuildConfig = {
+  outputDirectory: string;
+  adapterConfigFile: string;
+  contentJsonDirectory: string;
+  i18nFile: string;
+  componentsDirectory: string;
+  mappingFile: string;
+  pathsFile: string;
+  settingsFile: string;
+  untranslatedPagesDirectory: string;
+  translatedPagesDirectory: string;
+  localesOutputDirectory: string;
+};
+
+export type SwitchesBuildConfig = {
+  useAdapter: boolean;
+  useWebsiteSectionPaths: boolean;
+  writeSettings: boolean;
+  writePaths: boolean;
+  writeMappings: boolean;
+  writeAdapterConfig: boolean;
+  writeLocaleData: boolean;
+  writeContentJson: boolean;
+};
+
+type OptionsBuildConfig = {
   mappings?: MappingConfig;
   paths?: Record<string, SimplePathConfig | ComplexPathConfig>;
-  websiteSectionPathsConfig: WebsiteSectionPathsConfig;
+  websiteSectionPathsConfig?: WebsiteSectionPathsConfig;
   useWebsiteSectionPaths?: boolean;
   contentPrefetch?: ContentPrefetchConfig;
   settingsInclude?: number;
   locales?: LocalesConfig;
   settingsContentType?: string;
-  writeSettings?: boolean;
-  writePaths?: boolean;
-  writeMappings?: boolean;
-  writeAdapterConfig?: boolean;
-  writeLocaleData?: boolean;
-  writeContentJson?: boolean;
 };
 
-export type BuildTask = (buildConfig: BuildConfig, other: Record<string, unknown>) => Promise<void>;
+export type BuildConfig = OptionsBuildConfig & Partial<SwitchesBuildConfig> & Partial<FileLocationsBuildConfig>;
+
+export type ResolvedBuildConfig = OptionsBuildConfig & SwitchesBuildConfig & FileLocationsBuildConfig;
+
+export type BuildTask = (buildConfig: ResolvedBuildConfig, other: Record<string, unknown>) => Promise<void>;
+
+export type LastRevRc = {
+  build?: BuildConfig;
+  adapter?: AdapterConfig;
+};

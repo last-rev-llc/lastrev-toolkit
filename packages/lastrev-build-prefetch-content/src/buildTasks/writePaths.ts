@@ -1,10 +1,9 @@
 import { getStaticSlugsForContentType, Entry } from '@last-rev/integration-contentful';
 import { each, get, merge, map, filter, values, identity, every } from 'lodash';
 
-import { CONTENT_DIR, PATHS_FILE } from '../constants';
 import writeFile from '../helpers/writeFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
-import { BuildConfig, BuildTask, ComplexPathConfig, SimplePathConfig, PathChildrenConfig } from '../types';
+import { BuildTask, ComplexPathConfig, SimplePathConfig, PathChildrenConfig, ResolvedBuildConfig } from '../types';
 
 function isString(s): s is string {
   return typeof s === 'string';
@@ -17,7 +16,7 @@ function isSimplePathConfig(s): s is SimplePathConfig {
 type PathsRepresentation = Record<string, string>[];
 type PathsRepresentationTuple = [string, PathsRepresentation];
 
-const writePathsJs = async (buildConfig: BuildConfig, ...pathsRepresentationTuples: PathsRepresentationTuple[]) => {
+const writePathsJs = async (pathsFile: string, ...pathsRepresentationTuples: PathsRepresentationTuple[]) => {
   const paths = {};
   each(pathsRepresentationTuples, ([type, pathsRepresentation]) => {
     paths[type] = pathsRepresentation.map((params) => {
@@ -28,7 +27,7 @@ const writePathsJs = async (buildConfig: BuildConfig, ...pathsRepresentationTupl
   });
 
   const out = `export default ${JSON.stringify(paths, null, 2)};`;
-  await writeFile(PATHS_FILE, out);
+  await writeFile(pathsFile, out);
 };
 
 const convertSimpleToComplexPathConfig = (contentType: string, slugParam: string): ComplexPathConfig => {
@@ -117,7 +116,7 @@ const getComplexStaticSlugs = async (pathConfig: ComplexPathConfig, key: string)
   return [key, cleanUpPathsRepresentation(pathsRepresentation)];
 };
 
-const getStaticSlugFunctions = (buildConfig: BuildConfig): Promise<PathsRepresentationTuple>[] => {
+const getStaticSlugFunctions = (buildConfig: ResolvedBuildConfig): Promise<PathsRepresentationTuple>[] => {
   if (!buildConfig || !buildConfig.paths) return [];
   return map(buildConfig.paths, (value, key) => {
     const conf: ComplexPathConfig = isSimplePathConfig(value) ? convertSimpleToComplexPathConfig(key, value) : value;
@@ -126,12 +125,14 @@ const getStaticSlugFunctions = (buildConfig: BuildConfig): Promise<PathsRepresen
 };
 
 const writePaths: BuildTask = async (buildConfig): Promise<void> => {
-  await mkdirIfNotExists(CONTENT_DIR);
+  const { outputDirectory, pathsFile } = buildConfig;
+
+  await mkdirIfNotExists(outputDirectory);
 
   const staticSlugFunctions = getStaticSlugFunctions(buildConfig);
 
   const [...typeSlugTuples]: [...PathsRepresentationTuple[]] = await Promise.all([...staticSlugFunctions]);
-  await writePathsJs(buildConfig, ...typeSlugTuples);
+  await writePathsJs(pathsFile, ...typeSlugTuples);
 };
 
 export default writePaths;
