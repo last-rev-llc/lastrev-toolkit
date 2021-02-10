@@ -1,3 +1,5 @@
+import { AdapterConfig } from '@last-rev/adapter-contentful';
+
 export type MappingConfig = {
   overrides?: Record<string, string>;
   exclude?: string[];
@@ -85,3 +87,8 @@ export type BuildConfig = OptionsBuildConfig & Partial<SwitchesBuildConfig> & Pa
 export type ResolvedBuildConfig = OptionsBuildConfig & SwitchesBuildConfig & FileLocationsBuildConfig;
 
 export type BuildTask = (buildConfig: ResolvedBuildConfig, other: Record<string, unknown>) => Promise<void>;
+
+export type LastRevRc = {
+  build: BuildConfig;
+  adapter: AdapterConfig;
+};
