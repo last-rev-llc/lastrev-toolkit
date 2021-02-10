@@ -204,10 +204,6 @@
           "$ref": "#/definitions/BuildConfig"
         }
       },
-      "required": [
-        "build",
-        "adapter"
-      ],
       "type": "object"
     },
     "LocalesConfig": {

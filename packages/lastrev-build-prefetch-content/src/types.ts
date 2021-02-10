@@ -89,6 +89,6 @@ export type ResolvedBuildConfig = OptionsBuildConfig & SwitchesBuildConfig & Fil
 export type BuildTask = (buildConfig: ResolvedBuildConfig, other: Record<string, unknown>) => Promise<void>;
 
 export type LastRevRc = {
-  build: BuildConfig;
-  adapter: AdapterConfig;
+  build?: BuildConfig;
+  adapter?: AdapterConfig;
 };
