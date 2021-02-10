@@ -24,7 +24,6 @@ export const fillRequiredProps = <P extends ContentValidationProps>({
   props: P;
   propTypes: ParsedPropTypes;
 }) => {
-  console.log('Component', { props, propTypes });
   const newProps = { ...props };
   Object.keys(propTypes).forEach((key) => {
     if (!propTypes[key]) return;
