@@ -35,6 +35,5 @@ export const fillRequiredProps = <P extends ContentValidationProps>({
       newProps[key] = newProps[key] ?? getContent(name);
     }
   });
-  console.log('Component', { props, propTypes, newProps });
   return newProps;
 };
