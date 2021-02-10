@@ -1,14 +1,13 @@
 import * as React from 'react';
 import checkPropTypes from 'check-prop-types';
 import parsePropTypes from 'parse-prop-types';
-import noop from 'lodash/noop';
 import { ValidationContext } from './ContextValidationProvider';
 import { ContentValidationProps, fillRequiredProps } from './getContent';
 
 export const withContentValidation = ({ logLevel }) => <P extends ContentValidationProps>(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
-  const { handleError = noop } = React.useContext(ValidationContext);
+  const { handleError } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => (WrappedComponent ? parsePropTypes(WrappedComponent) : null), [
     WrappedComponent.name
   ]);
@@ -17,7 +16,7 @@ export const withContentValidation = ({ logLevel }) => <P extends ContentValidat
     [props]
   );
   React.useEffect(() => {
-    if (result) {
+    if (result && handleError) {
       handleError({
         error: result,
         componentName: WrappedComponent.name,
