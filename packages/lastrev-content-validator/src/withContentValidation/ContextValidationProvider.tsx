@@ -27,9 +27,13 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
       if (parentEl instanceof HTMLElement && el instanceof HTMLElement) {
         const contentId = parentEl.dataset.cskErrorId;
         const error = errors.find((x) => x.contentId == contentId);
-        el.dataset.cskEntryId = contentId;
-        el.dataset.cskDisplayName = error.componentName;
-        el.dataset.cskError = JSON.stringify(error);
+        if (error) {
+          el.dataset.cskEntryId = contentId;
+          el.dataset.cskDisplayName = error.componentName;
+          el.dataset.cskError = JSON.stringify(error);
+        } else {
+          console.log('ValidationError', { contentId, error, parentEl });
+        }
       }
     });
     switch (logLevel) {
