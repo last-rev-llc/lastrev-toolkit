@@ -7,6 +7,7 @@ export type LocalesConfig = {
   localizationLookupFieldName?: string;
   rawPagesDir?: string;
   outputPath?: string;
+  useV1?: boolean;
 };
 
 export type PathChildrenConfig = {
@@ -23,16 +24,26 @@ export type ComplexPathConfig = {
   children?: PathChildrenConfig;
 };
 
-export type ContentPrefetchConfig = {
-  types: string[];
-  pageSize?: number;
-  include?: number;
+export type ContentPrefetchConfig = Record<
+  string,
+  {
+    include: number;
+    slugField?: string;
+    rootOmitFields?: string[];
+    childOmitFields?: string[];
+  }
+>;
+
+export type WebsiteSectionPathsConfig = {
+  pageContentTypes: string[];
 };
 
 export type BuildConfig = {
   useAdapter?: boolean;
   mappings?: MappingConfig;
   paths?: Record<string, SimplePathConfig | ComplexPathConfig>;
+  websiteSectionPathsConfig: WebsiteSectionPathsConfig;
+  useWebsiteSectionPaths?: boolean;
   contentPrefetch?: ContentPrefetchConfig;
   settingsInclude?: number;
   locales?: LocalesConfig;

@@ -12,6 +12,7 @@ export type GetPageBySlugConfig = {
   locale?: string;
   include?: number;
   slugFieldName?: string;
+  omitFields: string[];
 };
 
 export type GetFullContentByIdConfig = {
@@ -19,6 +20,7 @@ export type GetFullContentByIdConfig = {
   id: string;
   locale?: string;
   include: number;
+  omitFields: string[];
 };
 
 export type GetGlobalSettingsConfig = {
@@ -33,6 +35,11 @@ export type GetAllContentItemsByContentTypeConfig = {
   order?: string;
   nestedFieldName?: string;
   include?: number;
+  omitFields: string[];
+};
+
+export type SyncAllEntriesAndAssetsConfig = {
+  contentTypeId: string;
 };
 
 export type LocalizationLookupMapping = Record<string, Record<string, string>>;

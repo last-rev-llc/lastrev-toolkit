@@ -54,9 +54,18 @@ Lerna ensures that all packages that changed, plus those depending on them are v
 - `yarn run build` - Cleans and builds each package in dependency order. We use [Typescript](https://www.typescriptlang.org/) to build the projects, as it allows for much safer code, and improved [intellisense in VS Code](https://code.visualstudio.com/docs/editor/intellisense)
 - `yarn run test` - Runs all of the tests across all projects. We use [Jest](https://jestjs.io/) as our testing library.
 - `yarn run test:watch` - Runs tests in watch mode.
+- `yarn run pub:prerelease` - Determines which packages have changed, increments the patch version number to a prerelease version, and publishes to NPM.
 - `yarn run pub:patch` - Determines which packages have changed, increments the patch version number, and publishes to NPM.
 - `yarn run pub:minor` - Determines which packages have changed, increments the minor version number, and publishes to NPM.
 - `yarn run pub:major` - Determines which packages have changed, increments the major version number, and publishes to NPM.
+
+## Testing libraries locally
+
+If you need to test some local changes to the toolkit against another local project, call `yarn run build:external` followed by the path to the root of the project you want to test against. This will build all the packages, and copy their dist files into the `node_modules` directory of the destination project. Note: You must already have built the destination project with the npm libraries for this to work (they need to be in `node_modules`).
+
+```bash
+yarn run build:external ../www.lastrev.com
+```
 
 ## Testing CLIs locally
 

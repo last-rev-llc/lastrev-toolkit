@@ -1,6 +1,6 @@
 {
   "name": "@last-rev/integration-contentful",
-  "version": "4.1.2-alpha.12",
+  "version": "4.1.7",
   "description": "Contentful integration for lastrev projects",
   "main": "dist/index.js",
   "files": [
@@ -30,6 +30,7 @@
     "@babel/preset-env": "^7.10.4",
     "@types/jest": "^26.0.7",
     "@types/lodash": "^4.14.158",
+    "deepdash": "^5.3.4",
     "eslint": "^7.3.1",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
@@ -52,7 +53,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.10.4",
-    "@last-rev/adapter-contentful": "^3.0.2-alpha.8",
+    "@last-rev/adapter-contentful": "^3.0.5",
     "@types/faker": "^4.1.12",
     "contentful": "^7.14.5",
     "lodash": "^4.17.19"

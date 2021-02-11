@@ -7,7 +7,8 @@ const getFullContentByIdCreator = (client: ContentfulClientApi) => async <T>({
   contentTypeId,
   id,
   locale,
-  include
+  include,
+  omitFields = []
 }: GetFullContentByIdConfig): Promise<Entry<T>> => {
   const entries = await client.getEntries({
     'content_type': contentTypeId,
@@ -16,7 +17,7 @@ const getFullContentByIdCreator = (client: ContentfulClientApi) => async <T>({
     'locale': locale
   });
 
-  return _.head(removeCircularRefs(entries).items) as Entry<T>;
+  return _.head(removeCircularRefs(entries, omitFields).items) as Entry<T>;
 };
 
 export default getFullContentByIdCreator;

@@ -9,7 +9,8 @@ const getPageBySlugCreator = (client: ContentfulClientApi) => async <T>({
   contentTypeId,
   locale,
   include = 4,
-  slugFieldName = DEFAULT_SLUG_FIELD_NAME
+  slugFieldName = DEFAULT_SLUG_FIELD_NAME,
+  omitFields = []
 }: GetPageBySlugConfig): Promise<Entry<T>> => {
   const opts = {
     content_type: contentTypeId,
@@ -20,7 +21,7 @@ const getPageBySlugCreator = (client: ContentfulClientApi) => async <T>({
   opts[`fields.${slugFieldName}`] = slug;
 
   const entries = await client.getEntries(opts);
-  return _.head(removeCircularRefs(entries).items) as Entry<T>;
+  return _.head(removeCircularRefs(entries, omitFields).items) as Entry<T>;
 };
 
 export default getPageBySlugCreator;

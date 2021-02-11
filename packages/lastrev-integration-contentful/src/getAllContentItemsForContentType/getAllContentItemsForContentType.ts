@@ -1,6 +1,6 @@
 import { ContentfulClientApi, Entry } from 'contentful';
 import { map } from 'lodash';
-import { DEFAULT_ORDER_PARAM } from '../constants';
+import { DEFAULT_ORDER_PARAM, DEFAULT_LOCALE_PARAM } from '../constants';
 import removeCircularRefs from '../helpers/removeCircularRefs';
 
 const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) => async <T>({
@@ -9,21 +9,25 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
   order = DEFAULT_ORDER_PARAM,
   include = 1,
   paginate = false,
+  locale = DEFAULT_LOCALE_PARAM,
   skip = 0,
-  limit = 1000
+  limit = 1000,
+  omitFields = []
 }: {
   contentTypeId: string;
   fields?: string[];
   order?: string;
+  locale?: string;
   include?: number;
   paginate?: boolean;
   skip?: number;
   limit?: number;
+  omitFields?: string[];
 }): Promise<Entry<T>[]> => {
   const select = fields.length
-    ? map(fields, (field) => {
+    ? `sys,${map(fields, (field) => {
         return `fields.${field}`;
-      }).join(',')
+      }).join(',')}`
     : null;
 
   if (paginate) {
@@ -31,12 +35,13 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
       content_type: contentTypeId,
       select,
       order,
+      locale,
       limit,
       skip,
       include
     });
 
-    const { items } = removeCircularRefs(queryResults);
+    const { items } = removeCircularRefs(queryResults, omitFields);
     return items;
   }
   const entries: Entry<T>[] = [];
@@ -50,6 +55,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
       content_type: contentTypeId,
       select,
       order,
+      locale,
       limit,
       skip,
       include
@@ -57,7 +63,7 @@ const getAllContentItemsForContentTypeCreator = (client: ContentfulClientApi) =>
 
     // eslint-disable-next-line no-param-reassign
     ({ skip, limit, total } = queryResults);
-    ({ items } = removeCircularRefs(queryResults));
+    ({ items } = removeCircularRefs(queryResults, omitFields));
 
     count += items.length;
     // eslint-disable-next-line no-param-reassign

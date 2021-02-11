@@ -29,7 +29,7 @@ export default withContentValidation({
   schema: yup.object({
     content: yup.object({
       quoteText: yup.string().required(),
-      attribution: yup.string().required(),
+      attribution: yup.string().required()
     })
   })
 })(SectionQuote);

@@ -9,6 +9,9 @@ import getGlobalSettingsCreator from './getGlobalSettings';
 import getContentTypesCreator from './getContentTypes';
 import getContentTypeCreator from './getContentType';
 import getAllContentItemsForContentTypeCreator from './getAllContentItemsForContentType';
+import syncAllEntriesForContentTypeCreator from './syncAllEntriesForContentType';
+import syncAllAssetsCreator from './syncAllAssets';
+
 import {
   GetPageBySlugConfig,
   GetFullContentByIdConfig,
@@ -34,6 +37,8 @@ export const getGlobalSettings = getGlobalSettingsCreator(client);
 export const getContentTypes = getContentTypesCreator(client);
 export const getContentType = getContentTypeCreator(client);
 export const getAllContentItemsForContentType = getAllContentItemsForContentTypeCreator(client);
+export const syncAllEntriesForContentType = syncAllEntriesForContentTypeCreator(client);
+export const syncAllAssets = syncAllAssetsCreator(client);
 
 export declare type WrappedContentful = {
   getPageBySlug(getPageBySlugConfig: GetPageBySlugConfig): Promise<Record<string, unknown>>;
