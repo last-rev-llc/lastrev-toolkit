@@ -1,6 +1,6 @@
 {
   "name": "@last-rev/build-prefetch-content",
-  "version": "4.1.8",
+  "version": "4.1.9-alpha.0",
   "description": "Prefetches global settings, path, and content mapping data",
   "main": "dist/index.js",
   "bin": {
@@ -42,8 +42,8 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "@last-rev/adapter-contentful": "^3.0.5",
-    "@last-rev/integration-contentful": "^4.1.7",
+    "@last-rev/adapter-contentful": "^3.0.6-alpha.0",
+    "@last-rev/integration-contentful": "^4.1.8-alpha.0",
     "@types/ora": "^3.2.0",
     "deepdash": "^5.3.2",
     "dotenv": "^8.2.0",
