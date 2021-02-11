@@ -37,7 +37,7 @@ export const withContentValidation = ({ logLevel }) => <P extends ContentValidat
 
     return (
       <React.Fragment>
-        <span data-csk-error="true" data-csk-error-id={props._id} />
+        <span data-csk-error="true" data-csk-error-id={props._id} data-csk-error-state={JSON.stringify(result)} />
         {cmp}
       </React.Fragment>
     );
