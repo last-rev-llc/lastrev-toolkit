@@ -16,7 +16,7 @@ function isSimplePathConfig(s): s is SimplePathConfig {
 type PathsRepresentation = Record<string, string>[];
 type PathsRepresentationTuple = [string, PathsRepresentation];
 
-const writePathsJs = async (pathsFile: string, ...pathsRepresentationTuples: PathsRepresentationTuple[]) => {
+const writePathsFile = async (pathsFile: string, ...pathsRepresentationTuples: PathsRepresentationTuple[]) => {
   const paths = {};
   each(pathsRepresentationTuples, ([type, pathsRepresentation]) => {
     paths[type] = pathsRepresentation.map((params) => {
@@ -26,7 +26,11 @@ const writePathsJs = async (pathsFile: string, ...pathsRepresentationTuples: Pat
     });
   });
 
-  const out = `export default ${JSON.stringify(paths, null, 2)};`;
+  const jsonOutput = JSON.stringify(paths, null, 2);
+
+  // if outputfile has js extension, write it as a js module, else write it as plain json;
+  const out = pathsFile.endsWith('.js') ? `export default ${jsonOutput};` : jsonOutput;
+
   await writeFile(pathsFile, out);
 };
 
@@ -132,7 +136,7 @@ const writePaths: BuildTask = async (buildConfig): Promise<void> => {
   const staticSlugFunctions = getStaticSlugFunctions(buildConfig);
 
   const [...typeSlugTuples]: [...PathsRepresentationTuple[]] = await Promise.all([...staticSlugFunctions]);
-  await writePathsJs(pathsFile, ...typeSlugTuples);
+  await writePathsFile(pathsFile, ...typeSlugTuples);
 };
 
 export default writePaths;
