@@ -19,7 +19,8 @@ const getLocalizationLookup = (client) => async ({
         'content_type': contentTypeId,
         'select': `sys,fields.${localizationLookupFieldName}`,
         'sys.id': process.env.CONTENTFUL_SETTINGS_ID,
-        'locale': code
+        'locale': code,
+        'include': 2
       })
     );
   }

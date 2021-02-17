@@ -1,7 +1,13 @@
 import { resolve } from 'path';
 import { get, chain, identity } from 'lodash';
 
-import { BuildConfig, ResolvedBuildConfig, SwitchesBuildConfig, FileLocationsBuildConfig } from '../types';
+import {
+  BuildConfig,
+  ResolvedBuildConfig,
+  SwitchesBuildConfig,
+  FileLocationsBuildConfig,
+  LocalesConfig
+} from '../types';
 import {
   PROJECT_ROOT,
   DEFAULT_OUTPUT_DIRNAME,
@@ -14,7 +20,11 @@ import {
   DEFAULT_SETTINGS_FILENAME,
   DEFAULT_UNTRANSLATED_PAGES_DIRNAME,
   DEFAULT_LOCALES_OUTPUT_DIRNAME,
-  DEFAULT_TRANSLATED_PAGES_DIRNAME
+  DEFAULT_TRANSLATED_PAGES_DIRNAME,
+  DEFAULT_LOCALES_LOOKUP_TYPE,
+  DEFAULT_LOCALIZATION_LOOKUP_FIELD_NAME,
+  DEFAULT_LOCALIZATION_ITEM_CONTENT_TYPE,
+  DEFAULT_LOCALIZATION_SET_CONTENT_TYPE
 } from '../constants';
 
 const resolveSwitches = (buildConfig: BuildConfig): SwitchesBuildConfig => {
@@ -78,13 +88,37 @@ const resolveFileLocations = (buildConfig: BuildConfig): FileLocationsBuildConfi
   };
 };
 
+const resolveLocalesConfigValues = (buildConfig: BuildConfig): LocalesConfig => {
+  return {
+    ...buildConfig.locales,
+    lookupType: get(buildConfig, 'locales.lookupType', DEFAULT_LOCALES_LOOKUP_TYPE),
+    localizationLookupFieldName: get(
+      buildConfig,
+      'locales.localizationLookupFieldName',
+      DEFAULT_LOCALIZATION_LOOKUP_FIELD_NAME
+    ),
+    localizationItemContentTypeId: get(
+      buildConfig,
+      'locales.localizationItemContentTypeId',
+      DEFAULT_LOCALIZATION_ITEM_CONTENT_TYPE
+    ),
+    localizationSetContentTypeId: get(
+      buildConfig,
+      'locales.localizationSetContentTypeId',
+      DEFAULT_LOCALIZATION_SET_CONTENT_TYPE
+    )
+  };
+};
+
 export default (buildConfig: BuildConfig): ResolvedBuildConfig => {
   const switches = resolveSwitches(buildConfig);
   const fileLocations = resolveFileLocations(buildConfig);
+  const locales = resolveLocalesConfigValues(buildConfig);
 
   return {
     ...buildConfig,
     ...switches,
-    ...fileLocations
+    ...fileLocations,
+    locales
   };
 };

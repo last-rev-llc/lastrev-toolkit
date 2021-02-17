@@ -209,20 +209,33 @@
     "LocalesConfig": {
       "additionalProperties": false,
       "properties": {
+        "localizationItemContentTypeId": {
+          "type": "string"
+        },
         "localizationLookupFieldName": {
           "type": "string"
+        },
+        "localizationSetContentTypeId": {
+          "type": "string"
+        },
+        "lookupType": {
+          "$ref": "#/definitions/LocalizationLookupType"
         },
         "outputPath": {
           "type": "string"
         },
         "rawPagesDir": {
           "type": "string"
-        },
-        "useV1": {
-          "type": "boolean"
         }
       },
       "type": "object"
+    },
+    "LocalizationLookupType": {
+      "enum": [
+        "JSON",
+        "Content"
+      ],
+      "type": "string"
     },
     "MappingConfig": {
       "additionalProperties": false,
