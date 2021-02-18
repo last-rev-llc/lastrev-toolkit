@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import findProjectRoot from './helpers/findProjectRoot';
+import { LocalizationLookupType } from './types';
 
 export const PROJECT_ROOT = findProjectRoot();
 
@@ -24,3 +25,6 @@ export const DEFAULT_LOCALES_OUTPUT_DIRNAME = 'locales';
 export const DEFAULT_UNTRANSLATED_PAGES_DIRNAME = 'src/_pages';
 export const DEFAULT_TRANSLATED_PAGES_DIRNAME = 'src/pages';
 export const DEFAULT_SLUG_FIELD = 'slug';
+export const DEFAULT_LOCALES_LOOKUP_TYPE: LocalizationLookupType = 'JSON';
+export const DEFAULT_LOCALIZATION_ITEM_CONTENT_TYPE = 'localizedStaticContentItem';
+export const DEFAULT_LOCALIZATION_SET_CONTENT_TYPE = 'localizedStaticContentSet';

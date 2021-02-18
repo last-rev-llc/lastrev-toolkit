@@ -1,8 +1,13 @@
-import { getLocalizationLookup, getLocales, LocalizationLookupMapping } from '@last-rev/integration-contentful';
-import { each, find, get, map } from 'lodash';
+import {
+  getLocalizationLookup,
+  getLocales,
+  LocalizationLookupMapping,
+  SafeEntryCollection
+} from '@last-rev/integration-contentful';
+import { each, find, get, map, mapValues } from 'lodash';
 import { resolve } from 'path';
 
-import { BuildTask } from '../types';
+import { BuildConfig, BuildTask, LocalizationLookupType } from '../types';
 import writeFile from '../helpers/writeFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 
@@ -11,7 +16,6 @@ const writeI18nJson = async (
   defaultLanguage: string,
   currentPagesDir: string,
   localesPath: string,
-  useV1: boolean,
   i18nFile: string
 ) => {
   const i18nJson = {
@@ -24,14 +28,7 @@ const writeI18nJson = async (
       '*': ['common']
     }
   };
-  const v1I18nJson = {
-    locales,
-    defaultLocale: defaultLanguage,
-    pages: {
-      '*': ['common']
-    }
-  };
-  const out = JSON.stringify(useV1 ? v1I18nJson : i18nJson, null, 2);
+  const out = JSON.stringify(i18nJson, null, 2);
   await writeFile(i18nFile, out);
 };
 
@@ -62,10 +59,45 @@ const writeLocaleFiles = async (
   await Promise.all(writeFilePromises);
 };
 
+const assignItem = (obj, entry) => {
+  obj[get(entry, 'fields.key') as string] = get(entry, 'fields.value');
+};
+
+const getLookupMappingFromContent = (
+  buildConfig: BuildConfig,
+  contentMapping: Record<string, any>
+): Record<string, Record<string, string>> => {
+  const itemType = get(buildConfig, 'locales.localizationItemContentTypeId');
+  const setType = get(buildConfig, 'locales.localizationSetContentTypeId');
+
+  return mapValues(contentMapping, (entries) => {
+    const out = {};
+    each(entries, (entry) => {
+      const contentType = get(entry, 'sys.contentType.sys.id');
+      if (contentType === itemType) {
+        assignItem(out, entry);
+      } else if (contentType === setType) {
+        each(get(entry, 'fields.items'), (item) => {
+          assignItem(out, item);
+        });
+      }
+    });
+    return out;
+  });
+};
+
+const getFinalLookupMapping = (
+  buildConfig: BuildConfig,
+  localizationLookupMapping: LocalizationLookupMapping
+): Record<string, Record<string, string>> => {
+  const lookupType: LocalizationLookupType = get(buildConfig, 'locales.lookupType');
+
+  if (lookupType === 'JSON') return localizationLookupMapping;
+  return getLookupMappingFromContent(buildConfig, localizationLookupMapping);
+};
+
 const writeLocales: BuildTask = async (buildConfig): Promise<void> => {
   const localizationLookupFieldName = get(buildConfig, 'locales.localizationLookupFieldName');
-
-  const useV1 = !!buildConfig.locales.useV1;
 
   const { settingsContentType, i18nFile, untranslatedPagesDirectory, localesOutputDirectory } = buildConfig;
 
@@ -80,8 +112,8 @@ const writeLocales: BuildTask = async (buildConfig): Promise<void> => {
   }).code;
 
   await Promise.all([
-    writeI18nJson(localeCodes, defaultLocale, untranslatedPagesDirectory, localesOutputDirectory, useV1, i18nFile),
-    writeLocaleFiles(localizationLookupMapping, localesOutputDirectory)
+    writeI18nJson(localeCodes, defaultLocale, untranslatedPagesDirectory, localesOutputDirectory, i18nFile),
+    writeLocaleFiles(getFinalLookupMapping(buildConfig, localizationLookupMapping), localesOutputDirectory)
   ]);
 };
 

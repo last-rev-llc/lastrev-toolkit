@@ -1,4 +1,4 @@
-import { Entry } from 'contentful';
+import { Entry, EntryCollection } from 'contentful';
 
 export { Entry } from 'contentful';
 
@@ -42,6 +42,6 @@ export type SyncAllEntriesAndAssetsConfig = {
   contentTypeId: string;
 };
 
-export type LocalizationLookupMapping = Record<string, Record<string, string>>;
+export type LocalizationLookupMapping = Record<string, any>;
 
 export type StaticSlugResult = string | [string, Entry<unknown>[]];

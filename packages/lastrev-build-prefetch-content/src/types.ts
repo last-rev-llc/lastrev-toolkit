@@ -5,6 +5,8 @@ export type MappingConfig = {
   exclude?: string[];
 };
 
+export type LocalizationLookupType = 'JSON' | 'Content';
+
 export type LocalesConfig = {
   localizationLookupFieldName?: string;
   /**
@@ -15,7 +17,9 @@ export type LocalesConfig = {
    * @deprecated
    */
   outputPath?: string;
-  useV1?: boolean;
+  lookupType?: LocalizationLookupType;
+  localizationItemContentTypeId?: string;
+  localizationSetContentTypeId?: string;
 };
 
 export type PathChildrenConfig = {
