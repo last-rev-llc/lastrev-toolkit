@@ -129,6 +129,7 @@ const getStaticSlugFunctions = (buildConfig: ResolvedBuildConfig): Promise<Paths
 };
 
 const writePaths: BuildTask = async (buildConfig): Promise<void> => {
+  // TODO: optimize this by using preloaded content
   const { outputDirectory, pathsFile } = buildConfig;
 
   await mkdirIfNotExists(outputDirectory);

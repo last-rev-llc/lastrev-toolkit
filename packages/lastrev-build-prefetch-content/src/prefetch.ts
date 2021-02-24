@@ -7,6 +7,7 @@ import { PROJECT_ROOT } from './constants';
 import getBuildTasks from './buildTasks';
 import { BuildTask, BuildConfig } from './types';
 import resolveConfig from './helpers/resolveConfig';
+import prefetchAllContent from './helpers/prefetchAllContent';
 
 console.log('project root', PROJECT_ROOT);
 
@@ -17,7 +18,13 @@ const { adapter: adapterConfig, build: buildConfig } = JSON.parse(
 const build = async (): Promise<void> => {
   const resolvedConfig = resolveConfig(buildConfig);
   const buildTasks: BuildTask[] = getBuildTasks(resolvedConfig);
-  await Promise.all(_.map(buildTasks, (buildTask) => buildTask(resolvedConfig, { adapterConfig })));
+  // if writing content JSON, we will use this opportunity to call this first, and put the contentful data in memory
+  // in order to optimize subsequent build tasks.
+  let preloadedContent;
+  if (buildConfig.writeContentJson) {
+    preloadedContent = await prefetchAllContent(resolvedConfig);
+  }
+  await Promise.all(_.map(buildTasks, (buildTask) => buildTask(resolvedConfig, preloadedContent, { adapterConfig })));
 };
 
 export default build;

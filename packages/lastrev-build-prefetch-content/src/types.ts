@@ -1,4 +1,5 @@
 import { AdapterConfig } from '@last-rev/adapter-contentful';
+import { Asset, Entry, ContentType } from 'contentful';
 
 export type MappingConfig = {
   overrides?: Record<string, string>;
@@ -50,6 +51,14 @@ export type WebsiteSectionPathsConfig = {
   pageContentTypes: string[];
 };
 
+export type NestedPathsConfig = {
+  [contentTypeId: string]: {
+    fieldName: string;
+    maxDepth?: number;
+    parentField?: string;
+  };
+};
+
 export type FileLocationsBuildConfig = {
   outputDirectory: string;
   adapterConfigFile: string;
@@ -73,6 +82,7 @@ export type SwitchesBuildConfig = {
   writeAdapterConfig: boolean;
   writeLocaleData: boolean;
   writeContentJson: boolean;
+  writeNestedPaths: boolean;
 };
 
 type OptionsBuildConfig = {
@@ -84,15 +94,37 @@ type OptionsBuildConfig = {
   settingsInclude?: number;
   locales?: LocalesConfig;
   settingsContentType?: string;
+  nestedPaths?: NestedPathsConfig;
 };
 
 export type BuildConfig = OptionsBuildConfig & Partial<SwitchesBuildConfig> & Partial<FileLocationsBuildConfig>;
 
 export type ResolvedBuildConfig = OptionsBuildConfig & SwitchesBuildConfig & FileLocationsBuildConfig;
 
-export type BuildTask = (buildConfig: ResolvedBuildConfig, other: Record<string, unknown>) => Promise<void>;
+export type BuildTask = (
+  buildConfig: ResolvedBuildConfig,
+  preloadedContent?: PreloadedContentfulContent,
+  other?: any
+) => Promise<void>;
 
 export type LastRevRc = {
   build?: BuildConfig;
   adapter?: AdapterConfig;
+};
+
+export type PreloadedContentfulContent = {
+  assetsById: {
+    [id: string]: Asset;
+  };
+  defaultLocale: string;
+  locales: string[];
+  contentTypes: ContentType[];
+  contentById: {
+    [id: string]: Entry<any>;
+  };
+  slugToIdByContentType: {
+    [contentTypId: string]: {
+      [slug: string]: string;
+    };
+  };
 };

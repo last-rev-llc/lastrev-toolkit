@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { get, chain, identity } from 'lodash';
+import { get, chain, identity, mapValues } from 'lodash';
 
 import {
   BuildConfig,
@@ -24,7 +24,8 @@ import {
   DEFAULT_LOCALES_LOOKUP_TYPE,
   DEFAULT_LOCALIZATION_LOOKUP_FIELD_NAME,
   DEFAULT_LOCALIZATION_ITEM_CONTENT_TYPE,
-  DEFAULT_LOCALIZATION_SET_CONTENT_TYPE
+  DEFAULT_LOCALIZATION_SET_CONTENT_TYPE,
+  DEFAULT_NESTED_PATHS_MAX_DEPTH
 } from '../constants';
 
 const resolveSwitches = (buildConfig: BuildConfig): SwitchesBuildConfig => {
@@ -36,7 +37,8 @@ const resolveSwitches = (buildConfig: BuildConfig): SwitchesBuildConfig => {
     'writeMappings',
     'writeAdapterConfig',
     'writeLocaleData',
-    'writeContentJson'
+    'writeContentJson',
+    'writeNestedPaths'
   ])
     .keyBy(identity)
     .mapValues((val) => get(buildConfig, val, false))
@@ -110,15 +112,29 @@ const resolveLocalesConfigValues = (buildConfig: BuildConfig): LocalesConfig => 
   };
 };
 
+const resolveNestedPathConfigValues = (buildConfig: BuildConfig) => {
+  const { nestedPaths } = buildConfig;
+  if (!nestedPaths) return {};
+  return mapValues(nestedPaths, (config) => {
+    const maxDepth = config.maxDepth || DEFAULT_NESTED_PATHS_MAX_DEPTH;
+    return {
+      ...config,
+      maxDepth
+    };
+  });
+};
+
 export default (buildConfig: BuildConfig): ResolvedBuildConfig => {
   const switches = resolveSwitches(buildConfig);
   const fileLocations = resolveFileLocations(buildConfig);
   const locales = resolveLocalesConfigValues(buildConfig);
+  const nestedPaths = resolveNestedPathConfigValues(buildConfig);
 
   return {
     ...buildConfig,
     ...switches,
     ...fileLocations,
-    locales
+    locales,
+    nestedPaths
   };
 };

@@ -10,6 +10,7 @@ const writeAdapterConfigJs = async (adapterConfigFile: string, adapterConfig: Ad
 
 const writeAdapterConfig: BuildTask = async (
   buildConfig,
+  _prefetchedContent,
   { adapterConfig }: { adapterConfig: AdapterConfig }
 ): Promise<void> => {
   const { outputDirectory, adapterConfigFile } = buildConfig;

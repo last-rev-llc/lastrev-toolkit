@@ -1,13 +1,8 @@
-import {
-  getLocalizationLookup,
-  getLocales,
-  LocalizationLookupMapping,
-  SafeEntryCollection
-} from '@last-rev/integration-contentful';
-import { each, find, get, map, mapValues } from 'lodash';
+import { getLocalizationLookup, getLocales, LocalizationLookupMapping } from '@last-rev/integration-contentful';
+import { each, find, get, identity, keyBy, map, mapValues } from 'lodash';
 import { resolve } from 'path';
 
-import { BuildConfig, BuildTask, LocalizationLookupType } from '../types';
+import { BuildConfig, BuildTask, LocalizationLookupType, PreloadedContentfulContent } from '../types';
 import writeFile from '../helpers/writeFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 
@@ -86,6 +81,44 @@ const getLookupMappingFromContent = (
   });
 };
 
+type LocaleData = { locales: string[]; defaultLocale: string };
+
+const loadLocales = async (prefetchedContent: PreloadedContentfulContent): Promise<LocaleData> => {
+  if (prefetchedContent) {
+    return {
+      locales: prefetchedContent.locales,
+      defaultLocale: prefetchedContent.defaultLocale
+    };
+  }
+  const locales = await getLocales();
+  const localeCodes = map(locales, 'code');
+  const defaultLocale = find(locales, (locale) => {
+    return locale.default;
+  }).code;
+
+  return {
+    locales: localeCodes,
+    defaultLocale
+  };
+};
+
+const loadLocalizationLookupMapping = async (
+  prefetchedContent: PreloadedContentfulContent,
+  localizationLookupFieldName,
+  settingsContentType
+): Promise<LocalizationLookupMapping> => {
+  if (prefetchedContent) {
+    const { locales, defaultLocale, contentById } = prefetchedContent;
+    const localizationLookupField = get(
+      contentById,
+      `${process.env.CONTENTFUL_SETTINGS_ID}.fields['${localizationLookupFieldName}']`
+    );
+    const defaultValue = localizationLookupField[defaultLocale];
+    return mapValues(keyBy(locales, identity), (locale) => get(localizationLookupField, locale, defaultValue));
+  }
+  return getLocalizationLookup({ localizationLookupFieldName, contentTypeId: settingsContentType });
+};
+
 const getFinalLookupMapping = (
   buildConfig: BuildConfig,
   localizationLookupMapping: LocalizationLookupMapping
@@ -96,23 +129,18 @@ const getFinalLookupMapping = (
   return getLookupMappingFromContent(buildConfig, localizationLookupMapping);
 };
 
-const writeLocales: BuildTask = async (buildConfig): Promise<void> => {
+const writeLocales: BuildTask = async (buildConfig, prefetchedContent): Promise<void> => {
   const localizationLookupFieldName = get(buildConfig, 'locales.localizationLookupFieldName');
 
   const { settingsContentType, i18nFile, untranslatedPagesDirectory, localesOutputDirectory } = buildConfig;
 
-  const [localizationLookupMapping, locales] = await Promise.all([
-    getLocalizationLookup({ localizationLookupFieldName, contentTypeId: settingsContentType }),
-    getLocales()
+  const [localizationLookupMapping, { locales, defaultLocale }] = await Promise.all([
+    loadLocalizationLookupMapping(prefetchedContent, localizationLookupFieldName, settingsContentType),
+    loadLocales(prefetchedContent)
   ]);
 
-  const localeCodes = map(locales, 'code');
-  const defaultLocale = find(locales, (locale) => {
-    return locale.default;
-  }).code;
-
   await Promise.all([
-    writeI18nJson(localeCodes, defaultLocale, untranslatedPagesDirectory, localesOutputDirectory, i18nFile),
+    writeI18nJson(locales, defaultLocale, untranslatedPagesDirectory, localesOutputDirectory, i18nFile),
     writeLocaleFiles(getFinalLookupMapping(buildConfig, localizationLookupMapping), localesOutputDirectory)
   ]);
 };

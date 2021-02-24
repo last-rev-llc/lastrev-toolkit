@@ -1,11 +1,15 @@
-import _ from 'lodash';
+import { map, get } from 'lodash';
 import Handlebars from 'handlebars';
 import Contentful, { getGlobalSettings, getLocales } from '@last-rev/integration-contentful';
+import jsonStringifySafe from 'json-stringify-safe';
+import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
 
 import writeFile from '../helpers/writeFile';
 import { SETTINGS_TEMPLATE } from '../constants';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
-import { BuildTask } from '../types';
+import { BuildTask, PreloadedContentfulContent, ResolvedBuildConfig } from '../types';
+
+import compose from '../helpers/compose';
 
 type LocalizedSettingsData = {
   locale: string;
@@ -18,22 +22,48 @@ const writeSettingsJs = async (settingsFile: string, settingsByLocale: Localized
   await writeFile(settingsFile, out);
 };
 
-const writeSettings: BuildTask = async (buildConfig, { adapterConfig }): Promise<void> => {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const getSettings = buildConfig.useAdapter ? Contentful(adapterConfig).getGlobalSettings : getGlobalSettings;
+const loadSettings = async (
+  buildConfig: ResolvedBuildConfig,
+  adapterConfig: AdapterConfig,
+  prefetchedContent: PreloadedContentfulContent
+) => {
+  const useAdapter = { buildConfig };
 
-  const { outputDirectory, settingsFile } = buildConfig;
+  if (prefetchedContent) {
+    const transform = useAdapter ? Adapter(adapterConfig) : (a) => a;
 
-  await mkdirIfNotExists(outputDirectory);
+    const { locales, defaultLocale, contentById, assetsById } = prefetchedContent;
+    return map(locales, (locale) => {
+      const composed = compose({
+        contentId: process.env.CONTENTFUL_SETTINGS_ID,
+        contentById,
+        include: buildConfig.settingsInclude,
+        assetsById,
+        defaultLocale,
+        locale,
+        rootOmitFields: [],
+        childOmitFields: []
+      });
+
+      const settings = transform(JSON.parse(jsonStringifySafe(composed)));
+      return {
+        locale,
+        isDefault: locale === defaultLocale,
+        settingsJson: JSON.stringify(settings, null, 2)
+      };
+    });
+  }
+
+  const getSettings = useAdapter ? Contentful(adapterConfig).getGlobalSettings : getGlobalSettings;
 
   const locales = await getLocales();
 
   const promises = locales.map((locale) => {
     return (async (): Promise<LocalizedSettingsData> => {
       const settings = await getSettings({
-        include: _.get(buildConfig, 'settingsInclude'),
+        include: get(buildConfig, 'settingsInclude'),
         locale: locale.code,
-        contentTypeId: _.get(buildConfig, 'settingsContentType')
+        contentTypeId: get(buildConfig, 'settingsContentType')
       });
       return {
         locale: locale.code,
@@ -44,6 +74,16 @@ const writeSettings: BuildTask = async (buildConfig, { adapterConfig }): Promise
   });
 
   const localeSettings = await Promise.all(promises);
+
+  return localeSettings;
+};
+
+const writeSettings: BuildTask = async (buildConfig, prefetchedContent, { adapterConfig }): Promise<void> => {
+  const { outputDirectory, settingsFile } = buildConfig;
+
+  await mkdirIfNotExists(outputDirectory);
+
+  const localeSettings = await loadSettings(buildConfig, adapterConfig, prefetchedContent);
 
   await writeSettingsJs(settingsFile, localeSettings);
 };
