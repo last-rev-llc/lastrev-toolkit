@@ -19,6 +19,23 @@ const writeMappingJs = async (
   await writeFile(mappingFile, out);
 };
 
+const writeMappingJson = async (mappingFile: string, mappings: Record<string, string>) => {
+  await writeFile(mappingFile, JSON.stringify(mappings, null, 2));
+};
+
+const writeMappingFile = async (
+  outputDir: string,
+  componentsDir: string,
+  mappingFile: string,
+  mappings: Record<string, string>
+): Promise<void> => {
+  if (mappingFile.endsWith('json')) {
+    writeMappingJson(mappingFile, mappings);
+  } else {
+    writeMappingJs(outputDir, componentsDir, mappingFile, mappings);
+  }
+};
+
 const getAndProcessComponentMappings = async (
   mappings: MappingConfig,
   componentsDir: string,
@@ -36,7 +53,7 @@ const writeMappings: BuildTask = async (buildConfig, prefetchedContent): Promise
 
   const componentMappings = await getAndProcessComponentMappings(mappings, componentsDirectory, prefetchedContent);
 
-  await writeMappingJs(outputDirectory, componentsDirectory, mappingFile, componentMappings);
+  await writeMappingFile(outputDirectory, componentsDirectory, mappingFile, componentMappings);
 };
 
 export default writeMappings;
