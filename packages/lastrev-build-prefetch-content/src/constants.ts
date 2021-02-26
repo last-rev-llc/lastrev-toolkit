@@ -6,14 +6,11 @@ import { LocalizationLookupType } from './types';
 export const PROJECT_ROOT = findProjectRoot();
 
 // internal
-export const MAPPING_TEMPLATE_FILE = resolve(__dirname, '../templates/mapping.js.hbs');
 export const SETTINGS_TEMPLATE_FILE = resolve(__dirname, '../templates/settings.js.hbs');
-export const MAPPING_TEMPLATE = readFileSync(MAPPING_TEMPLATE_FILE, 'utf-8');
 export const SETTINGS_TEMPLATE = readFileSync(SETTINGS_TEMPLATE_FILE, 'utf-8');
 
 // defaults
 export const DEFAULT_OUTPUT_DIRNAME = 'src/buildArtifacts';
-export const DEFAULT_COMPONENTS_DIRNAME = 'src/components';
 export const DEFAULT_PATHS_FILENAME = 'paths.js';
 export const DEFAULT_MAPPING_FILENAME = 'mapping.js';
 export const DEFAULT_CONTENT_JSON_DIRNAME = 'contentJson';

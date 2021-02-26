@@ -7,9 +7,10 @@ import { PROJECT_ROOT } from './constants';
 import getBuildTasks from './buildTasks';
 import { BuildTask, BuildConfig } from './types';
 import resolveConfig from './helpers/resolveConfig';
+import mkdirIfNotExists from './helpers/mkDirIfNotExists';
 import prefetchAllContent from './helpers/prefetchAllContent';
 
-console.log('project root', PROJECT_ROOT);
+console.log('Running lr-prefetch from project root:', PROJECT_ROOT);
 
 const { adapter: adapterConfig, build: buildConfig } = JSON.parse(
   readFileSync(resolve(PROJECT_ROOT, './.lastrevrc'), 'utf-8')
@@ -24,6 +25,7 @@ const build = async (): Promise<void> => {
   if (buildConfig.writeContentJson) {
     preloadedContent = await prefetchAllContent(resolvedConfig);
   }
+  await mkdirIfNotExists(buildConfig.outputDirectory);
   await Promise.all(_.map(buildTasks, (buildTask) => buildTask(resolvedConfig, preloadedContent, { adapterConfig })));
 };
 

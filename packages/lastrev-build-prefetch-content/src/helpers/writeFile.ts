@@ -1,6 +1,3 @@
-import { promisify } from 'util';
-import { writeFile as w } from 'fs';
+import { promises as fsPromises } from 'fs';
 
-const writeFile = promisify(w);
-
-export default writeFile;
+export default fsPromises.writeFile;

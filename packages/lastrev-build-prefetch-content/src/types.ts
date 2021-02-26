@@ -65,7 +65,6 @@ export type FileLocationsBuildConfig = {
   adapterConfigFile: string;
   contentJsonDirectory: string;
   i18nFile: string;
-  componentsDirectory: string;
   mappingFile: string;
   pathsFile: string;
   settingsFile: string;

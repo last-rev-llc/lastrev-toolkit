@@ -16,7 +16,6 @@ import {
   PROJECT_ROOT,
   DEFAULT_OUTPUT_DIRNAME,
   DEFAULT_ADAPTER_CONFIG_FILENAME,
-  DEFAULT_COMPONENTS_DIRNAME,
   DEFAULT_CONTENT_JSON_DIRNAME,
   DEFAULT_I18N_FILENAME,
   DEFAULT_MAPPING_FILENAME,
@@ -32,7 +31,6 @@ import {
   DEFAULT_NESTED_PATHS_MAX_DEPTH,
   DEFAULT_SLUG_FIELD
 } from '../constants';
-import writeMappings from '../buildTasks/writeMappings';
 
 const resolveSwitches = (buildConfig: BuildConfig): SwitchesBuildConfig => {
   return chain([
@@ -66,7 +64,6 @@ const resolveFileLocations = (buildConfig: BuildConfig): FileLocationsBuildConfi
   const settingsFile = resolveToOutputDir('settingsFile', DEFAULT_SETTINGS_FILENAME);
 
   const i18nFile = resolveToProjectRoot('i18nFile', DEFAULT_I18N_FILENAME);
-  const componentsDirectory = resolveToProjectRoot('componentsDirectory', DEFAULT_COMPONENTS_DIRNAME);
   const translatedPagesDirectory = resolveToProjectRoot('translatedPagesDirectory', DEFAULT_TRANSLATED_PAGES_DIRNAME);
   const untranslatedPagesDirectory = resolveToProjectRootWithLegacyField(
     'untranslatedPagesDirectory',
@@ -87,7 +84,6 @@ const resolveFileLocations = (buildConfig: BuildConfig): FileLocationsBuildConfi
     pathsFile,
     settingsFile,
     i18nFile,
-    componentsDirectory,
     translatedPagesDirectory,
     untranslatedPagesDirectory,
     localesOutputDirectory

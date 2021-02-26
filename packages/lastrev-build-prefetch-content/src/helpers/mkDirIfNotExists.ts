@@ -1,12 +1,10 @@
-import { promisify } from 'util';
-import { exists as e, mkdir as m } from 'fs';
+import { promises as fsPromises, existsSync } from 'fs';
 
-const exists = promisify(e);
-const mkdir = promisify(m);
+const { mkdir } = fsPromises;
 
 const mkdirIfNotExists = async (dir: string): Promise<void> => {
   try {
-    if (!(await exists(dir))) {
+    if (!existsSync(dir)) {
       await mkdir(dir, { recursive: true });
     }
   } catch (err) {
