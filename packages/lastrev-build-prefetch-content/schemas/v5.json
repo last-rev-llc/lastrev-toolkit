@@ -60,9 +60,6 @@
         "adapterConfigFile": {
           "type": "string"
         },
-        "componentsDirectory": {
-          "type": "string"
-        },
         "contentJson": {
           "$ref": "#/definitions/ContentJsonConfig"
         },
