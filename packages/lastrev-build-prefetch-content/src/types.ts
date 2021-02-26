@@ -1,4 +1,5 @@
-import { AdapterConfig } from '@last-rev/adapter-contentful';
+import { AdapterConfig, ContentUrlLookup } from '@last-rev/adapter-contentful';
+import { Asset, Entry, ContentType } from 'contentful';
 
 export type MappingConfig = {
   overrides?: Record<string, string>;
@@ -36,18 +37,27 @@ export type ComplexPathConfig = {
   children?: PathChildrenConfig;
 };
 
-export type ContentPrefetchConfig = Record<
-  string,
-  {
+export type ContentJsonConfig = {
+  [pageContentType: string]: {
     include: number;
     slugField?: string;
     rootOmitFields?: string[];
     childOmitFields?: string[];
-  }
->;
+  };
+};
 
 export type WebsiteSectionPathsConfig = {
   pageContentTypes: string[];
+};
+
+export type NestedParentPathsConfig = {
+  [contentTypeId: string]: {
+    fieldName: string;
+    paramName?: string;
+    maxDepth?: number;
+    parentField?: string;
+    root?: string;
+  };
 };
 
 export type FileLocationsBuildConfig = {
@@ -66,7 +76,6 @@ export type FileLocationsBuildConfig = {
 
 export type SwitchesBuildConfig = {
   useAdapter: boolean;
-  useWebsiteSectionPaths: boolean;
   writeSettings: boolean;
   writePaths: boolean;
   writeMappings: boolean;
@@ -75,24 +84,77 @@ export type SwitchesBuildConfig = {
   writeContentJson: boolean;
 };
 
-type OptionsBuildConfig = {
-  mappings?: MappingConfig;
-  paths?: Record<string, SimplePathConfig | ComplexPathConfig>;
-  websiteSectionPathsConfig?: WebsiteSectionPathsConfig;
-  useWebsiteSectionPaths?: boolean;
-  contentPrefetch?: ContentPrefetchConfig;
-  settingsInclude?: number;
-  locales?: LocalesConfig;
-  settingsContentType?: string;
+export type NestedChildPathsConfig = Record<string, SimplePathConfig | ComplexPathConfig>;
+
+export type PathsConfig = {
+  type?:
+    | 'Nested Parent'
+    /**
+     * @deprecated
+     */
+    | 'Nested Children'
+    /**
+     * @deprecated
+     */
+    | 'Website Sections';
+  config: NestedChildPathsConfig | WebsiteSectionPathsConfig | NestedParentPathsConfig;
 };
 
-export type BuildConfig = OptionsBuildConfig & Partial<SwitchesBuildConfig> & Partial<FileLocationsBuildConfig>;
+export type SettingsConfig = {
+  include?: number;
+};
+
+type OptionsBuildConfig = {
+  excludeTypes: string[];
+  mappings: MappingConfig;
+  paths: PathsConfig;
+  contentJson: ContentJsonConfig;
+  settings: SettingsConfig;
+  locales: LocalesConfig;
+};
+
+export type BuildConfig = Partial<OptionsBuildConfig> &
+  Partial<SwitchesBuildConfig> &
+  Partial<FileLocationsBuildConfig>;
 
 export type ResolvedBuildConfig = OptionsBuildConfig & SwitchesBuildConfig & FileLocationsBuildConfig;
 
-export type BuildTask = (buildConfig: ResolvedBuildConfig, other: Record<string, unknown>) => Promise<void>;
+export type BuildTask = (
+  buildConfig: ResolvedBuildConfig,
+  preloadedContent: PreloadedContentfulContent,
+  other?: {
+    adapterConfig: AdapterConfig;
+  }
+) => Promise<void>;
 
 export type LastRevRc = {
   build?: BuildConfig;
   adapter?: AdapterConfig;
+};
+
+export type PathsOutput = {
+  [contentTypeId: string]: {
+    params: {
+      [paramName: string]: string[];
+    };
+  }[];
+};
+
+export type PreloadedContentfulContent = {
+  assetsById: {
+    [id: string]: Asset;
+  };
+  defaultLocale: string;
+  locales: string[];
+  contentTypes: ContentType[];
+  contentById: {
+    [id: string]: Entry<any>;
+  };
+  slugToIdByContentType: {
+    [contentTypId: string]: {
+      [slug: string]: string;
+    };
+  };
+  contentUrlLookup: ContentUrlLookup;
+  pathsByContentType: PathsOutput;
 };

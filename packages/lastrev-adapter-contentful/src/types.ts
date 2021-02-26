@@ -46,6 +46,13 @@ export type ParsedAsset = {
   contentType: string;
 };
 
+export type ContentUrlLookup = {
+  [contentId: string]: {
+    href: string;
+    as: string;
+  };
+};
+
 export type AdapterConfig = {
   urlMap?: Record<
     string,
@@ -62,6 +69,7 @@ export type AdapterConfig = {
   manualEntryTypeText?: string;
   contentRefTypeText?: string;
   assetRefTypeText?: string;
+  contentUrlLookup?: ContentUrlLookup;
 };
 
 export type CircularReference = {

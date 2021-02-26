@@ -1,12 +1,16 @@
 import { resolve } from 'path';
-import { get, chain, identity } from 'lodash';
+import { get, chain, identity, mapValues } from 'lodash';
 
 import {
   BuildConfig,
   ResolvedBuildConfig,
   SwitchesBuildConfig,
   FileLocationsBuildConfig,
-  LocalesConfig
+  LocalesConfig,
+  PathsConfig,
+  NestedParentPathsConfig,
+  SettingsConfig,
+  ContentJsonConfig
 } from '../types';
 import {
   PROJECT_ROOT,
@@ -24,13 +28,15 @@ import {
   DEFAULT_LOCALES_LOOKUP_TYPE,
   DEFAULT_LOCALIZATION_LOOKUP_FIELD_NAME,
   DEFAULT_LOCALIZATION_ITEM_CONTENT_TYPE,
-  DEFAULT_LOCALIZATION_SET_CONTENT_TYPE
+  DEFAULT_LOCALIZATION_SET_CONTENT_TYPE,
+  DEFAULT_NESTED_PATHS_MAX_DEPTH,
+  DEFAULT_SLUG_FIELD
 } from '../constants';
+import writeMappings from '../buildTasks/writeMappings';
 
 const resolveSwitches = (buildConfig: BuildConfig): SwitchesBuildConfig => {
   return chain([
     'useAdapter',
-    'useWebsiteSectionPaths',
     'writeSettings',
     'writePaths',
     'writeMappings',
@@ -110,15 +116,78 @@ const resolveLocalesConfigValues = (buildConfig: BuildConfig): LocalesConfig => 
   };
 };
 
+const resolvePathConfigValues = (buildConfig: BuildConfig) => {
+  const type: PathsConfig['type'] = get(buildConfig, 'paths.type', 'Nested Children');
+
+  let config: PathsConfig['config'] = get(buildConfig, 'paths.config', {});
+
+  switch (type) {
+    case 'Nested Parent':
+      if (config) {
+        config = mapValues(config as NestedParentPathsConfig, (config) => {
+          const maxDepth = config.maxDepth || DEFAULT_NESTED_PATHS_MAX_DEPTH;
+          return {
+            ...config,
+            maxDepth,
+            paramName: config.paramName || 'slug',
+            root: config.root || '/'
+          };
+        });
+      }
+      break;
+    case 'Website Sections':
+      if (!config.pageContentTypes) {
+        config.pageContentTypes = [];
+      }
+      break;
+    default:
+      break;
+  }
+
+  return {
+    type,
+    config
+  };
+};
+
+const resolveMappingsConfigValues = (buildConfig: BuildConfig) => {
+  const overrides = get(buildConfig, 'mappings.overrides', {});
+  const excludes = get(buildConfig, 'mappings.excludes', {});
+  return {
+    overrides,
+    excludes
+  };
+};
+
+const resolveContentJsonConfigValues = (buildConfig: BuildConfig): ContentJsonConfig => {
+  const { contentJson } = buildConfig;
+  if (!contentJson) return {};
+  return mapValues(contentJson, ({ include, slugField, rootOmitFields, childOmitFields }) => ({
+    include,
+    slugField: slugField || DEFAULT_SLUG_FIELD,
+    rootOmitFields: rootOmitFields || [],
+    childOmitFields: childOmitFields || []
+  }));
+};
+
 export default (buildConfig: BuildConfig): ResolvedBuildConfig => {
   const switches = resolveSwitches(buildConfig);
   const fileLocations = resolveFileLocations(buildConfig);
   const locales = resolveLocalesConfigValues(buildConfig);
+  const paths = resolvePathConfigValues(buildConfig);
+  const excludeTypes = get(buildConfig, 'excludeTypes', []) as string[];
+  const mappings = resolveMappingsConfigValues(buildConfig);
+  const settings = get(buildConfig, 'settings', { include: 5 }) as SettingsConfig;
+  const contentJson = resolveContentJsonConfigValues(buildConfig);
 
   return {
-    ...buildConfig,
     ...switches,
     ...fileLocations,
+    excludeTypes,
+    mappings,
+    paths,
+    contentJson,
+    settings,
     locales
   };
 };

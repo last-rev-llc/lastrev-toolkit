@@ -1,7 +1,7 @@
 import { has, omitBy } from 'lodash';
 import { Entry } from 'contentful';
 import parseEntry from '../entryParser';
-import { UrlMap, LinkFields, ParsedEntry } from '../types';
+import { UrlMap, LinkFields, ParsedEntry, ContentUrlLookup } from '../types';
 import { warn } from '../helpers';
 
 export declare type LinkParserConfig = {
@@ -17,6 +17,7 @@ export declare type LinkParserConfig = {
   contentTypeId: string;
   urlMap?: UrlMap;
   parsedEntries: Record<string, ParsedEntry>;
+  contentUrlLookup?: ContentUrlLookup;
 };
 
 export default ({
@@ -30,7 +31,8 @@ export default ({
   id,
   contentTypeId,
   urlMap,
-  parsedEntries
+  parsedEntries,
+  contentUrlLookup
 }: LinkParserConfig): Record<string, unknown> => {
   const { action, destinationType, manualUrl, contentReference, assetReference } = fields;
 
@@ -60,7 +62,7 @@ export default ({
       }
       const parsed = has(parsedEntries, contentReference.sys.id)
         ? parsedEntries[contentReference.sys.id]
-        : parseEntry(contentReference as Entry<{ slug: string }>, urlMap);
+        : parseEntry(contentReference as Entry<{ slug: string }>, urlMap, contentUrlLookup);
       const { _href, _as, _contentTypeId, _id } = parsed;
 
       if (!_href || !_as) {

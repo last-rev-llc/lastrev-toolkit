@@ -47,6 +47,9 @@ The project is configured via the JSON syntaxed `.lastrevrc` file in the root of
 | contentPrefetch.{contentType}.include         | number                | The depth to which nested referenced entries are expanded.                                                                                                                              |
 | contentPrefetch.{contentType}.rootOmitFields  | string[]              | An array of field names to omit from the page object at the root level.                                                                                                                 |
 | contentPrefetch.{contentType}.childOmitFields | string[]              | An array of field names to omit from nested entries at all child levels.                                                                                                                |
+| writeNestedPaths                              | boolean               | Whether to use the nestedPaths config to build complex path params (see below)                                                                                                          |
+| nestedPaths                                   | object                | An object, keyed by contentTypeId declaring the paths to write to the paths file                                                                                                        |
+| nestedPaths{contentTypeId}                    | object                | Each nested path is configured with a key value pair where the key is the name of the param and the value is the field path within the content item                                     |
 
 example
 
@@ -71,6 +74,18 @@ example
           "param": "stepslug",
           "fieldName": "steps"
         }
+      }
+    },
+    "nestedPaths": {
+      "pageAccelerator": {
+        "slug": "slug"
+      },
+      "pagePost": {
+        "category": "categoryPostColType.slug",
+        "post": "slug"
+      },
+      "categoryPostColumnType": {
+        "cateogry": "slug"
       }
     },
     "mappings": {
