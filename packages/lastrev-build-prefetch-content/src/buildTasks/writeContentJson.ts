@@ -2,7 +2,7 @@
 import jsonStringifySafe from 'json-stringify-safe';
 import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
 import { resolve } from 'path';
-import { each, map, get, keyBy, find } from 'lodash';
+import { map, get } from 'lodash';
 import writeJsonFile from '../helpers/writeJsonFile';
 import compose from '../helpers/compose';
 import { BuildTask } from '../types';
@@ -27,11 +27,11 @@ const writeContentJson: BuildTask = async (
     slugToIdByContentType
   } = preloadedContent;
 
-  const { useAdapter, contentPrefetch: contentPrefetchConfig, contentJsonDirectory } = buildConfig;
+  const { useAdapter, contentJson: contentPrefetchConfig, contentJsonDirectory } = buildConfig;
 
-  const beginTime = Date.now();
+  const { contentUrlLookup } = preloadedContent;
 
-  const transform = useAdapter ? Adapter(adapterConfig) : (a) => a;
+  const transform = useAdapter ? Adapter({ ...adapterConfig, contentUrlLookup }) : (a) => a;
 
   const composeTracker = trackProcess('Composing, transforming, and writing content JSON files');
 
@@ -82,8 +82,6 @@ const writeContentJson: BuildTask = async (
   );
 
   composeTracker.stop();
-
-  console.log(`Total Time: ${(Date.now() - beginTime) / 1000}s`);
 };
 
 export default writeContentJson;

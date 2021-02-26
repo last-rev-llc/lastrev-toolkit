@@ -122,8 +122,10 @@ const getComplexStaticSlugs = async (pathConfig: ComplexPathConfig, key: string)
 
 const getStaticSlugFunctions = (buildConfig: ResolvedBuildConfig): Promise<PathsRepresentationTuple>[] => {
   if (!buildConfig || !buildConfig.paths) return [];
-  return map(buildConfig.paths, (value, key) => {
-    const conf: ComplexPathConfig = isSimplePathConfig(value) ? convertSimpleToComplexPathConfig(key, value) : value;
+  return map(buildConfig.paths.config, (value, key) => {
+    const conf = isSimplePathConfig(value)
+      ? convertSimpleToComplexPathConfig(key, value)
+      : (value as ComplexPathConfig);
     return getComplexStaticSlugs(conf, key);
   });
 };

@@ -1,6 +1,5 @@
-import { map, get } from 'lodash';
+import { map } from 'lodash';
 import Handlebars from 'handlebars';
-import Contentful, { getGlobalSettings, getLocales } from '@last-rev/integration-contentful';
 import jsonStringifySafe from 'json-stringify-safe';
 import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
 
@@ -29,53 +28,29 @@ const loadSettings = async (
 ) => {
   const useAdapter = { buildConfig };
 
-  if (prefetchedContent) {
-    const transform = useAdapter ? Adapter(adapterConfig) : (a) => a;
+  const { locales, contentUrlLookup, defaultLocale, contentById, assetsById } = prefetchedContent;
 
-    const { locales, defaultLocale, contentById, assetsById } = prefetchedContent;
-    return map(locales, (locale) => {
-      const composed = compose({
-        contentId: process.env.CONTENTFUL_SETTINGS_ID,
-        contentById,
-        include: buildConfig.settingsInclude,
-        assetsById,
-        defaultLocale,
-        locale,
-        rootOmitFields: [],
-        childOmitFields: []
-      });
+  const transform = useAdapter ? Adapter({ ...adapterConfig, contentUrlLookup }) : (a) => a;
 
-      const settings = transform(JSON.parse(jsonStringifySafe(composed)));
-      return {
-        locale,
-        isDefault: locale === defaultLocale,
-        settingsJson: JSON.stringify(settings, null, 2)
-      };
+  return map(locales, (locale) => {
+    const composed = compose({
+      contentId: process.env.CONTENTFUL_SETTINGS_ID,
+      contentById,
+      include: buildConfig.settings.include,
+      assetsById,
+      defaultLocale,
+      locale,
+      rootOmitFields: [],
+      childOmitFields: []
     });
-  }
 
-  const getSettings = useAdapter ? Contentful(adapterConfig).getGlobalSettings : getGlobalSettings;
-
-  const locales = await getLocales();
-
-  const promises = locales.map((locale) => {
-    return (async (): Promise<LocalizedSettingsData> => {
-      const settings = await getSettings({
-        include: get(buildConfig, 'settingsInclude'),
-        locale: locale.code,
-        contentTypeId: get(buildConfig, 'settingsContentType')
-      });
-      return {
-        locale: locale.code,
-        isDefault: locale.default,
-        settingsJson: JSON.stringify(settings, null, 2)
-      };
-    })();
+    const settings = transform(JSON.parse(jsonStringifySafe(composed)));
+    return {
+      locale,
+      isDefault: locale === defaultLocale,
+      settingsJson: JSON.stringify(settings, null, 2)
+    };
   });
-
-  const localeSettings = await Promise.all(promises);
-
-  return localeSettings;
 };
 
 const writeSettings: BuildTask = async (buildConfig, prefetchedContent, { adapterConfig }): Promise<void> => {

@@ -10,12 +10,13 @@ const writeAdapterConfigJs = async (adapterConfigFile: string, adapterConfig: Ad
 
 const writeAdapterConfig: BuildTask = async (
   buildConfig,
-  _prefetchedContent,
+  prefetchedContent,
   { adapterConfig }: { adapterConfig: AdapterConfig }
 ): Promise<void> => {
   const { outputDirectory, adapterConfigFile } = buildConfig;
+  const { contentUrlLookup } = prefetchedContent;
   await mkdirIfNotExists(outputDirectory);
-  await writeAdapterConfigJs(adapterConfigFile, adapterConfig);
+  await writeAdapterConfigJs(adapterConfigFile, { ...adapterConfig, contentUrlLookup });
 };
 
 export default writeAdapterConfig;

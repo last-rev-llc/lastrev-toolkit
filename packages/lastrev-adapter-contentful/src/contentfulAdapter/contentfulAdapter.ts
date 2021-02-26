@@ -15,7 +15,8 @@ const Adapter = ({
   downloadActionText = 'Download',
   manualEntryTypeText = 'Manual text entry',
   contentRefTypeText = 'Content reference',
-  assetRefTypeText = 'Asset reference'
+  assetRefTypeText = 'Asset reference',
+  contentUrlLookup
 }: AdapterConfig): Transform => (data) => {
   const parsedEntries: Record<string, ParsedEntry> = {};
 
@@ -39,11 +40,12 @@ const Adapter = ({
         id: get(obj, 'sys.id') as string,
         contentTypeId: linkContentType,
         urlMap,
-        parsedEntries
+        parsedEntries,
+        contentUrlLookup
       });
     }
     if (isEntry(obj)) {
-      const parsed = parseEntry(obj as Entry<Record<string, unknown>>, urlMap);
+      const parsed = parseEntry(obj as Entry<Record<string, unknown>>, urlMap, contentUrlLookup);
       parsedEntries[parsed._id] = parsed;
       const parsedFields: Record<string, unknown> = mapValues((obj as Entry<Record<string, unknown>>).fields, traverse);
       return {

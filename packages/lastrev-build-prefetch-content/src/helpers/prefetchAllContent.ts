@@ -1,12 +1,15 @@
-import { PreloadedContentfulContent, ResolvedBuildConfig } from '../types';
+import { NestedParentPathsConfig, PreloadedContentfulContent, ResolvedBuildConfig } from '../types';
 import {
   syncAllEntriesForContentType,
   syncAllAssets,
   getContentTypes,
-  getLocales
+  getLocales,
+  Entry
 } from '@last-rev/integration-contentful';
 
-import { each, map, get, keyBy, find } from 'lodash';
+import { join } from 'path';
+
+import { each, map, get, keyBy, find, mapValues, isString, pickBy, identity, filter, includes } from 'lodash';
 import trackProcess from './trackProcess';
 import delay from './delay';
 
@@ -54,8 +57,51 @@ const fetchContentDataByContentType = async ({ contentTypeId, isPage, slugField,
   };
 };
 
+const getPathSegments = (
+  contentById: { [id: string]: Entry<any> },
+  contentId: string,
+  nestedPathsConfig: NestedParentPathsConfig,
+  depth: number,
+  defaultLocale: string,
+  pathSegments: string[] = []
+): string[] => {
+  // reached max depth, return current params
+  if (depth === 0) return pathSegments;
+
+  const content = contentById[contentId];
+
+  // something went wrong, invalid path (this will happen if content is deleted but the reference not removed)
+  if (!content) throw Error(`Invalid reference to nonexistant item: ${contentId}`);
+
+  const contentTypeId = get(content, 'sys.contentType.sys.id');
+
+  const currentConfig = nestedPathsConfig[contentTypeId];
+
+  // no config for this type, invalid path
+  if (!currentConfig) throw Error(`No nestedPaths config for content type: ${contentTypeId}`);
+
+  const { fieldName, parentField } = currentConfig;
+
+  const fieldValue = get(content, `fields.${fieldName}['${defaultLocale}']`);
+
+  if (!isString(fieldValue)) {
+    throw Error(`Slug field is not a string! Content ID: ${contentId}, fieldName: ${fieldName}`);
+  }
+
+  pathSegments.unshift(fieldValue);
+
+  const parentContentId = get(content, `fields.${parentField}['${defaultLocale}'].sys.id`);
+
+  if (parentContentId) {
+    return getPathSegments(contentById, parentContentId, nestedPathsConfig, depth - 1, defaultLocale, pathSegments);
+  }
+
+  // reached the end, return segments
+  return pathSegments;
+};
+
 export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedContentfulContent> => {
-  const { contentPrefetch: contentPrefetchConfig } = buildConfig;
+  const { contentJson: contentPrefetchConfig, excludeTypes } = buildConfig;
 
   const [contentTypes, { defaultLocale, locales }, assetsById] = await Promise.all([
     fetchContentTypes(),
@@ -67,8 +113,10 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
   const slugToIdByContentType = {};
   const contentFetchTracker = trackProcess('Fetching all entries and assets from Contentful');
 
+  const filteredTypes = filter(contentTypes, (contentType) => !includes(excludeTypes, contentType.sys.id));
+
   await Promise.all(
-    map(contentTypes, (contentType, index) =>
+    map(filteredTypes, (contentType, index) =>
       (async () => {
         const contentTypeId = contentType.sys.id;
         await delay(index * 100);
@@ -98,12 +146,59 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
 
   contentFetchTracker.stop();
 
+  const {
+    paths: { type: pathsType, config: pathsConfig }
+  } = buildConfig;
+
+  let contentUrlLookup;
+  let pathsByContentType;
+
+  switch (pathsType) {
+    case 'Nested Parent': {
+      const nestedPaths = pathsConfig as NestedParentPathsConfig;
+      pathsByContentType = mapValues(nestedPaths, () => []);
+      contentUrlLookup = mapValues(globalContentById, (entry, id) => {
+        const contentTypeId = get(entry, 'sys.contentType.sys.id');
+        const currentConfig = nestedPaths[contentTypeId];
+        if (!currentConfig) return null;
+
+        let slugs: string[];
+
+        try {
+          slugs = getPathSegments(globalContentById, id, nestedPaths, currentConfig.maxDepth, defaultLocale);
+        } catch (e) {
+          console.log(`Unable to load path for ${id}: ${e.message}`);
+          return null;
+        }
+
+        pathsByContentType[contentTypeId].push({
+          params: {
+            [currentConfig.paramName]: slugs
+          }
+        });
+        return {
+          href: join(currentConfig.root, slugs.join('/')),
+          as: join(currentConfig.root, `[...${currentConfig.paramName}]`)
+        };
+      });
+      break;
+    }
+    case 'Website Sections': {
+      throw Error('WSS not currently supported');
+    }
+    default: {
+      // skip for now, do it the old way
+    }
+  }
+
   return {
     contentById: globalContentById,
     assetsById,
     locales,
     defaultLocale,
     contentTypes,
-    slugToIdByContentType
+    slugToIdByContentType,
+    pathsByContentType,
+    contentUrlLookup: pickBy(contentUrlLookup, identity)
   };
 };
