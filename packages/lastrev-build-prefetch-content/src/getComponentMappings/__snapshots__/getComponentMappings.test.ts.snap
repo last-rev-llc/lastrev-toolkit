@@ -3,6 +3,7 @@
 exports[`getComponentMappings.js returns correct mappings with both overrides and excludes 1`] = `
 Object {
   "moduleCardGeneral": "ModuleCardGeneral",
+  "moduleHero": "ModuleHero",
   "settingsGlobal": "Layout",
 }
 `;
@@ -10,39 +11,42 @@ Object {
 exports[`getComponentMappings.js returns correct mappings with exclude and no overrides 1`] = `
 Object {
   "moduleCardGeneral": "ModuleCardGeneral",
+  "moduleHero": "ModuleHero",
+  "settingsGlobal": "SettingsGlobal",
 }
 `;
 
 exports[`getComponentMappings.js returns correct mappings with exclude containing non-existent component 1`] = `
 Object {
   "moduleCardGeneral": "ModuleCardGeneral",
+  "moduleHero": "ModuleHero",
   "pageGeneral": "PageGeneral",
-}
-`;
-
-exports[`getComponentMappings.js returns correct mappings with no overrides or exclude 1`] = `
-Object {
-  "moduleCardGeneral": "ModuleCardGeneral",
-  "pageGeneral": "PageGeneral",
+  "settingsGlobal": "SettingsGlobal",
 }
 `;
 
 exports[`getComponentMappings.js returns correct mappings with override containing non-existent component 1`] = `
 Object {
   "moduleCardGeneral": "ModuleCardGeneral",
+  "moduleHero": "ModuleHero",
+  "pageGeneral": "Dummy",
+  "settingsGlobal": "SettingsGlobal",
 }
 `;
 
 exports[`getComponentMappings.js returns correct mappings with override containing non-existent content type 1`] = `
 Object {
   "moduleCardGeneral": "ModuleCardGeneral",
+  "moduleHero": "ModuleHero",
   "pageGeneral": "PageGeneral",
+  "settingsGlobal": "SettingsGlobal",
 }
 `;
 
 exports[`getComponentMappings.js returns correct mappings with overrides and no exclude 1`] = `
 Object {
   "moduleCardGeneral": "ModuleCardGeneral",
+  "moduleHero": "ModuleHero",
   "pageGeneral": "PageGeneral",
   "settingsGlobal": "Layout",
 }
@@ -51,6 +55,7 @@ Object {
 exports[`getComponentMappings.js returns correct mappings with overrides but exclude contains overriden component 1`] = `
 Object {
   "moduleCardGeneral": "ModuleCardGeneral",
+  "moduleHero": "ModuleHero",
   "pageGeneral": "PageGeneral",
 }
 `;

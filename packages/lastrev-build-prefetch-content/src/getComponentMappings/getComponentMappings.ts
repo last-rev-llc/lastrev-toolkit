@@ -11,7 +11,7 @@ const getComponentMappings = (contentTypes: ContentType[], config: MappingConfig
   const out = {};
 
   const overrides = get(config, 'overrides', {});
-  const excludes = get(config, 'excludes', []);
+  const exclude = get(config, 'exclude', []);
 
   each(contentTypes, (item) => {
     const {
@@ -20,7 +20,7 @@ const getComponentMappings = (contentTypes: ContentType[], config: MappingConfig
 
     const componentName = get(overrides, contentTypeId, pascalCase(contentTypeId));
 
-    if (!includes(excludes, componentName)) {
+    if (!includes(exclude, componentName)) {
       out[contentTypeId] = componentName;
     }
   });
