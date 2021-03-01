@@ -3,7 +3,7 @@ import { get, map, each } from 'lodash';
 import writeFile from '../../helpers/writeFile';
 import mkdirIfNotExists from '../../helpers/mkDirIfNotExists';
 import { BuildTask } from '../../types';
-import { getDetailPagePaths, getLandingPagePaths } from './helpers';
+import { getDetailPagePaths, getLandingPagePaths } from './helpers.ts_';
 
 const hashResults = (results) => {
   const out = {};

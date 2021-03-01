@@ -19,7 +19,7 @@
     "preversion": "yarn run lint",
     "version": "yarn run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "gen:schema": "ts-json-schema-generator --path ./src/types.ts --type LastRevRc -j basic -o lastrevrc-schema.json -e export"
+    "gen:schema": "ts-json-schema-generator --path ./src/types.ts --type LastRevRc -j basic -o lastrevrc-schema.json -e export -i last-rev-build-prefetch-content"
   },
   "author": "Jaime Morales",
   "license": "ISC",

@@ -1,4 +1,5 @@
 {
+  "$id": "last-rev-build-prefetch-content",
   "$ref": "#/definitions/LastRevRc",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
@@ -43,10 +44,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "url",
-              "key"
-            ],
+            "required": ["url", "key"],
             "type": "object"
           },
           "type": "object"
@@ -145,10 +143,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "param",
-        "contentType"
-      ],
+      "required": ["param", "contentType"],
       "type": "object"
     },
     "ContentJsonConfig": {
@@ -174,9 +169,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "include"
-        ],
+        "required": ["include"],
         "type": "object"
       },
       "type": "object"
@@ -192,10 +185,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "href",
-          "as"
-        ],
+        "required": ["href", "as"],
         "type": "object"
       },
       "type": "object"
@@ -237,10 +227,7 @@
       "type": "object"
     },
     "LocalizationLookupType": {
-      "enum": [
-        "JSON",
-        "Content"
-      ],
+      "enum": ["JSON", "Content"],
       "type": "string"
     },
     "MappingConfig": {
@@ -294,9 +281,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "fieldName"
-        ],
+        "required": ["fieldName"],
         "type": "object"
       },
       "type": "object"
@@ -314,10 +299,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "param",
-        "fieldName"
-      ],
+      "required": ["param", "fieldName"],
       "type": "object"
     },
     "PathsConfig": {
@@ -337,17 +319,11 @@
           ]
         },
         "type": {
-          "enum": [
-            "Nested Parent",
-            "Nested Children",
-            "Website Sections"
-          ],
+          "enum": ["Nested Parent", "Nested Children", "Website Sections"],
           "type": "string"
         }
       },
-      "required": [
-        "config"
-      ],
+      "required": ["config"],
       "type": "object"
     },
     "SettingsConfig": {
@@ -372,9 +348,7 @@
           "type": "array"
         }
       },
-      "required": [
-        "pageContentTypes"
-      ],
+      "required": ["pageContentTypes"],
       "type": "object"
     }
   }

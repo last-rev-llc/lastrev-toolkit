@@ -1,5 +1,5 @@
-import { createDetailPage, DETAIL_PAGE_TYPE, LANDING_PAGE_TYPE } from './writeWebsiteSectionPaths.mock';
-import { getDetailPagePaths, getLandingPagePaths } from './helpers';
+import { createDetailPage, DETAIL_PAGE_TYPE, LANDING_PAGE_TYPE } from './writeWebsiteSectionPaths.mock.ts_';
+import { getDetailPagePaths, getLandingPagePaths } from './helpers.ts_';
 import { each, filter, find, get } from 'lodash';
 
 let detailPage;
