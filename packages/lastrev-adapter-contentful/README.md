@@ -31,7 +31,9 @@ Confifg allows one to override specific field names for parsing URLs:
   downloadActionText = 'Download',
   manualEntryTypeText = 'Manual text entry',
   contentRefTypeText = 'Content reference',
-  assetRefTypeText = 'Asset reference'
+  assetRefTypeText = 'Asset reference',
+  contentUrlLookup = {}
+  skipContentTypes = []
 }
 
 // example:
@@ -51,3 +53,11 @@ Confifg allows one to override specific field names for parsing URLs:
   "linkContentType": "ElementCta"
 }
 ```
+
+## URL lookup
+
+The preferred method to generate the correct `_href` and `_as` properties for the content items is to pass in a contentUrlLookup property which maps a contentID to an object like this `{ href: '...whatever', as: '...whatever' }`. If this cannot be done, the old urlMap method is still supported.
+
+## skipping types
+
+If for whatever reason we do not want to traverse items of a specific content type, just pass those content type IDs into the `skipContentTypes` array.

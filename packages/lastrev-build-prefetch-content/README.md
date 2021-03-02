@@ -20,6 +20,10 @@ or, in an npm script:
 }
 ```
 
+## Approach in V5
+
+In V5 of the prefetch script, an assumption is made that we will be prefetching all content. This allows us to optimize the process, making the least amount of calls possible to Contentful, and also allows us to pre-calculate complex URLs for content items based on the `paths` config. If there are old or unused content types, use the `excludeTypes` property to exclude those from the prefetch.
+
 ## Configuration
 
 The project is configured via the JSON syntaxed `.lastrevrc` file in the root of your project.
@@ -44,29 +48,30 @@ Or make sure you have the following settings in your .vscode file at the root of
 }
 ```
 
-| Property                                  | Type                                | Description                                                                                                                                                                             | Required                                                                                                                                                                                 | Default Value          |
-| ----------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------- |
-| useAdapter                                | boolean                             | Whether to use the adapter to transform the data fetched from contentful. If this is true, another property at the root of the file should be configured for the adapter config to use. | No                                                                                                                                                                                       | `false`                |
-| writeMappings                             | boolean                             | Whether to write the component mappings file.                                                                                                                                           | No                                                                                                                                                                                       | `false`                |
-| writeSettings                             | boolean                             | Whether to write the settings file.                                                                                                                                                     | No                                                                                                                                                                                       | `false`                |
-| writeAdapterConfig                        | boolean                             | Whether to write the adapter config file.                                                                                                                                               | No                                                                                                                                                                                       | `false`                |
-| writePaths                                | boolean                             | Whether to write the paths file.                                                                                                                                                        | No                                                                                                                                                                                       | `false`                |
-| writeContentJson                          | boolen                              | Whether or not to write JSON files for the content to be used to render the pages.                                                                                                      | No                                                                                                                                                                                       | `false`                |
-| writeLocaleData                           | boolean                             | Whether to write the i18n.json and locale lookup files.                                                                                                                                 | No                                                                                                                                                                                       | `false`                |
-| settings                                  | object                              | the levels of depth to grab in the GlobalSettings object.                                                                                                                               | No                                                                                                                                                                                       |                        |
-| mappings                                  | object                              | Configure the component mapper. See below.                                                                                                                                              | No                                                                                                                                                                                       |                        |
-| mappings.overrides                        | { [contentTypeId: string]: string } | Key value pair of content type id to component name, overriding the default pascalCase lookup of component.                                                                             | No                                                                                                                                                                                       | `{}`                   |
-| mappings.exclude                          | string[]                            | An array of component names to exclude form the mappings. This is useful to avoid circular dependencies, which will break storybook functionality.                                      | No                                                                                                                                                                                       | `[]`                   |
-| locales                                   | object                              | Configure the locales data writer. See below.                                                                                                                                           | No                                                                                                                                                                                       |                        |
-| locales.localizationLookupFieldName       | string                              | The name of the localizationLookup field in the global settings object .                                                                                                                | No                                                                                                                                                                                       | `'localizationLookup'` |
-| contentJson                               | { [contentTypeId: string]: object } | A configuration object keyed by content type.                                                                                                                                           | No                                                                                                                                                                                       | `{}`                   |
-| contentJson.{contentType}.slugField       | string                              | the name of the field used for the slug of this content type.                                                                                                                           | No                                                                                                                                                                                       | `'sys.id'`             |
-| contentJson.{contentType}.include         | number                              | The depth to which nested referenced entries are expanded.                                                                                                                              | No                                                                                                                                                                                       | `1`                    |
-| contentJson.{contentType}.rootOmitFields  | string[]                            | An array of field names to omit from the page object at the root level.                                                                                                                 | No                                                                                                                                                                                       | `[]`                   |
-| contentJson.{contentType}.childOmitFields | string[]                            | An array of field names to omit from nested entries at all child levels.                                                                                                                | No                                                                                                                                                                                       | `[]`                   |
-| paths                                     | object                              | An object, described below, configuring how to write the paths                                                                                                                          | No                                                                                                                                                                                       | `{}`                   |
-| paths.type                                | 'Nested Children'                   | 'Nested Parent'                                                                                                                                                                         | How the nesting is arranged. Nested Children will build an object based on child items of a parent property, nested parent will build a hierarchy based on a parent field of the object. | No                     | `'Nested Children'` |
-| paths.config                              | object                              | see examples below for how to configure these obejcts                                                                                                                                   | No                                                                                                                                                                                       | {}                     |
+| Property                                  | Type                                 | Description                                                                                                                                                                              | Required | Default Value          |
+| ----------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------- |
+| useAdapter                                | boolean                              | Whether to use the adapter to transform the data fetched from contentful. If this is true, another property at the root of the file should be configured for the adapter config to use.  | No       | `false`                |
+| excludeTypes                              | string[]                             | An array of content types to exclude from all prefetching.                                                                                                                               | No       | `[]`                   |
+| writeMappings                             | boolean                              | Whether to write the component mappings file.                                                                                                                                            | No       | `false`                |
+| writeSettings                             | boolean                              | Whether to write the settings file.                                                                                                                                                      | No       | `false`                |
+| writeAdapterConfig                        | boolean                              | Whether to write the adapter config file.                                                                                                                                                | No       | `false`                |
+| writePaths                                | boolean                              | Whether to write the paths file.                                                                                                                                                         | No       | `false`                |
+| writeContentJson                          | boolen                               | Whether or not to write JSON files for the content to be used to render the pages.                                                                                                       | No       | `false`                |
+| writeLocaleData                           | boolean                              | Whether to write the i18n.json and locale lookup files.                                                                                                                                  | No       | `false`                |
+| settings                                  | object                               | the levels of depth to grab in the GlobalSettings object.                                                                                                                                | No       |                        |
+| mappings                                  | object                               | Configure the component mapper. See below.                                                                                                                                               | No       |                        |
+| mappings.overrides                        | { [contentTypeId: string]: string }  | Key value pair of content type id to component name, overriding the default pascalCase lookup of component.                                                                              | No       | `{}`                   |
+| mappings.exclude                          | string[]                             | An array of component names to exclude form the mappings. This is useful to avoid circular dependencies, which will break storybook functionality.                                       | No       | `[]`                   |
+| locales                                   | object                               | Configure the locales data writer. See below.                                                                                                                                            | No       |                        |
+| locales.localizationLookupFieldName       | string                               | The name of the localizationLookup field in the global settings object .                                                                                                                 | No       | `'localizationLookup'` |
+| contentJson                               | { [contentTypeId: string]: object }  | A configuration object keyed by content type.                                                                                                                                            | No       | `{}`                   |
+| contentJson.{contentType}.slugField       | string                               | the name of the field used for the slug of this content type.                                                                                                                            | No       | `'sys.id'`             |
+| contentJson.{contentType}.include         | number                               | The depth to which nested referenced entries are expanded.                                                                                                                               | No       | `1`                    |
+| contentJson.{contentType}.rootOmitFields  | string[]                             | An array of field names to omit from the page object at the root level.                                                                                                                  | No       | `[]`                   |
+| contentJson.{contentType}.childOmitFields | string[]                             | An array of field names to omit from nested entries at all child levels.                                                                                                                 | No       | `[]`                   |
+| paths                                     | object                               | An object, described below, configuring how to write the paths                                                                                                                           | No       | `{}`                   |
+| paths.type                                | 'Nested Children' or 'Nested Parent' | How the nesting is arranged. Nested Children will build an object based on child items of a parent property, nested parent will build a hierarchy based on a parent field of the object. | No       | `'Nested Children'`    |
+| paths.config                              | object                               | see examples below for how to configure these obejcts                                                                                                                                    | No       | {}                     |
 
 example
 
@@ -83,61 +88,14 @@ example
     "writeContentJson": true,
     "paths": {
       "type": "Nested Children",
-      // shorthand, describing single level paths and which field to use
       "pageGeneral": "slug",
       "pageRecipe": "slug",
-      // a nested child configuration.
-      // The top level represents the parent, in this example an object of type "recipe", the param represents the param to use,
-      // the children object has a param represening the slug name for this level, and the fieldName for which field represents the children.
-      // outputs the following structure:
-      //{
-      // "params": {
-      //   "topicslug": "what-does-it-mean-to-be-an-admin-for-dropbox",
-      //   "slug": "business-admin-course"
-      // }
       "nestedPageRecipeStep": {
         "param": "slug",
         "contentType": "recipe",
         "children": {
           "param": "stepslug",
           "fieldName": "steps"
-        }
-      }
-    },
-    // alternatively:
-    // this is the suggested approach.
-    // this will generate path objects for next.js as well as the href and as
-    // properties of the content item, which will be used in the adapter
-    // outputs the following structure:
-    // {
-    //   "params": {
-    //     "slug": [
-    //       "test-post-column-type",
-    //       "test-page-post"
-    //     ]
-    //   }
-    // }
-    "paths": {
-      "type": "Nested Parent",
-      "config": {
-        "pageIngredient": {
-          // which field to use. defaults to "slug"
-          "fieldName": "slug",
-          // the param name to use in the path object
-          // defaults to "slug"
-          "paramName": "slug",
-          // The maxDepth to go in the hierarchy
-          // defaults to 10
-          "maxDepth": 3,
-          // the root for the  URLs
-          "root": "/recipes",
-          "parentField": "parentRecipe"
-        },
-        "pageRecipe": {
-          "fieldName": "slug",
-          "paramName": "slug",
-          "maxDepth": 1,
-          "root": "/recipes"
         }
       }
     },
@@ -172,36 +130,204 @@ example
 }
 ```
 
-### Configuring paths (Nested Children)
+### Configuring paths
 
-Paths can either be a mapping of contentType to parameter:
+Paths can be one of two types, "Nested Children" or "Nested Parent".
+These two paths are confgiured and built differently.
 
-```json
-{
-  "config": {
-    "pageRecipe": "slug"
-  }
-}
-```
+**Nested Children**
+NOTE: This is not the recommended approach, see "Nested Parent" below for the recommended approach.
 
-or a more complex object where children parameters can be defined:
+Nested children type paths are configured as below. Each item under `config` represents one group of paths, keyed off of the key in the object. As a shorthand, a string configuration will assume the key to be the contentTypeId and the value to be the param name.
+
+Each children object can have a nested children object within it.
 
 ```json
 {
-  "config": {
-    "nestedPageRecipeStep": {
-      "param": "slug",
-      "contentType": "recipe",
-      "children": {
-        "param": "stepslug",
-        "fieldName": "steps",
+  "paths": {
+    "type": "Nested Children",
+    "config": {
+      "nestedPageRecipeStep": {
+        "param": "slug",
+        "contentType": "recipe",
         "children": {
-          // param:...
-          // fieldName:...
+          "param": "stepslug",
+          "fieldName": "steps"
         }
       }
     }
   }
+}
+
+// this shorthand:
+{
+  "paths": {
+    "type": "Nested Children",
+    "config": {
+      "pageGeneral": "slug"
+    }
+  }
+}
+
+// is the same as
+{
+  "paths": {
+    "type": "Nested Children",
+    "config": {
+      "pageGeneral": {
+        "param": "slug",
+        "contentType": "pageGeneral"
+      }
+    }
+  }
+}
+```
+
+The output of the above configuration is an object that looks like this:
+
+```json
+{
+  "nestedPageRecipeStep": [
+    {
+      "params": {
+        "slug": "my-recipe-1",
+        "stepslug": "my-recipe-1-step-1"
+      }
+    },
+    {
+      "params": {
+        "slug": "my-recipe-1",
+        "stepslug": "my-recipe-1-step-2"
+      }
+    },
+    {
+      "params": {
+        "slug": "my-recipe-2",
+        "stepslug": "my-recipe-2-step-1"
+      }
+    }
+  ]
+}
+```
+
+This is intended for single slug style configuration in next.js, like this:
+
+```
+/
+├── /recipes
+│   ├── [slug].js
+│   │   ├── [stepslug].js
+│   │   └── index.js
+└── index.js
+```
+
+**Nested Parent**
+
+Nested parent type paths are configured as below. Each item under `config` represents one content type, and how that type is rendered. `fieldName` will be the field in which the "slug" is located, generally this will be `slug`. `paramName` will be the paramName to output to both the paths file as well as to the generated URLs for each content item (see below). `root` is the root for the generated URLs. `parentField` represents a field name of a reference field containing parent content items which the current one is nested below. `maxDepth` represents how far up the hierarchy to builkd before stopping. This can help stop endless loops.
+
+if an item is found in the parentField, the contentType of that item is scanned in the paths config to determine the `slug` and possible `parentField` of that item, etc.
+
+```json
+{
+  "paths": {
+    "type": "Nested Parent",
+    "config": {
+      "pageAccelerator": {
+        "maxDepth": 3,
+        "fieldName": "slug",
+        "paramName": "slug",
+        "root": "/accelerators"
+      },
+      "pagePost": {
+        "fieldName": "slug",
+        "parentField": "categoryPostColType",
+        "root": "/the-line"
+      },
+      "categoryPostColumnType": {
+        "fieldName": "slug",
+        "root": "/the-line"
+      }
+    }
+  }
+}
+```
+
+The output of the above configuration is an object that looks like this:
+
+```json
+{
+  "pageAccelerator": [
+    {
+      "params": {
+        "slug": ["accelerator-1"]
+      }
+    },
+    {
+      "params": {
+        "slug": ["accelerator-2"]
+      }
+    }
+  ],
+  "categoryPostColumnType": [
+    {
+      "params": {
+        "slug": ["post-type-1"]
+      }
+    },
+    {
+      "params": {
+        "slug": ["post-type-2"]
+      }
+    }
+  ],
+  "pagePost": [
+    {
+      "params": {
+        "slug": ["post-type-1", "post-1"]
+      }
+    },
+    {
+      "params": {
+        "slug": ["post-type-1", "post-2"]
+      }
+    },
+    {
+      "params": {
+        "slug": ["post-type-2", "post-3"]
+      }
+    },
+    {
+      "params": {
+        "slug": ["post-type-2", "post-4"]
+      }
+    }
+  ]
+}
+```
+
+This is intended for multiple slug style configuration in next.js, like this:
+
+```
+/
+├── /accelerators
+│   ├── [...slug].js
+│   └── index.js
+├── /the-line
+│   ├── [...slug].js
+│   └── index.js
+└── index.js
+```
+
+In the above scenbario, "the-line" can have one of two levels below it, where the category would be the first level, and the post would be the second level.
+
+In addition to being more flexible, the Nested Parent approach is also tied in with content prefetch, and the URLs are generated prior to passing objects through the adapter. The content to URL mapping is passed along to the adapter to help generate the correct `_href` and `_as` properties.
+
+For one of the pagePost items shown above, these would be the `_href` and `_as` properties:
+
+```js
+{
+  _href: '/the-line/[...slug]',
+  _as: '/the-line/post-type-2/post-3'
 }
 ```
 

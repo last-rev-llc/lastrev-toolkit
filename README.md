@@ -16,6 +16,10 @@ The [LastRev Contentful Integration](packages/lastrev-integration-contentful) is
 
 The [LastRev Content Prefetcher](packages/lastrev-build-prefetch-content) is a build script which prefetches some data from contentful to help reduce build times and enable component lookups.
 
+### @last-rev/content-validator
+
+The [LastRev Content Validator](packages/lastrev-content-validator) is module that provides a set of useful components to catch Content validation errors and provides a DOM API to expose validation errors to extensions.
+
 ## Usage
 
 This monorepo uses [Lerna](https://github.com/lerna/lerna) and [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) to manage the packages. Scripts are executed with [Yarn](https://yarnpkg.com/). In general, run scripts from the workspace root to run accross all packages.
