@@ -1,4 +1,4 @@
-import { map, isArray, mapValues, get, isObject, compact } from 'lodash';
+import { map, isArray, mapValues, get, isObject, compact, includes } from 'lodash';
 import { Entry, Asset } from 'contentful';
 import parseLink from '../linkParser';
 import parseAsset from '../assetParser';
@@ -16,7 +16,8 @@ const Adapter = ({
   manualEntryTypeText = 'Manual text entry',
   contentRefTypeText = 'Content reference',
   assetRefTypeText = 'Asset reference',
-  contentUrlLookup
+  contentUrlLookup,
+  skipContentTypes
 }: AdapterConfig): Transform => (data) => {
   const parsedEntries: Record<string, ParsedEntry> = {};
 
@@ -45,6 +46,10 @@ const Adapter = ({
       });
     }
     if (isEntry(obj)) {
+      if (includes(skipContentTypes, get(obj, 'sys.contentType.sys.id'))) {
+        // stop traversing, return item as is:
+        return obj;
+      }
       const parsed = parseEntry(obj as Entry<Record<string, unknown>>, urlMap, contentUrlLookup);
       parsedEntries[parsed._id] = parsed;
       const parsedFields: Record<string, unknown> = mapValues((obj as Entry<Record<string, unknown>>).fields, traverse);

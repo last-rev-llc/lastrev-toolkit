@@ -129,6 +129,41 @@ Object {
     },
   },
   "internalTitle": "Patient Education Global Settings",
+  "thisTypeShouldBeSkipped": Object {
+    "fields": Object {
+      "internalTitle": "Skip This",
+      "otherField": "Something",
+    },
+    "sys": Object {
+      "contentType": Object {
+        "sys": Object {
+          "id": "skipThisType",
+          "linkType": "ContentType",
+          "type": "Link",
+        },
+      },
+      "createdAt": "2020-05-26T16:45:16.462Z",
+      "environment": Object {
+        "sys": Object {
+          "id": "master",
+          "linkType": "Environment",
+          "type": "Link",
+        },
+      },
+      "id": "mock_thisshouldbeskipped_12345",
+      "locale": "en-US",
+      "revision": 5,
+      "space": Object {
+        "sys": Object {
+          "id": "o8vbqs3spmqj",
+          "linkType": "Space",
+          "type": "Link",
+        },
+      },
+      "type": "Entry",
+      "updatedAt": "2020-06-17T20:00:03.043Z",
+    },
+  },
 }
 `;
 
