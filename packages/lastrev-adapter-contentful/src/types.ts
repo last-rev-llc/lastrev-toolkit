@@ -70,6 +70,7 @@ export type AdapterConfig = {
   contentRefTypeText?: string;
   assetRefTypeText?: string;
   contentUrlLookup?: ContentUrlLookup;
+  skipContentTypes?: string[];
 };
 
 export type CircularReference = {

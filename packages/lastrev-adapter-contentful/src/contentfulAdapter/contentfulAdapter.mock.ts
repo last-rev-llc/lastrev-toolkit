@@ -12,6 +12,41 @@ export default {
     internalTitle: 'Patient Education Global Settings',
     headerSearchPlaceholderText: 'Search',
     headerSearchErrorMessage: 'There was an error',
+    thisTypeShouldBeSkipped: {
+      sys: {
+        space: {
+          sys: {
+            type: 'Link',
+            linkType: 'Space',
+            id: 'o8vbqs3spmqj'
+          }
+        },
+        type: 'Entry',
+        id: 'mock_thisshouldbeskipped_12345',
+        contentType: {
+          sys: {
+            type: 'Link',
+            linkType: 'ContentType',
+            id: 'skipThisType'
+          }
+        },
+        revision: 5,
+        createdAt: '2020-05-26T16:45:16.462Z',
+        updatedAt: '2020-06-17T20:00:03.043Z',
+        environment: {
+          sys: {
+            id: 'master',
+            type: 'Link',
+            linkType: 'Environment'
+          }
+        },
+        locale: 'en-US'
+      },
+      fields: {
+        internalTitle: 'Skip This',
+        otherField: 'Something'
+      }
+    },
     headerUtilityNavSiteNameLink: {
       sys: {
         space: {

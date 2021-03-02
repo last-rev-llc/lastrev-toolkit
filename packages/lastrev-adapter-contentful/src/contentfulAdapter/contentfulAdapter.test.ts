@@ -13,7 +13,8 @@ const transform = Adapter({
   linkContentType: 'uieCta',
   manualEntryTypeText: 'Manual URL',
   modalActionText: 'Open a modal',
-  contentRefTypeText: 'ContentReference'
+  contentRefTypeText: 'ContentReference',
+  skipContentTypes: ['skipThisType']
 });
 
 describe('Contentful Adapter', () => {
