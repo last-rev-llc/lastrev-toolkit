@@ -18,8 +18,9 @@
     "test:watch": "jest --watch",
     "format": "lerna run format",
     "lint": "lerna run lint",
-    "build:external": "yarn run build && ./copy-build",
-    "gen:schema": "lerna run gen:schema"
+    "build:external": "yarn build && yarn copy:build",
+    "gen:schema": "lerna run gen:schema",
+    "copy:build": "./copy-build"
   },
   "devDependencies": {
     "commander": "^6.2.1",

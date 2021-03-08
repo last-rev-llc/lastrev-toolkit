@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { get, chain, identity, mapValues } from 'lodash';
+import { get, chain, identity, mapValues, map } from 'lodash';
 
 import {
   BuildConfig,
@@ -10,7 +10,8 @@ import {
   PathsConfig,
   NestedParentPathsConfig,
   SettingsConfig,
-  ContentJsonConfig
+  ContentJsonConfig,
+  ExlcudePagesConfig
 } from '../types';
 import {
   PROJECT_ROOT,
@@ -166,6 +167,10 @@ const resolveContentJsonConfigValues = (buildConfig: BuildConfig): ContentJsonCo
   }));
 };
 
+const resolveExcludePagesConfigValues = (buildConfig: BuildConfig): ExlcudePagesConfig => {
+  return buildConfig.excludePages || {};
+};
+
 export default (buildConfig: BuildConfig): ResolvedBuildConfig => {
   const switches = resolveSwitches(buildConfig);
   const fileLocations = resolveFileLocations(buildConfig);
@@ -175,6 +180,7 @@ export default (buildConfig: BuildConfig): ResolvedBuildConfig => {
   const mappings = resolveMappingsConfigValues(buildConfig);
   const settings = get(buildConfig, 'settings', { include: 5 }) as SettingsConfig;
   const contentJson = resolveContentJsonConfigValues(buildConfig);
+  const excludePages = resolveExcludePagesConfigValues(buildConfig);
 
   return {
     ...switches,
@@ -184,6 +190,7 @@ export default (buildConfig: BuildConfig): ResolvedBuildConfig => {
     paths,
     contentJson,
     settings,
-    locales
+    locales,
+    excludePages
   };
 };

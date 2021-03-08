@@ -48,8 +48,8 @@ export type ParsedAsset = {
 
 export type ContentUrlLookup = {
   [contentId: string]: {
-    href: string;
-    as: string;
+    href?: string;
+    as?: string;
   };
 };
 

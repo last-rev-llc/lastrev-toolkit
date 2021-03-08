@@ -2063,6 +2063,11 @@
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
 
+"@types/json-logic-js@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/json-logic-js/-/json-logic-js-1.2.1.tgz#064e777b77b0fcb77f00c2c50fec1387cb33eb47"
+  integrity sha512-g/g+wj/7sgazpiCHiyAtndoNiy/LodLkNG4I9MILAl0UinKKwv3GiPKbtvcE1hIoezQqgDamXfx8Lht62/hHqw==
+
 "@types/json-schema@^7.0.3":
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.6.tgz#f4c7ec43e81b319a9815115031709f26987891f0"
@@ -5267,6 +5272,11 @@ graceful-fs@^4.0.0, graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.4.tgz#2256bde14d3632958c465ebc96dc467ca07a29fb"
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
 
+graceful-fs@^4.2.6:
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.6.tgz#ff040b2b0853b23c3d31027523706f1885d76bee"
+  integrity sha512-nTnJ528pbqxYanhpDYsi4Rd8MAeaBA67+RZ10CM1m3bTAVFEDcd5AuA4a6W5YkGZ1iNXHzZz8T6TBKLeBuNriQ==
+
 growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
@@ -6570,6 +6580,11 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
   integrity sha1-597mbjXW/Bb3EP6R1c9p9w8IkR0=
+
+json-logic-js@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/json-logic-js/-/json-logic-js-2.0.0.tgz#bd83ade3f1e46e4544062e61f9f7c035052b101d"
+  integrity sha512-cQBDOXgFtFladCg99wnQ7YfN+nv1+Sznj4K6bp3CTgDJNJKgEXJE2VCXzVBjEU2e1UagDHSek52IQk5Ha38n7Q==
 
 json-parse-better-errors@^1.0.0, json-parse-better-errors@^1.0.1:
   version "1.0.2"

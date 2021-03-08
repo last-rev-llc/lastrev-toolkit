@@ -2,7 +2,6 @@ import { getStaticSlugsForContentType, Entry } from '@last-rev/integration-conte
 import { each, get, merge, map, filter, values, identity, every } from 'lodash';
 
 import writeFile from '../helpers/writeFile';
-import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 import { BuildTask, ComplexPathConfig, SimplePathConfig, PathChildrenConfig, ResolvedBuildConfig } from '../types';
 
 function isString(s): s is string {
@@ -131,10 +130,7 @@ const getStaticSlugFunctions = (buildConfig: ResolvedBuildConfig): Promise<Paths
 };
 
 const writePaths: BuildTask = async (buildConfig): Promise<void> => {
-  // TODO: optimize this by using preloaded content
-  const { outputDirectory, pathsFile } = buildConfig;
-
-  await mkdirIfNotExists(outputDirectory);
+  const { pathsFile } = buildConfig;
 
   const staticSlugFunctions = getStaticSlugFunctions(buildConfig);
 

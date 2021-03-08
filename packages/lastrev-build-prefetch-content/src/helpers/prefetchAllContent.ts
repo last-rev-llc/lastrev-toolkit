@@ -9,9 +9,10 @@ import {
 
 import { join } from 'path';
 
-import { each, map, get, keyBy, find, mapValues, isString, pickBy, identity, filter, includes } from 'lodash';
+import { each, map, get, keyBy, find, mapValues, isString, pickBy, identity, filter, includes, omitBy } from 'lodash';
 import trackProcess from './trackProcess';
 import delay from './delay';
+import excludeContent from './excludeContent';
 
 const fetchContentTypes = async () => {
   const results = await getContentTypes();
@@ -39,7 +40,7 @@ const fetchContentDataByContentType = async ({ contentTypeId, isPage, slugField,
     contentTypeId
   });
   const contentById = {};
-  const slugToId = {};
+  const slugToId: { [slug: string]: string } = {};
   each(results.entries, (entry) => {
     const id = get(entry, 'sys.id');
     contentById[id] = entry;
@@ -63,6 +64,7 @@ const getPathSegments = (
   nestedPathsConfig: NestedParentPathsConfig,
   depth: number,
   defaultLocale: string,
+  shouldBeExcluded: (parent: Entry<any>) => boolean,
   pathSegments: string[] = []
 ): string[] => {
   // reached max depth, return current params
@@ -70,8 +72,12 @@ const getPathSegments = (
 
   const content = contentById[contentId];
 
+  if (shouldBeExcluded(content)) {
+    throw Error(`Parent excluded: ${contentId}`);
+  }
+
   // something went wrong, invalid path (this will happen if content is deleted but the reference not removed)
-  if (!content) throw Error(`Invalid reference to nonexistant item: ${contentId}`);
+  if (!content) throw Error(`Invalid reference to nonexistent item: ${contentId}`);
 
   const contentTypeId = get(content, 'sys.contentType.sys.id');
 
@@ -93,7 +99,15 @@ const getPathSegments = (
   const parentContentId = get(content, `fields.${parentField}['${defaultLocale}'].sys.id`);
 
   if (parentContentId) {
-    return getPathSegments(contentById, parentContentId, nestedPathsConfig, depth - 1, defaultLocale, pathSegments);
+    return getPathSegments(
+      contentById,
+      parentContentId,
+      nestedPathsConfig,
+      depth - 1,
+      defaultLocale,
+      shouldBeExcluded,
+      pathSegments
+    );
   }
 
   // reached the end, return segments
@@ -162,13 +176,35 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
         const currentConfig = nestedPaths[contentTypeId];
         if (!currentConfig) return null;
 
+        const { exclude, excludeIfParentIsExcluded } = excludeContent(buildConfig, entry, defaultLocale);
+
+        if (exclude) {
+          return {
+            href: null,
+            as: null
+          };
+        }
+
         let slugs: string[];
 
         try {
-          slugs = getPathSegments(globalContentById, id, nestedPaths, currentConfig.maxDepth, defaultLocale);
+          slugs = getPathSegments(
+            globalContentById,
+            id,
+            nestedPaths,
+            currentConfig.maxDepth,
+            defaultLocale,
+            (parent) => {
+              if (!excludeIfParentIsExcluded) return false;
+              return excludeContent(buildConfig, parent, defaultLocale).exclude;
+            }
+          );
         } catch (e) {
-          console.log(`Unable to load path for ${id}: ${e.message}`);
-          return null;
+          console.log(`did not generate path data. Reason: ${e.message}`);
+          return {
+            href: null,
+            as: null
+          };
         }
 
         pathsByContentType[contentTypeId].push({
@@ -176,6 +212,7 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
             [currentConfig.paramName]: slugs
           }
         });
+
         return {
           href: join(currentConfig.root, slugs.join('/')),
           as: join(currentConfig.root, `[...${currentConfig.paramName}]`)
