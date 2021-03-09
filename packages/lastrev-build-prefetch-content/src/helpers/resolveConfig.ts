@@ -11,7 +11,7 @@ import {
   NestedParentPathsConfig,
   SettingsConfig,
   ContentJsonConfig,
-  ExlcudePagesConfig
+  ExcludePagesConfig
 } from '../types';
 import {
   PROJECT_ROOT,
@@ -167,7 +167,7 @@ const resolveContentJsonConfigValues = (buildConfig: BuildConfig): ContentJsonCo
   }));
 };
 
-const resolveExcludePagesConfigValues = (buildConfig: BuildConfig): ExlcudePagesConfig => {
+const resolveExcludePagesConfigValues = (buildConfig: BuildConfig): ExcludePagesConfig => {
   return buildConfig.excludePages || {};
 };
 
