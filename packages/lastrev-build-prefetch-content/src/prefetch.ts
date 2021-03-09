@@ -19,13 +19,17 @@ const { adapter: adapterConfig, build: buildConfig } = JSON.parse(
 const build = async (): Promise<void> => {
   const resolvedConfig = resolveConfig(buildConfig);
   const buildTasks: BuildTask[] = getBuildTasks(resolvedConfig);
+
+  console.log(`Writing files to ${resolvedConfig.outputDirectory}`);
+  await mkdirIfNotExists(resolvedConfig.outputDirectory);
+
   // if writing content JSON, we will use this opportunity to call this first, and put the contentful data in memory
   // in order to optimize subsequent build tasks.
   let preloadedContent;
   if (buildConfig.writeContentJson) {
     preloadedContent = await prefetchAllContent(resolvedConfig);
   }
-  await mkdirIfNotExists(buildConfig.outputDirectory);
+
   await Promise.all(_.map(buildTasks, (buildTask) => buildTask(resolvedConfig, preloadedContent, { adapterConfig })));
 };
 

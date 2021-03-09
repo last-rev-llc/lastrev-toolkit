@@ -5,7 +5,6 @@ import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
 
 import writeFile from '../helpers/writeFile';
 import { SETTINGS_TEMPLATE } from '../constants';
-import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 import { BuildTask, PreloadedContentfulContent, ResolvedBuildConfig } from '../types';
 
 import compose from '../helpers/compose';
@@ -54,9 +53,7 @@ const loadSettings = async (
 };
 
 const writeSettings: BuildTask = async (buildConfig, prefetchedContent, { adapterConfig }): Promise<void> => {
-  const { outputDirectory, settingsFile } = buildConfig;
-
-  await mkdirIfNotExists(outputDirectory);
+  const { settingsFile } = buildConfig;
 
   const localeSettings = await loadSettings(buildConfig, adapterConfig, prefetchedContent);
 

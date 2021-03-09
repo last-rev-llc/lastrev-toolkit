@@ -17,12 +17,20 @@ export default (
   const slug = extractSlug(obj);
 
   // use a lookup of pre-parsed URLs first.
-  let { href: _href, as: _as } = get(contentUrlLookup, _id, { href: null, as: null });
+  const urlData = get(contentUrlLookup, _id);
 
-  // if non-existant, fall back to the URL map.
-  if (!_href || !_as) {
+  let _href = null;
+  let _as = null;
+
+  if (!urlData) {
     const mapped = get(urlMap, _contentTypeId);
     [_href, _as] = mapped && slug ? getUrl(mapped, slug) : [];
+  } else {
+    const { href, as } = urlData;
+    if (href && as) {
+      _href = href;
+      _as = as;
+    }
   }
 
   return pickBy(

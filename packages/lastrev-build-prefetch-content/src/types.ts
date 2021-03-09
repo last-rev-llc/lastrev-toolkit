@@ -1,5 +1,6 @@
 import { AdapterConfig, ContentUrlLookup } from '@last-rev/adapter-contentful';
 import { Asset, Entry, ContentType } from 'contentful';
+import { RulesLogic } from 'json-logic-js';
 
 export type MappingConfig = {
   overrides?: Record<string, string>;
@@ -103,6 +104,14 @@ export type SettingsConfig = {
   include?: number;
 };
 
+export type ExcludePagesConfig = {
+  [contentTypeId: string]: {
+    excludeIfParentExcluded: boolean;
+    fields: string[];
+    rules: RulesLogic;
+  };
+};
+
 type OptionsBuildConfig = {
   excludeTypes: string[];
   mappings: MappingConfig;
@@ -110,6 +119,7 @@ type OptionsBuildConfig = {
   contentJson: ContentJsonConfig;
   settings: SettingsConfig;
   locales: LocalesConfig;
+  excludePages: ExcludePagesConfig;
 };
 
 export type BuildConfig = Partial<OptionsBuildConfig> &
