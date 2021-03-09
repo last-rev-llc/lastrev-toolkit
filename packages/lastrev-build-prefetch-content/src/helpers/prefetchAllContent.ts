@@ -214,8 +214,8 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
         });
 
         return {
-          href: join(currentConfig.root, slugs.join('/')),
-          as: join(currentConfig.root, `[...${currentConfig.paramName}]`)
+          href: join(currentConfig.root, `[...${currentConfig.paramName}]`),
+          as: join(currentConfig.root, slugs.join('/'))
         };
       });
       break;
