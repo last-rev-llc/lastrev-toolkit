@@ -104,7 +104,7 @@ export type SettingsConfig = {
   include?: number;
 };
 
-export type ExlcudePagesConfig = {
+export type ExcludePagesConfig = {
   [contentTypeId: string]: {
     excludeIfParentExcluded: boolean;
     fields: string[];
@@ -119,7 +119,7 @@ type OptionsBuildConfig = {
   contentJson: ContentJsonConfig;
   settings: SettingsConfig;
   locales: LocalesConfig;
-  excludePages: ExlcudePagesConfig;
+  excludePages: ExcludePagesConfig;
 };
 
 export type BuildConfig = Partial<OptionsBuildConfig> &
