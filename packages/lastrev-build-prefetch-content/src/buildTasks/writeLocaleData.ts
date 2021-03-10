@@ -1,6 +1,6 @@
 import { each, get, identity, keyBy, mapValues } from 'lodash';
 import { resolve } from 'path';
-
+import { Entry } from 'contentful';
 import { BuildConfig, BuildTask, LocalizationLookupType } from '../types';
 import writeFile from '../helpers/writeFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
@@ -54,26 +54,37 @@ const writeLocaleFiles = async (
   await Promise.all(writeFilePromises);
 };
 
-const assignItem = (obj, entry) => {
-  obj[get(entry, 'fields.key') as string] = get(entry, 'fields.value');
+const assignItem = (obj, entry, locale, defaultLocale) => {
+  obj[get(entry, `fields.key['${defaultLocale}']`) as string] = get(
+    entry,
+    `fields.value[${locale}]`,
+    get(entry, `fields.value[${defaultLocale}]`, '')
+  );
 };
 
 const getLookupMappingFromContent = (
   buildConfig: BuildConfig,
-  contentMapping: Record<string, any>
+  contentMapping: Record<string, any>,
+  contentById: { [id: string]: Entry<any> },
+  defaultLocale: string
 ): Record<string, Record<string, string>> => {
   const itemType = get(buildConfig, 'locales.localizationItemContentTypeId');
   const setType = get(buildConfig, 'locales.localizationSetContentTypeId');
 
-  return mapValues(contentMapping, (entries) => {
+  return mapValues(contentMapping, (entryLinks, locale) => {
     const out = {};
-    each(entries, (entry) => {
+    each(entryLinks, (entryLink) => {
+      const entryId = get(entryLink, 'sys.id');
+      const entry = contentById[entryId];
       const contentType = get(entry, 'sys.contentType.sys.id');
       if (contentType === itemType) {
-        assignItem(out, entry);
+        assignItem(out, entry, locale, defaultLocale);
       } else if (contentType === setType) {
-        each(get(entry, 'fields.items'), (item) => {
-          assignItem(out, item);
+        const items = get(entry, `fields.items['${locale}']`, get(entry, `fields.items['${defaultLocale}']`, []));
+        each(items, (itemLink) => {
+          const itemId = get(itemLink, 'sys.id');
+          const entry = contentById[itemId];
+          assignItem(out, entry, locale, defaultLocale);
         });
       }
     });
@@ -85,12 +96,14 @@ type LocaleData = { locales: string[]; defaultLocale: string };
 
 const getFinalLookupMapping = (
   buildConfig: BuildConfig,
-  localizationLookupMapping: LocalizationLookupMapping
+  localizationLookupMapping: LocalizationLookupMapping,
+  contentById: { [id: string]: Entry<any> },
+  defaultLocale: string
 ): Record<string, Record<string, string>> => {
   const lookupType: LocalizationLookupType = get(buildConfig, 'locales.lookupType');
 
   if (lookupType === 'JSON') return localizationLookupMapping;
-  return getLookupMappingFromContent(buildConfig, localizationLookupMapping);
+  return getLookupMappingFromContent(buildConfig, localizationLookupMapping, contentById, defaultLocale);
 };
 
 const writeLocales: BuildTask = async (buildConfig, prefetchedContent): Promise<void> => {
@@ -108,9 +121,11 @@ const writeLocales: BuildTask = async (buildConfig, prefetchedContent): Promise<
     get(localizationLookupField, locale, defaultValue)
   );
 
+  const finalMapping = getFinalLookupMapping(buildConfig, localizationLookupMapping, contentById, defaultLocale);
+
   await Promise.all([
     writeI18nJson(locales, defaultLocale, untranslatedPagesDirectory, localesOutputDirectory, i18nFile),
-    writeLocaleFiles(getFinalLookupMapping(buildConfig, localizationLookupMapping), localesOutputDirectory)
+    writeLocaleFiles(finalMapping, localesOutputDirectory)
   ]);
 };
 

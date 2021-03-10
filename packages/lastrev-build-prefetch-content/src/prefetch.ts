@@ -23,12 +23,9 @@ const build = async (): Promise<void> => {
   console.log(`Writing files to ${resolvedConfig.outputDirectory}`);
   await mkdirIfNotExists(resolvedConfig.outputDirectory);
 
-  // if writing content JSON, we will use this opportunity to call this first, and put the contentful data in memory
-  // in order to optimize subsequent build tasks.
   let preloadedContent;
-  if (buildConfig.writeContentJson) {
-    preloadedContent = await prefetchAllContent(resolvedConfig);
-  }
+
+  preloadedContent = await prefetchAllContent(resolvedConfig);
 
   await Promise.all(_.map(buildTasks, (buildTask) => buildTask(resolvedConfig, preloadedContent, { adapterConfig })));
 };
