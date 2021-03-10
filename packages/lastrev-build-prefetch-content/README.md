@@ -30,7 +30,7 @@ The project is configured via the JSON syntaxed `.lastrevrc` file in the root of
 
 In order to get schema validation, either add the following property to the .lastrevrc file:
 
-`"$schema":"https://raw.githubusercontent.com/last-rev-llc/lastrev-toolkit/master/packages/lastrev-build-prefetch-content/schemas/v5.json"`
+`"$schema":"https://raw.githubusercontent.com/last-rev-llc/lastrev-toolkit/master/packages/lastrev-build-prefetch-content/schemas/v5.schema.json"`
 
 Or make sure you have the following settings in your .vscode file at the root of the project:
 
