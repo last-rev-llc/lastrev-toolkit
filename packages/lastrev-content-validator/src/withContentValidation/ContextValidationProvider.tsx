@@ -1,9 +1,11 @@
 import * as React from 'react';
 
 interface ErrorInstance {
-  error: string;
+  errors: {
+    [key: string]: string;
+  };
   componentName: string;
-  contentId: string;
+  id: string;
   logLevel?: 'ERROR' | 'DEBUG';
 }
 
@@ -19,16 +21,17 @@ export const ValidationContext = React.createContext<Partial<ValidationContextIn
 
 export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
   const [errors, setErrors] = React.useState<ErrorInstance[]>([]);
+  const errorsById = React.useMemo(() => errors.reduce((accum, error) => ({ accum, [error.id]: error }), {}), [
+    errors.join('')
+  ]);
   React.useEffect(() => {
-    const errorContainers = document.querySelectorAll('[data-csk-error=true] + *');
-
-    errorContainers.forEach((el) => {
-      const parentEl = el.parentElement.querySelector('[data-csk-error=true]') as HTMLElement;
-      if (parentEl instanceof HTMLElement && el instanceof HTMLElement) {
-        const contentId = parentEl.dataset.cskErrorId;
-        const error = errors.find((x) => x.contentId == contentId);
-        el.dataset.cskEntryId = contentId;
-        el.dataset.cskDisplayName = error.componentName;
+    const errorMarkers = document.querySelectorAll('[data-csk-error=true]');
+    errorMarkers.forEach((marker: HTMLElement) => {
+      const el = marker.nextElementSibling as HTMLElement;
+      const id = marker.dataset.cskErrorId;
+      const error = errorsById[id];
+      if (error) {
+        el.dataset.cskErrorId = id;
         el.dataset.cskError = JSON.stringify(error);
       }
     });
@@ -39,10 +42,10 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
       default:
         throw new Error(JSON.stringify(errors));
     }
-  }, [errors]);
+  }, [errorsById]);
 
-  const handleError = ({ error, componentName, contentId, logLevel: instanceLogLevel }: ErrorInstance) => {
-    setErrors((state) => [...state, { error, componentName, contentId, instanceLogLevel }]);
+  const handleError = ({ errors, componentName, id, logLevel: instanceLogLevel }: ErrorInstance) => {
+    setErrors((state) => [...state, { errors, componentName, id, instanceLogLevel }]);
   };
 
   return <ValidationContext.Provider value={{ handleError }}>{children}</ValidationContext.Provider>;

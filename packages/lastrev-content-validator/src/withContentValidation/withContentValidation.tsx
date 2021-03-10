@@ -1,28 +1,50 @@
 import * as React from 'react';
-import checkPropTypes from 'check-prop-types';
 import parsePropTypes from 'parse-prop-types';
 import { ValidationContext } from './ContextValidationProvider';
-import { ContentValidationProps, fillRequiredProps } from './getContent';
+import { ContentValidationProps, fillRequiredProps, checkPropTypes } from './getContent';
+import { uniqueId } from 'lodash';
+import * as yup from 'yup';
 
-export const withContentValidation = ({ logLevel }) => <P extends ContentValidationProps>(
+interface Args {
+  logLevel?: 'ERROR' | 'DEBUG';
+  schema: yup.ObjectSchema;
+}
+const getErrors = ({ schema, props }) => {
+  try {
+    const uuid = Date.now().toString();
+    console.log('getErrors' + uuid, { props, schema });
+    console.time('getErrors' + uuid);
+    schema.validateSync(props, { abortEarly: false });
+  } catch (error) {
+    const errors = {};
+    if (error.inner && error.inner.length) {
+      error.inner.forEach((e: yup.ValidationError) => {
+        const prop = e.path.split('.')[e.path.split('.').length - 1];
+        errors[prop] = e;
+      });
+      console.log('Errors', { error, errors });
+      return errors;
+    }
+  }
+};
+export const withContentValidation = ({ logLevel, schema }: Args) => <P extends ContentValidationProps>(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
-  const { handleError } = React.useContext(ValidationContext);
+  const [id] = React.useState(uniqueId());
+  const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
-  const result = React.useMemo(() => checkPropTypes(WrappedComponent.propTypes, props, 'prop', WrappedComponent.name), [
-    props
-  ]);
+  const errors = React.useMemo(() => getErrors({ props, schema }), [props, schema]);
   React.useEffect(() => {
-    if (result) {
+    if (errors) {
       handleError({
-        error: result,
+        id,
+        errors,
         componentName: WrappedComponent.name,
-        contentId: props._id,
         logLevel
       });
     }
-  }, [result]);
-  if (result) {
+  }, [errors]);
+  if (errors) {
     let cmp: React.ReactElement;
     try {
       cmp = WrappedComponent(
@@ -34,7 +56,7 @@ export const withContentValidation = ({ logLevel }) => <P extends ContentValidat
 
     return (
       <React.Fragment>
-        <span data-csk-error="true" data-csk-error-id={props._id} />
+        <span data-csk-error="true" data-csk-error-id={id} />
         {cmp}
       </React.Fragment>
     );
