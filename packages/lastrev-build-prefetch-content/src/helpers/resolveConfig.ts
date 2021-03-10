@@ -64,18 +64,15 @@ const resolveFileLocations = (buildConfig: BuildConfig): FileLocationsBuildConfi
   const pathsFile = resolveToOutputDir('pathsFile', DEFAULT_PATHS_FILENAME);
   const settingsFile = resolveToOutputDir('settingsFile', DEFAULT_SETTINGS_FILENAME);
 
-  const i18nFile = resolveToProjectRoot('i18nFile', DEFAULT_I18N_FILENAME);
+  const i18nFile = get(buildConfig, 'i18nFile', DEFAULT_I18N_FILENAME);
   const translatedPagesDirectory = resolveToProjectRoot('translatedPagesDirectory', DEFAULT_TRANSLATED_PAGES_DIRNAME);
   const untranslatedPagesDirectory = resolveToProjectRootWithLegacyField(
     'untranslatedPagesDirectory',
     'locales.rawPagesDir',
     DEFAULT_UNTRANSLATED_PAGES_DIRNAME
   );
-  const localesOutputDirectory = resolveToProjectRootWithLegacyField(
-    'localesOutputDirectory',
-    'locales.outputPath',
-    DEFAULT_LOCALES_OUTPUT_DIRNAME
-  );
+
+  const localesOutputDirectory = get(buildConfig, 'localesOutputDirectory', DEFAULT_LOCALES_OUTPUT_DIRNAME);
 
   return {
     outputDirectory,

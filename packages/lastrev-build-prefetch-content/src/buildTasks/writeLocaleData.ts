@@ -2,6 +2,7 @@ import { each, get, identity, keyBy, mapValues } from 'lodash';
 import { resolve } from 'path';
 import { Entry } from 'contentful';
 import { BuildConfig, BuildTask, LocalizationLookupType } from '../types';
+import slash from 'slash';
 import writeFile from '../helpers/writeFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 import { LocalizationLookupMapping } from '@last-rev/integration-contentful';
@@ -16,9 +17,9 @@ const writeI18nJson = async (
   const i18nJson = {
     allLanguages: locales,
     defaultLanguage,
-    currentPagesDir,
+    currentPagesDir: slash(currentPagesDir),
     finalPagesDir: 'src/pages',
-    localesPath,
+    localesPath: slash(localesPath),
     pages: {
       '*': ['common']
     }
