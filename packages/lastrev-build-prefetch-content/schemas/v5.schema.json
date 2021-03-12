@@ -258,12 +258,6 @@
         },
         "lookupType": {
           "$ref": "#/definitions/LocalizationLookupType"
-        },
-        "outputPath": {
-          "type": "string"
-        },
-        "rawPagesDir": {
-          "type": "string"
         }
       },
       "type": "object"

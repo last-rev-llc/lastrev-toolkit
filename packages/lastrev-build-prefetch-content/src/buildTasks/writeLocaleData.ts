@@ -2,7 +2,6 @@ import { each, get, identity, keyBy, mapValues } from 'lodash';
 import { resolve } from 'path';
 import { Entry } from 'contentful';
 import { BuildConfig, BuildTask, LocalizationLookupType } from '../types';
-import slash from 'slash';
 import writeFile from '../helpers/writeFile';
 import mkdirIfNotExists from '../helpers/mkDirIfNotExists';
 import { LocalizationLookupMapping } from '@last-rev/integration-contentful';
@@ -11,15 +10,16 @@ const writeI18nJson = async (
   locales: string[],
   defaultLanguage: string,
   currentPagesDir: string,
+  finalPagesDir: string,
   localesPath: string,
   i18nFile: string
 ) => {
   const i18nJson = {
     allLanguages: locales,
     defaultLanguage,
-    currentPagesDir: slash(currentPagesDir),
-    finalPagesDir: 'src/pages',
-    localesPath: slash(localesPath),
+    currentPagesDir: currentPagesDir,
+    finalPagesDir: finalPagesDir,
+    localesPath: localesPath,
     pages: {
       '*': ['common']
     }
@@ -36,6 +36,7 @@ const writeLocaleFiles = async (
   const dirMappings = [];
 
   each(localizationLookupMapping, (mapping, localeCode) => {
+    // resolving here instead of earlier in order to write the unresolved version to the i8n file.
     const dir = resolve(localesDir, `./${localeCode}`);
 
     dirMappings.push([dir, mapping]);
@@ -110,7 +111,7 @@ const getFinalLookupMapping = (
 const writeLocales: BuildTask = async (buildConfig, prefetchedContent): Promise<void> => {
   const localizationLookupFieldName = get(buildConfig, 'locales.localizationLookupFieldName');
 
-  const { i18nFile, untranslatedPagesDirectory, localesOutputDirectory } = buildConfig;
+  const { i18nFile, untranslatedPagesDirectory, translatedPagesDirectory, localesOutputDirectory } = buildConfig;
   const { locales, defaultLocale, contentById } = prefetchedContent;
 
   const localizationLookupField = get(
@@ -125,7 +126,14 @@ const writeLocales: BuildTask = async (buildConfig, prefetchedContent): Promise<
   const finalMapping = getFinalLookupMapping(buildConfig, localizationLookupMapping, contentById, defaultLocale);
 
   await Promise.all([
-    writeI18nJson(locales, defaultLocale, untranslatedPagesDirectory, localesOutputDirectory, i18nFile),
+    writeI18nJson(
+      locales,
+      defaultLocale,
+      untranslatedPagesDirectory,
+      translatedPagesDirectory,
+      localesOutputDirectory,
+      i18nFile
+    ),
     writeLocaleFiles(finalMapping, localesOutputDirectory)
   ]);
 };

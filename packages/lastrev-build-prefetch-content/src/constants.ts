@@ -25,4 +25,5 @@ export const DEFAULT_SLUG_FIELD = 'slug';
 export const DEFAULT_LOCALES_LOOKUP_TYPE: LocalizationLookupType = 'JSON';
 export const DEFAULT_LOCALIZATION_ITEM_CONTENT_TYPE = 'localizedStaticContentItem';
 export const DEFAULT_LOCALIZATION_SET_CONTENT_TYPE = 'localizedStaticContentSet';
+export const DEFAULT_CONTENTFUL_TOKENS_FILENAME = 'tokens.json';
 export const DEFAULT_NESTED_PATHS_MAX_DEPTH = 10;

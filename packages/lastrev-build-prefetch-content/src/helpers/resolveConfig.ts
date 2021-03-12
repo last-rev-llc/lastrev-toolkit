@@ -30,7 +30,8 @@ import {
   DEFAULT_LOCALIZATION_ITEM_CONTENT_TYPE,
   DEFAULT_LOCALIZATION_SET_CONTENT_TYPE,
   DEFAULT_NESTED_PATHS_MAX_DEPTH,
-  DEFAULT_SLUG_FIELD
+  DEFAULT_SLUG_FIELD,
+  DEFAULT_CONTENTFUL_TOKENS_FILENAME
 } from '../constants';
 
 const resolveSwitches = (buildConfig: BuildConfig): SwitchesBuildConfig => {
@@ -55,24 +56,17 @@ const resolveFileLocations = (buildConfig: BuildConfig): FileLocationsBuildConfi
     resolve(outputDirectory, get(buildConfig, key, defaultVal));
   const resolveToProjectRoot = (key: string, defaultVal: string): string =>
     resolve(PROJECT_ROOT, get(buildConfig, key, defaultVal));
-  const resolveToProjectRootWithLegacyField = (key: string, legacyKey: string, defaultVal: string): string =>
-    resolve(PROJECT_ROOT, get(buildConfig, key, get(buildConfig, legacyKey, defaultVal)));
 
   const adapterConfigFile = resolveToOutputDir('adapterConfigFile', DEFAULT_ADAPTER_CONFIG_FILENAME);
   const contentJsonDirectory = resolveToOutputDir('contentJsonDirectory', DEFAULT_CONTENT_JSON_DIRNAME);
   const mappingFile = resolveToOutputDir('mappingFile', DEFAULT_MAPPING_FILENAME);
   const pathsFile = resolveToOutputDir('pathsFile', DEFAULT_PATHS_FILENAME);
   const settingsFile = resolveToOutputDir('settingsFile', DEFAULT_SETTINGS_FILENAME);
+  const i18nFile = resolveToProjectRoot('i18nFile', DEFAULT_I18N_FILENAME);
 
-  const i18nFile = get(buildConfig, 'i18nFile', DEFAULT_I18N_FILENAME);
-  const translatedPagesDirectory = resolveToProjectRoot('translatedPagesDirectory', DEFAULT_TRANSLATED_PAGES_DIRNAME);
-  const untranslatedPagesDirectory = resolveToProjectRootWithLegacyField(
-    'untranslatedPagesDirectory',
-    'locales.rawPagesDir',
-    DEFAULT_UNTRANSLATED_PAGES_DIRNAME
-  );
-
+  const translatedPagesDirectory = get(buildConfig, 'translatedPagesDirectory', DEFAULT_TRANSLATED_PAGES_DIRNAME);
   const localesOutputDirectory = get(buildConfig, 'localesOutputDirectory', DEFAULT_LOCALES_OUTPUT_DIRNAME);
+  const untranslatedPagesDirectory = get(buildConfig, 'untranslatedPagesDirectory', DEFAULT_UNTRANSLATED_PAGES_DIRNAME);
 
   return {
     outputDirectory,

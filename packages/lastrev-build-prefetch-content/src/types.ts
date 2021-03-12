@@ -11,14 +11,6 @@ export type LocalizationLookupType = 'JSON' | 'Content';
 
 export type LocalesConfig = {
   localizationLookupFieldName?: string;
-  /**
-   * @deprecated
-   */
-  rawPagesDir?: string;
-  /**
-   * @deprecated
-   */
-  outputPath?: string;
   lookupType?: LocalizationLookupType;
   localizationItemContentTypeId?: string;
   localizationSetContentTypeId?: string;
