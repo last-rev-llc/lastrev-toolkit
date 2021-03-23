@@ -26,38 +26,42 @@ const compose = ({
     if (node === undefined || node === null) {
       return node;
     }
-    if (isArray(node)) {
-      return map(without(node, undefined, null), (item) => traverse(item, maxDepth, false));
+    if (isField) {
+      if (has(node, locale)) {
+        return traverse(node[locale], maxDepth, false);
+      }
+      if (has(node, defaultLocale)) {
+        return traverse(node[defaultLocale], maxDepth, false);
+      }
+      return undefined;
+    } else {
+      if (isArray(node)) {
+        return map(without(node, undefined, null), (item) => traverse(item, maxDepth, false));
+      }
+      if (maxDepth > 0 && isUnexpandedEntryLink(node)) {
+        const newNode = contentById[node.sys.id];
+        // reference field, decrement maxDepth.
+        return traverse(newNode, maxDepth - 1, false);
+      }
+      if (isUnexpandedAssetLink(node)) {
+        const newNode = assetsById[node.sys.id];
+        return traverse(newNode, maxDepth, false);
+      }
+      if (isObject(node)) {
+        return mapValues(omitBy(node, isNil), (v, k) => {
+          if (k === 'sys') {
+            // don't traverse sys;
+            return v;
+          }
+          if (k === 'fields') {
+            // omit child fields
+            return mapValues(omit(v, childOmitFields), (field) => traverse(field, maxDepth, true));
+          }
+          return traverse(v, maxDepth, false);
+        });
+      }
+      return node;
     }
-    if (maxDepth > 0 && isUnexpandedEntryLink(node)) {
-      const newNode = contentById[node.sys.id];
-      // reference field, decrement maxDepth.
-      return traverse(newNode, maxDepth - 1, false);
-    }
-    if (isUnexpandedAssetLink(node)) {
-      const newNode = assetsById[node.sys.id];
-      return traverse(newNode, maxDepth, false);
-    }
-    if (isField && has(node, locale)) {
-      return traverse(node[locale], maxDepth, false);
-    }
-    if (isField && has(node, defaultLocale)) {
-      return traverse(node[defaultLocale], maxDepth, false);
-    }
-    if (isObject(node)) {
-      return mapValues(omitBy(node, isNil), (v, k) => {
-        if (k === 'sys') {
-          // don't traverse sys;
-          return v;
-        }
-        if (k === 'fields') {
-          // omit child fields
-          return mapValues(omit(v, childOmitFields), (field) => traverse(field, maxDepth, true));
-        }
-        return traverse(v, maxDepth, false);
-      });
-    }
-    return node;
   };
 
   const out = {
