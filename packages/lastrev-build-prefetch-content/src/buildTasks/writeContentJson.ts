@@ -66,7 +66,7 @@ const writeContentJson: BuildTask = async (
 
                     const transformed = transform(JSON.parse(jsonStringifySafe(composed)));
 
-                    const filename = resolve(pageContentTypeDir, `${slug}.json`);
+                    const filename = resolve(pageContentTypeDir, `${slug.replace('/', '_')}.json`);
 
                     await unlinkIfExists(filename);
 
