@@ -33,7 +33,7 @@ const compose = ({
       if (has(node, defaultLocale)) {
         return traverse(node[defaultLocale], maxDepth, false);
       }
-      return node;
+      return undefined;
     } else {
       if (isArray(node)) {
         return map(without(node, undefined, null), (item) => traverse(item, maxDepth, false));
