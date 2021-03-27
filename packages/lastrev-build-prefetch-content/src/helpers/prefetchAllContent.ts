@@ -115,6 +115,7 @@ const getPathSegments = (
 };
 
 export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedContentfulContent> => {
+  const contentFetchTracker = trackProcess('Fetching all entries and assets from Contentful');
   const { contentJson: contentPrefetchConfig, excludeTypes } = buildConfig;
 
   const [contentTypes, { defaultLocale, locales }, assetsById] = await Promise.all([
@@ -125,7 +126,6 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
 
   let globalContentById = {};
   const slugToIdByContentType = {};
-  const contentFetchTracker = trackProcess('Fetching all entries and assets from Contentful');
 
   const filteredTypes = filter(contentTypes, (contentType) => !includes(excludeTypes, contentType.sys.id));
 
