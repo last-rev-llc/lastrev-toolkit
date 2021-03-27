@@ -53,9 +53,11 @@ const compose = ({
             // don't traverse sys;
             return v;
           }
-          if (k === 'fields' && typeof v === 'object') {
+          if (k === 'fields') {
             // omit child fields
-            return mapValues(omit(v, childOmitFields), (field) => traverse(field, maxDepth, true));
+            if (typeof v === 'object')
+              return mapValues(omit(v, childOmitFields), (field) => traverse(field, maxDepth, true));
+            else return v;
           }
           return traverse(v, maxDepth, false);
         });
