@@ -33,7 +33,7 @@ const compose = ({
       if (has(node, defaultLocale)) {
         return traverse(node[defaultLocale], maxDepth, false);
       }
-      return undefined;
+      return node;
     } else {
       if (isArray(node)) {
         return map(without(node, undefined, null), (item) => traverse(item, maxDepth, false));
@@ -54,10 +54,9 @@ const compose = ({
             return v;
           }
           if (k === 'fields') {
+            if (Array.isArray(v)) return v;
             // omit child fields
-            if (typeof v === 'object')
-              return mapValues(omit(v, childOmitFields), (field) => traverse(field, maxDepth, true));
-            else return v;
+            return mapValues(omit(v, childOmitFields), (field) => traverse(field, maxDepth, true));
           }
           return traverse(v, maxDepth, false);
         });
