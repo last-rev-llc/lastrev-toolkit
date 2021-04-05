@@ -9,9 +9,15 @@ const getGlobalSettings = (client: ContentfulClientApi) => async <T>({
   include = 6,
   contentTypeId = DEFAULT_SETTINGS_CONTENT_TYPE
 }: GetGlobalSettingsConfig): Promise<Entry<T>> => {
+  const settingsId = process.env.CONTENTFUL_SETTINGS_ID;
+
+  if (!settingsId) {
+    throw Error(`required environment variable: "CONTENTFUL_SETTINGS_ID" is missing. Please update your environment.`);
+  }
+
   const entries = await client.getEntries({
     'content_type': contentTypeId,
-    'sys.id': process.env.CONTENTFUL_SETTINGS_ID,
+    'sys.id': settingsId,
     'locale': locale,
     'include': include
   });

@@ -109,15 +109,18 @@ const getFinalLookupMapping = (
 };
 
 const writeLocales: BuildTask = async (buildConfig, prefetchedContent): Promise<void> => {
+  const settingsId = process.env.CONTENTFUL_SETTINGS_ID;
+
+  if (!settingsId) {
+    throw Error(`required environment variable: "CONTENTFUL_SETTINGS_ID" is missing. Please update your environment.`);
+  }
+
   const localizationLookupFieldName = get(buildConfig, 'locales.localizationLookupFieldName');
 
   const { i18nFile, untranslatedPagesDirectory, translatedPagesDirectory, localesOutputDirectory } = buildConfig;
   const { locales, defaultLocale, contentById } = prefetchedContent;
 
-  const localizationLookupField = get(
-    contentById,
-    `${process.env.CONTENTFUL_SETTINGS_ID}.fields['${localizationLookupFieldName}']`
-  );
+  const localizationLookupField = get(contentById, `${settingsId}.fields['${localizationLookupFieldName}']`);
   const defaultValue = localizationLookupField[defaultLocale];
   const localizationLookupMapping = mapValues(keyBy(locales, identity), (locale) =>
     get(localizationLookupField, locale, defaultValue)

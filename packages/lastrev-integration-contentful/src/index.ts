@@ -21,10 +21,22 @@ import {
 
 export * from './types';
 
+const space = process.env.CONTENTFUL_SPACE_ID;
+
+if (!space) {
+  throw Error(`required environment variable: "CONTENTFUL_SPACE_ID" is missing. Please update your environment.`);
+}
+
+const accessToken = process.env.CONTENTFUL_ACCESSTOKEN;
+
+if (!accessToken) {
+  throw Error(`required environment variable: "CONTENTFUL_ACCESSTOKEN" is missing. Please update your environment.`);
+}
+
 const client = createClient({
-  space: process.env.CONTENTFUL_SPACE_ID,
+  space,
   environment: process.env.CONTENTFUL_ENV || 'master',
-  accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
+  accessToken,
   host: process.env.CONTENTFUL_HOST || 'preview.contentful.com'
 });
 

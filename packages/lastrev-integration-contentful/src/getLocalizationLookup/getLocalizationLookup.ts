@@ -8,6 +8,12 @@ const getLocalizationLookup = (client) => async ({
   localizationLookupFieldName?: string;
   contentTypeId?: string;
 }): Promise<LocalizationLookupMapping> => {
+  const settingsId = process.env.CONTENTFUL_SETTINGS_ID;
+
+  if (!settingsId) {
+    throw Error(`required environment variable: "CONTENTFUL_SETTINGS_ID" is missing. Please update your environment.`);
+  }
+
   const locales = await client.getLocales();
   const localeCodes = locales.items.map((locale) => locale.code);
   const commonTextQueries = [];
@@ -18,7 +24,7 @@ const getLocalizationLookup = (client) => async ({
       client.getEntries({
         'content_type': contentTypeId,
         'select': `sys,fields.${localizationLookupFieldName}`,
-        'sys.id': process.env.CONTENTFUL_SETTINGS_ID,
+        'sys.id': settingsId,
         'locale': code,
         'include': 2
       })

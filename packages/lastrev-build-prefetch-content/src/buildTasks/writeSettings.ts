@@ -53,6 +53,12 @@ const loadSettings = async (
 };
 
 const writeSettings: BuildTask = async (buildConfig, prefetchedContent, { adapterConfig }): Promise<void> => {
+  const settingsId = process.env.CONTENTFUL_SETTINGS_ID;
+
+  if (!settingsId) {
+    throw Error(`required environment variable: "CONTENTFUL_SETTINGS_ID" is missing. Please update your environment.`);
+  }
+
   const { settingsFile } = buildConfig;
 
   const localeSettings = await loadSettings(buildConfig, adapterConfig, prefetchedContent);
