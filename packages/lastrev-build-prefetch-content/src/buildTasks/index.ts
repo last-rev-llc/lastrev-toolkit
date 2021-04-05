@@ -6,11 +6,15 @@ import writeLocaleData from './writeLocaleData';
 import { BuildTask, ResolvedBuildConfig } from '../types';
 import writeContentJson from './writeContentJson';
 import writeNestedPaths from './writeNestedPaths';
+import assertEnvVar from '../helpers/assertEnvVar';
 
 const getBuildTasks = (buildConfig: ResolvedBuildConfig): BuildTask[] => {
   const out: BuildTask[] = [];
 
-  if (buildConfig.writeSettings) out.push(writeSettings);
+  if (buildConfig.writeSettings) {
+    assertEnvVar('CONTENTFUL_SETTINGS_ID');
+    out.push(writeSettings);
+  }
   if (buildConfig.writePaths) {
     switch (buildConfig.paths.type) {
       case 'Nested Parent':
@@ -25,7 +29,10 @@ const getBuildTasks = (buildConfig: ResolvedBuildConfig): BuildTask[] => {
 
   if (buildConfig.writeMappings) out.push(writeMappings);
   if (buildConfig.writeAdapterConfig) out.push(writeAdapterConfig);
-  if (buildConfig.writeLocaleData) out.push(writeLocaleData);
+  if (buildConfig.writeLocaleData) {
+    assertEnvVar('CONTENTFUL_SETTINGS_ID');
+    out.push(writeLocaleData);
+  }
   if (buildConfig.writeContentJson) out.push(writeContentJson);
 
   return out;
