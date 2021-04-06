@@ -71,6 +71,11 @@ export type AdapterConfig = {
   assetRefTypeText?: string;
   contentUrlLookup?: ContentUrlLookup;
   skipContentTypes?: string[];
+  useAdapter?: boolean;
+  useSyncAPI?: boolean;
+  usePreviewAPI?: boolean;
+  useFileCache?: boolean;
+  composers?: { [key: string]: (content: unknown) => unknown };
 };
 
 export type CircularReference = {
