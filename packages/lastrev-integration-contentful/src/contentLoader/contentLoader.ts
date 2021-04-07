@@ -30,7 +30,6 @@ const getKeyString = (x: any) => JSON.stringify(getKey(x));
 
 const resolveSettled = (promises) =>
   promises.map((p) => {
-    console.log('Promise', p);
     if (p?.status === 'rejected') {
       console.log('Error', p?.reason);
     }
@@ -102,8 +101,11 @@ const loadContent = ({
     .then(
       map((entry: any) => {
         if (!entry) return null;
-        const { id, slug, contentTypeId, locale } = entry;
+        const { slug, locale } = entry;
+        const contentTypeId = entry?._contentTypeId ?? entry?.contentTypeId;
+        const id = entry?._id ?? entry?.id;
         // Resolve by id
+
         const idKey = getKeyString({ locale, contentTypeId, id });
         if (results[idKey]) {
           results[idKey] = entry;
