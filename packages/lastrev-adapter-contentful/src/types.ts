@@ -74,7 +74,6 @@ export type AdapterConfig = {
   contentJsonDirectory?: string;
   useAdapter?: boolean;
   useSyncAPI?: boolean;
-  usePreviewAPI?: boolean;
   useFileCache?: boolean;
   composers?: { [key: string]: (content: unknown) => unknown };
 };

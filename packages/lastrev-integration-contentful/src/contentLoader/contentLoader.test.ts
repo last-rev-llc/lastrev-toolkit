@@ -16,16 +16,25 @@ const client = createClient({
   host: process.env.CONTENTFUL_HOST || 'preview.contentful.com'
 });
 
-describe('Content Loader', () => {
-  let contentful;
+describe('Content Loader with FetchAPI', () => {
   let contentLoader;
+  let keyId;
+  let keySlug;
   beforeEach(() => {
     jest.setTimeout(30000);
+    keyId = {
+      locale: 'en-US',
+      contentTypeId: 'categoryPostTag',
+      id: '287730029'
+    };
+    keySlug = {
+      locale: 'en-US',
+      contentTypeId: 'categoryPostTag',
+      slug: 'entrepreneurial-ecosystem'
+    };
     contentLoader = new ContentLoader({
       client,
       urlMap,
-      // useFileCache: true,
-      // useSyncAPI: true,
       linkContentType: 'uieCta',
       manualEntryTypeText: 'Manual URL',
       modalActionText: 'Open a modal',
@@ -35,99 +44,24 @@ describe('Content Loader', () => {
     });
   });
 
-  it('loads data via Fetch API ', async () => {
-    const out = await contentLoader.load({
-      contentTypeId: 'categoryPostTag',
-      locale: 'en-US',
-      id: '287730029'
-    });
-    expect(out).toMatchObject({
-      contentTypeId: 'categoryPostTag',
-      locale: 'en-US',
-      id: '287730029'
-    });
+  it('loads data by id ', async () => {
+    const out = await contentLoader.load(keyId);
+    expect(out).toMatchObject(keyId);
   });
-  // it('loads data via Preview API ', async () => {
-  //   const out = await contentLoader.load({
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US',
-  //     id: '1'
-  //   });
-  //   expect(out).toMatchObject({
-  //     id: '1',
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US'
-  //   });
-  // });
-  // it('loads data via File API ', async () => {
-  //   const out = await contentLoader.load({
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US',
-  //     id: '1'
-  //   });
-  //   expect(out).toMatchObject({
-  //     id: '1',
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US'
-  //   });
-  // });
-  // it('loads data by id correctly', async () => {
-  //   const out = await contentLoader.load({
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US',
-  //     id: '1'
-  //   });
-  //   expect(out).toMatchObject({
-  //     id: '1',
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US'
-  //   });
-  // });
-  // it('loads data by slug correctly', async () => {
-  //   const out = await contentLoader.load({
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US',
-  //     slug: 'mock'
-  //   });
-  //   expect(out).toMatchObject({
-  //     slug: 'mock',
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US'
-  //   });
-  // });
-  // it('loads many items by ids correctly', async () => {
-  //   const keys = [
-  //     {
-  //       contentTypeId: 'mock',
-  //       locale: 'en-US',
-  //       id: '1'
-  //     },
-  //     {
-  //       contentTypeId: 'mock',
-  //       locale: 'en-US',
-  //       id: '1'
-  //     }
-  //   ];
-  //   const out = await contentLoader.loadMany(keys);
-  //   expect({ out }).toMatchObject({ out: keys });
-  // });
-  // it('loads many items by slugs correctly', async () => {
-  //   const out = await contentLoader.loadMany([
-  //     {
-  //       contentTypeId: 'mock',
-  //       locale: 'en-US',
-  //       slug: 'mock'
-  //     },
-  //     {
-  //       contentTypeId: 'mock',
-  //       locale: 'en-US',
-  //       slug: 'mock'
-  //     }
-  //   ]);
-  //   expect(out).toMatchObject({
-  //     slug: 'mock',
-  //     contentTypeId: 'mock',
-  //     locale: 'en-US'
-  //   });
-  // });
+
+  it('loads data by slug correctly', async () => {
+    const out = await contentLoader.load(keySlug);
+    expect(out).toMatchObject(keySlug);
+  });
+
+  it('loads many items by ids correctly', async () => {
+    const keys = [keyId, keyId];
+    const out = await contentLoader.loadMany(keys);
+    expect({ out }).toMatchObject({ out: keys });
+  });
+  it('loads many items by slugs correctly', async () => {
+    const keys = [keySlug, keySlug];
+    const out = await contentLoader.loadMany(keys);
+    expect(out).toMatchObject(keys);
+  });
 });

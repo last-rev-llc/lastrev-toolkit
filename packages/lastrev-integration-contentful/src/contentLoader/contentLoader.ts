@@ -28,6 +28,14 @@ const logger = (...args: any) => console.log('ContentLoader', ...args);
 const getKey = ({ locale, contentTypeId, slug, id }: Key) => (id ? { locale, id } : { locale, contentTypeId, slug });
 const getKeyString = (x: any) => JSON.stringify(getKey(x));
 
+const resolveSettled = (promises) =>
+  promises.map((p) => {
+    console.log('Promise', p);
+    if (p?.status === 'rejected') {
+      console.log('Error', p?.reason);
+    }
+    return p?.value || null;
+  });
 const fetchEntries = async ({
   client,
   contentTypeId,
@@ -42,13 +50,13 @@ const fetchEntries = async ({
     console.log('useFileCache');
     // Dynamic import to prevent fs dependency on client browsers
     const { default: readContentJSON } = await import('./readContentJSON');
-    entries = await Promise.all(keys.map(readContentJSON(contentJsonDirectory)));
+    entries = resolveSettled(await Promise.allSettled(keys.map(readContentJSON(contentJsonDirectory))));
   } else if (useSyncAPI) {
     console.log('useSyncAPI');
     entries = await syncAllEntriesForContentType({ contentTypeId }).then(({ entries }) => entries);
   } else {
     console.log('useFetchAPI');
-    entries = await Promise.all(keys.map(fetchEntry({ client })));
+    entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
   }
   console.log('FetchEntries:entries', entries);
 
