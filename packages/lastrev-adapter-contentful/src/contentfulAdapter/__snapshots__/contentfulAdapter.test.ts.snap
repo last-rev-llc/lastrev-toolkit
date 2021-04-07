@@ -4,6 +4,7 @@ exports[`Contentful Adapter converts the data correctly 1`] = `
 Object {
   "_contentTypeId": "1234",
   "_id": "2345",
+  "contentTypeId": "1234",
   "footerLogo": Object {
     "contentType": "image/png",
     "description": "nulla hic corporis",
@@ -56,6 +57,8 @@ Object {
       "_contentTypeId": "elementNavLink",
       "_id": "mock_settingsGlobal-baselineCta",
       "_modifiedDate": "2020-06-17T19:39:13.522Z",
+      "contentTypeId": "elementNavLink",
+      "id": "mock_settingsGlobal-baselineCta",
       "internalTitle": "Healthfacts - Nav Link",
       "mainLink": Object {
         "_contentTypeId": "uieCta",
@@ -69,11 +72,14 @@ Object {
         "target": null,
         "trackingId": "4321",
       },
+      "modifiedDate": "2020-06-17T19:39:13.522Z",
     },
     Object {
       "_contentTypeId": "elementNavLink",
       "_id": "mock_settingsGlobal-baselineMainLinks",
       "_modifiedDate": "2020-06-17T19:39:26.301Z",
+      "contentTypeId": "elementNavLink",
+      "id": "mock_settingsGlobal-baselineMainLinks",
       "internalTitle": "Healthwise - Nav Link",
       "mainLink": Object {
         "_contentTypeId": "uieCta",
@@ -88,11 +94,14 @@ Object {
         "target": null,
         "trackingId": "9838",
       },
+      "modifiedDate": "2020-06-17T19:39:26.301Z",
     },
     Object {
       "_contentTypeId": "elementNavLink",
       "_id": "mock_Element-NavLink",
       "_modifiedDate": "2020-06-17T19:42:15.908Z",
+      "contentTypeId": "elementNavLink",
+      "id": "mock_Element-NavLink",
       "internalTitle": "Kids Health - Nav Link",
       "mainLink": Object {
         "_contentTypeId": "uieCta",
@@ -106,12 +115,15 @@ Object {
         "target": "_blank",
         "trackingId": "mollitia",
       },
+      "modifiedDate": "2020-06-17T19:42:15.908Z",
     },
   ],
   "headerUtilityNavSiteNameLink": Object {
     "_contentTypeId": "elementNavLink",
     "_id": "mock_settingsGlobal-headerUtilityNavSiteNameLink",
     "_modifiedDate": "2020-06-17T20:00:03.043Z",
+    "contentTypeId": "elementNavLink",
+    "id": "mock_settingsGlobal-headerUtilityNavSiteNameLink",
     "internalTitle": "Mock headerUtilityNavSiteNameLink for Settings - Global",
     "mainLink": Object {
       "_contentTypeId": "uieCta",
@@ -127,7 +139,9 @@ Object {
       "target": null,
       "trackingId": "mollitia",
     },
+    "modifiedDate": "2020-06-17T20:00:03.043Z",
   },
+  "id": "2345",
   "internalTitle": "Patient Education Global Settings",
   "thisTypeShouldBeSkipped": Object {
     "fields": Object {
@@ -172,6 +186,8 @@ Object {
   "_contentTypeId": "settingsGlobal",
   "_id": "1wmrGhKeCNbe3QssB6UNkN",
   "_modifiedDate": "2020-07-06T23:50:58.713Z",
+  "contentTypeId": "settingsGlobal",
+  "id": "1wmrGhKeCNbe3QssB6UNkN",
   "localizationLookup": Object {
     "createAccountDescription": "Earn rewards with each purchase. Save earth. Connect with other Impossible fans.",
     "createAccountLinkLabel": "Sign up for Taste Place here.",
@@ -182,5 +198,6 @@ Object {
     "operatorLoginPreText": "Restaurant operators",
     "recipeMinutes": "min",
   },
+  "modifiedDate": "2020-07-06T23:50:58.713Z",
 }
 `;
