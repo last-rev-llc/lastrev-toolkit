@@ -1,10 +1,11 @@
 import { get, map } from 'lodash/fp';
 import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
 import { ContentfulClientApi } from 'contentful';
-import { flatten, groupBy } from 'lodash';
+import { flatten, groupBy, uniq } from 'lodash';
 import compose from './compose';
 import { createLoader } from './createLoader';
 import fetchEntry from './fetchEntry';
+import resolveFields from './resolveFields';
 
 interface ContentLoaderConfig {
   client: ContentfulClientApi;
@@ -12,10 +13,6 @@ interface ContentLoaderConfig {
   syncAllEntriesForContentType: any;
   transform?: (x: unknown) => unknown;
 }
-const DEFAULT_CONFIG = {
-  useSyncAPI: process.env.USE_SYNC_API || false,
-  useFileCache: process.env.USE_FILE_CACHE || false
-};
 
 interface Key {
   contentTypeId?: string;
@@ -23,7 +20,7 @@ interface Key {
   slug?: string;
   locale?: string;
 }
-const logger = (...args: any) => console.log('ContentLoader', ...args);
+// const logger = (...args: any) => console.log('ContentLoader', ...args);
 // Produces the same key applied to load and when parsing an Entry
 const getKey = ({ locale, contentTypeId, slug, id }: Key) => (id ? { locale, id } : { locale, contentTypeId, slug });
 const getKeyString = (x: any) => JSON.stringify(getKey(x));
@@ -35,6 +32,14 @@ const resolveSettled = (promises) =>
     }
     return p?.value || null;
   });
+
+const extractLocales = (content: any) =>
+  uniq(
+    Object.values(content.fields).reduce<string[]>(
+      (locales: string[], field) => [...locales, ...Object.keys(field)],
+      []
+    )
+  );
 const fetchEntries = async ({
   client,
   contentTypeId,
@@ -46,22 +51,33 @@ const fetchEntries = async ({
 }) => {
   let entries = [];
   if (useFileCache) {
-    console.log('useFileCache');
+    // console.log('useFileCache');
     // Dynamic import to prevent fs dependency on client browsers
     const { default: readContentJSON } = await import('./readContentJSON');
     entries = resolveSettled(await Promise.allSettled(keys.map(readContentJSON(contentJsonDirectory))));
   } else if (useSyncAPI) {
-    console.log('useSyncAPI');
-    entries = await syncAllEntriesForContentType({ contentTypeId }).then(({ entries }) => entries);
+    // console.log('useSyncAPI');
+    entries = await syncAllEntriesForContentType({ contentTypeId })
+      .then(({ entries }) =>
+        // Extract all possible locales for each content
+        entries.map((content) =>
+          extractLocales(content).map((locale) => resolveFields({ content, locale, defaultLocale: 'en-US' }))
+        )
+      )
+      .then(flatten);
   } else {
-    console.log('useFetchAPI');
+    // console.log('useFetchAPI');
     entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
   }
-  console.log('FetchEntries:entries', entries);
+  // console.log('FetchEntries:entries', entries);
 
   return entries;
 };
 
+const DEFAULT_CONFIG = {
+  useSyncAPI: process.env.USE_SYNC_API === 'true' || false,
+  useFileCache: process.env.USE_FILE_CACHE === 'true' || false
+};
 const loadContent = ({
   client,
   composers,
@@ -72,7 +88,7 @@ const loadContent = ({
   syncAllEntriesForContentType,
   contentJsonDirectory
 }: ContentLoaderConfig & AdapterConfig & { loader: ContentLoader }) => async (keysAll: Array<Key>) => {
-  logger('loadContent:keys', { loader, keysAll });
+  // logger('loadContent:keys', { loader, keysAll });
   const keysByContentType = groupBy(keysAll, get('contentTypeId'));
   // Initialize the results map for memory optimization
   const results = keysAll.reduce(
@@ -121,15 +137,15 @@ const loadContent = ({
           if (slug) loader.prime(getKey({ locale, contentTypeId, slug }), entry);
           loader.prime(getKey({ locale, contentTypeId, id }), entry);
         }
-        console.log('Entry', { idKey, slugKey, entry });
+        // console.log('Entry', { idKey, slugKey, entry });
       })
     );
 
-  // 2. Use the in memory results map and return the requested items
+  // Use the in memory results map and return the requested items
   const entries = keysAll.map((key) =>
     Object.keys(results[getKeyString(key)]).length == 1 ? null : results[getKeyString(key)]
   );
-  console.log('Sync entries:items', { keysAll, results, entries });
+  // console.log('Sync entries:items', { keysAll, results, entries });
   return entries;
 };
 
@@ -141,6 +157,7 @@ class ContentLoader {
     const transform = Adapter(config);
     let loader;
     const fetch = loadContent({
+      ...DEFAULT_CONFIG,
       client,
       composers,
       transform,
@@ -155,27 +172,19 @@ class ContentLoader {
   }
 
   async fetch(keys: Key[]) {
-    console.log('READY?', this.ready);
     await this.ready;
-    console.log('YES!');
     return this.fetch(keys);
   }
   async load(key: Key) {
-    console.log('READY?', this.ready);
     await this.ready;
-    console.log('YES!');
     return this.loader?.load(key);
   }
   async loadMany(key: Key[]) {
-    console.log('READY?', this.ready);
     await this.ready;
-    console.log('YES!');
     return this.loader?.loadMany(key);
   }
   async prime(key: Key, value: any) {
-    console.log('READY?', this.ready);
     await this.ready;
-    console.log('YES!');
     return this.loader?.prime(key, value);
   }
   primeAll() {

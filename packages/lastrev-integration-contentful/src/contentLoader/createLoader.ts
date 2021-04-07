@@ -26,14 +26,12 @@ const parseKey = (key: Key, x: any) => {
 export const createLoader = async <T>({ fetch, key = 'sys.id', lazy = true, ...options }: LoaderConfig<T>) => {
   const loader = new DataLoader(
     async (keys: readonly any[]) => {
-      console.log('FETCH', { keys });
       // Fetch all items we can
       const items = await fetch(keys);
       // primeLoader(loader, () => Promise.resolve(items), key);
 
       const byKey = keyBy((x) => parseKey(key, x), items);
       const result = keys.map((x: any) => byKey[parseKey(key, x)]);
-      console.log('Load', { keys, result });
       return result;
     },
     {
