@@ -39,7 +39,12 @@ export default (
       _contentTypeId,
       _href,
       _as,
-      _modifiedDate
+      _modifiedDate,
+      id: _id,
+      contentTypeId: _contentTypeId,
+      href: _href,
+      as: _as,
+      modifiedDate: _modifiedDate
     },
     // eslint-disable-next-line @typescript-eslint/unbound-method
     identity

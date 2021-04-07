@@ -11,7 +11,7 @@
     "clean": "rm -rf ./dist",
     "compile": "tsc -p tsconfig.build.json",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch --setupFiles dotenv/config",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint",
     "prepublishOnly": "yarn run lint && yarn run build",

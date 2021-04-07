@@ -11,6 +11,7 @@ import getContentTypeCreator from './getContentType';
 import getAllContentItemsForContentTypeCreator from './getAllContentItemsForContentType';
 import syncAllEntriesForContentTypeCreator from './syncAllEntriesForContentType';
 import syncAllAssetsCreator from './syncAllAssets';
+import ContentLoader from './contentLoader';
 
 import {
   GetPageBySlugConfig,
@@ -47,6 +48,7 @@ export declare type WrappedContentful = {
   getAllContentItemsForContentType(
     getAllContentItemsByContentTypeConfig: GetAllContentItemsByContentTypeConfig
   ): Promise<Record<string, unknown>>;
+  loader: ContentLoader;
 };
 
 const Contentful = (config: AdapterConfig): WrappedContentful => {
@@ -60,7 +62,12 @@ const Contentful = (config: AdapterConfig): WrappedContentful => {
       transform(await getGlobalSettings(getGlobalSettingsConfig)),
     getAllContentItemsForContentType: async (
       getAllContentItemsForContentTypeConfig: GetAllContentItemsByContentTypeConfig
-    ) => transform(await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig))
+    ) => transform(await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig)),
+    loader: new ContentLoader({
+      ...config,
+      client,
+      syncAllEntriesForContentType
+    })
   };
 };
 

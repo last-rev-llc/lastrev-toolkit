@@ -71,6 +71,7 @@ export type AdapterConfig = {
   assetRefTypeText?: string;
   contentUrlLookup?: ContentUrlLookup;
   skipContentTypes?: string[];
+  contentJsonDirectory?: string;
   useAdapter?: boolean;
   useSyncAPI?: boolean;
   usePreviewAPI?: boolean;
