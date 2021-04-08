@@ -1,4 +1,12 @@
-const compose = (composers = {}) => async ({ entry, displayType, locale = 'en-US' }) => {
+const compose = (composers = {}) => async ({
+  entry,
+  displayType,
+  locale = 'en-US'
+}: {
+  entry: any;
+  displayType?: string;
+  locale?: string;
+}) => {
   const contentTypeId = entry?._contentTypeId || displayType;
   try {
     if (!entry) throw Error(`Compose:${contentTypeId}: Need to provide entry`);
