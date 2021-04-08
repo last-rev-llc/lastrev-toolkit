@@ -53,22 +53,26 @@ const fetchEntries = async ({
   if (useFileCache) {
     // console.log('useFileCache');
     // Dynamic import to prevent fs dependency on client browsers
-    const { default: readContentJSON } = await import('./readContentJSON');
-    entries = resolveSettled(await Promise.allSettled(keys.map(readContentJSON(contentJsonDirectory))));
-  } else if (useSyncAPI) {
-    // console.log('useSyncAPI');
-    entries = await syncAllEntriesForContentType({ contentTypeId })
-      .then(({ entries }) =>
-        // Extract all possible locales for each content
-        entries.map((content) =>
-          extractLocales(content).map((locale) => resolveFields({ content, locale, defaultLocale: 'en-US' }))
-        )
-      )
-      .then(flatten);
-  } else {
-    // console.log('useFetchAPI');
-    entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
+    try {
+      const { default: readContentJSON } = await import('./readContentJSON');
+      entries = resolveSettled(await Promise.allSettled(keys.map(readContentJSON(contentJsonDirectory))));
+    } catch (error) {
+      if (useSyncAPI) {
+        // console.log('useSyncAPI');
+        entries = await syncAllEntriesForContentType({ contentTypeId })
+          .then(({ entries }) =>
+            // Extract all possible locales for each content
+            entries.map((content) =>
+              extractLocales(content).map((locale) => resolveFields({ content, locale, defaultLocale: 'en-US' }))
+            )
+          )
+          .then(flatten);
+      }
+      // console.log('useFetchAPI');
+      entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
+    }
   }
+
   // console.log('FetchEntries:entries', entries);
 
   return entries;

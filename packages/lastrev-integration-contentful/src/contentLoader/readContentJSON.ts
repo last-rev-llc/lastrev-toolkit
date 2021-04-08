@@ -12,8 +12,7 @@ const readContentJSON = (contentJsonDirectory) => async ({ contentTypeId, slug, 
       locale
     };
   } catch (e) {
-    console.log(`unable to load page JSON for route: ${route}`);
-    return null;
+    throw new Error(`unable to load page JSON for route: ${route}`);
   }
 };
 
