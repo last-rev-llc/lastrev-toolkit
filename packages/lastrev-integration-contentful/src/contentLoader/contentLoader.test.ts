@@ -16,22 +16,32 @@ const client = createClient({
   host: process.env.CONTENTFUL_HOST || 'preview.contentful.com'
 });
 
+const keyId = {
+  locale: 'en-US',
+  contentTypeId: 'categoryPostTag',
+  id: '287730029'
+};
+const keyId2 = {
+  locale: 'en-US',
+  contentTypeId: 'categoryPostTag',
+  id: '2877300292'
+};
+const keySlug = {
+  locale: 'en-US',
+  contentTypeId: 'categoryPostTag',
+  slug: 'entrepreneurial-ecosystem'
+};
+const keySlug2 = {
+  locale: 'en-US',
+  contentTypeId: 'categoryPostTag',
+  slug: 'entrepreneurial-ecosystem-2'
+};
+
 describe('Content Loader with FileCache', () => {
   let contentLoader;
-  let keyId;
-  let keySlug;
   beforeEach(() => {
+
     jest.setTimeout(30000);
-    keyId = {
-      locale: 'en-US',
-      contentTypeId: 'categoryPostTag',
-      id: '287730029'
-    };
-    keySlug = {
-      locale: 'en-US',
-      contentTypeId: 'categoryPostTag',
-      slug: 'entrepreneurial-ecosystem'
-    };
     contentLoader = new ContentLoader({
       client,
       urlMap,
@@ -49,56 +59,28 @@ describe('Content Loader with FileCache', () => {
     const out = await contentLoader.load(keyId);
     expect(out).toMatchObject(keyId);
   });
-
-  it('loads data by slug correctly', async () => {
-    const out = await contentLoader.load(keySlug);
-    expect(out).toMatchObject(keySlug);
-  });
-
-  it('loads many items by ids correctly', async () => {
-    const keys = [keyId, keyId];
-    const out = await contentLoader.loadMany(keys);
-    expect({ out }).toMatchObject({ out: keys });
-  });
-  it('loads many items by slugs correctly', async () => {
-    const keys = [keySlug, keySlug];
-    const out = await contentLoader.loadMany(keys);
-    expect(out).toMatchObject(keys);
-  });
-});
-
-describe('Content Loader with FetchAPI', () => {
-  let contentLoader;
-  let keyId;
-  let keySlug;
-  beforeEach(() => {
-    jest.setTimeout(30000);
-    keyId = {
-      locale: 'en-US',
-      contentTypeId: 'categoryPostTag',
-      id: '287730029'
-    };
-    keySlug = {
-      locale: 'en-US',
-      contentTypeId: 'categoryPostTag',
-      slug: 'entrepreneurial-ecosystem'
-    };
+  it('loads data by id  and composes', async () => {
     contentLoader = new ContentLoader({
       client,
-      disableFileCache: true,
       urlMap,
       linkContentType: 'uieCta',
       manualEntryTypeText: 'Manual URL',
       modalActionText: 'Open a modal',
       contentRefTypeText: 'ContentReference',
       skipContentTypes: ['skipThisType'],
-      syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client)
+      contentJsonDirectory: './mock/contentJson',
+      syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client),
+      composers: {
+        categoryPostTag: async ({ entry, loader, locale }) => {
+          return {
+            ...entry,
+            composeTest: 'TEST'
+          };
+        }
+      }
     });
-  });
-
-  it('loads data by id ', async () => {
     const out = await contentLoader.load(keyId);
-    expect(out).toMatchObject(keyId);
+    expect(out).toMatchObject({ ...keyId, composeTest: 'TEST' });
   });
 
   it('loads data by slug correctly', async () => {
@@ -107,65 +89,96 @@ describe('Content Loader with FetchAPI', () => {
   });
 
   it('loads many items by ids correctly', async () => {
-    const keys = [keyId, keyId];
+    const keys = [keyId, keyId2];
     const out = await contentLoader.loadMany(keys);
     expect({ out }).toMatchObject({ out: keys });
   });
   it('loads many items by slugs correctly', async () => {
-    const keys = [keySlug, keySlug];
+    const keys = [keySlug, keySlug2];
     const out = await contentLoader.loadMany(keys);
     expect(out).toMatchObject(keys);
   });
 });
 
-describe('Content Loader with Sync API', () => {
-  let contentLoader;
-  let keyId;
-  let keySlug;
-  beforeEach(() => {
-    jest.setTimeout(30000);
-    keyId = {
-      locale: 'en-US',
-      contentTypeId: 'categoryPostTag',
-      id: '287730029'
-    };
-    keySlug = {
-      locale: 'en-US',
-      contentTypeId: 'categoryPostTag',
-      slug: 'entrepreneurial-ecosystem'
-    };
-    contentLoader = new ContentLoader({
-      client,
-      urlMap,
-      mode: 'SYNC',
-      disableFileCache: true,
-      linkContentType: 'uieCta',
-      manualEntryTypeText: 'Manual URL',
-      modalActionText: 'Open a modal',
-      contentRefTypeText: 'ContentReference',
-      skipContentTypes: ['skipThisType'],
-      syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client)
-    });
-  });
+// TODO Mock Contentful API for this tests
+// describe('Content Loader with FetchAPI', () => {
+//   let contentLoader;
 
-  it('loads data by id ', async () => {
-    const out = await contentLoader.load(keyId);
-    expect(out).toMatchObject(keyId);
-  });
+//   beforeEach(() => {
+//     jest.setTimeout(30000);
 
-  it('loads data by slug correctly', async () => {
-    const out = await contentLoader.load(keySlug);
-    expect(out).toMatchObject(keySlug);
-  });
+//     contentLoader = new ContentLoader({
+//       client,
+//       disableFileCache: true,
+//       urlMap,
+//       linkContentType: 'uieCta',
+//       manualEntryTypeText: 'Manual URL',
+//       modalActionText: 'Open a modal',
+//       contentRefTypeText: 'ContentReference',
+//       skipContentTypes: ['skipThisType'],
+//       syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client)
+//     });
+//   });
 
-  it('loads many items by ids correctly', async () => {
-    const keys = [keyId, keyId];
-    const out = await contentLoader.loadMany(keys);
-    expect({ out }).toMatchObject({ out: keys });
-  });
-  it('loads many items by slugs correctly', async () => {
-    const keys = [keySlug, keySlug];
-    const out = await contentLoader.loadMany(keys);
-    expect(out).toMatchObject(keys);
-  });
-});
+//   it('loads data by id ', async () => {
+//     const out = await contentLoader.load(keyId);
+//     expect(out).toMatchObject(keyId);
+//   });
+
+//   it('loads data by slug correctly', async () => {
+//     const out = await contentLoader.load(keySlug);
+//     expect(out).toMatchObject(keySlug);
+//   });
+
+//   it('loads many items by ids correctly', async () => {
+//     const keys = [keyId, keyId2];
+//     const out = await contentLoader.loadMany(keys);
+//     expect({ out }).toMatchObject({ out: keys });
+//   });
+//   it('loads many items by slugs correctly', async () => {
+//     const keys = [keySlug, keySlug2];
+//     const out = await contentLoader.loadMany(keys);
+//     expect(out).toMatchObject(keys);
+//   });
+// });
+
+// describe('Content Loader with Sync API', () => {
+//   let contentLoader;
+
+//   beforeEach(() => {
+//     jest.setTimeout(30000);
+//     contentLoader = new ContentLoader({
+//       client,
+//       urlMap,
+//       mode: 'SYNC',
+//       disableFileCache: true,
+//       linkContentType: 'uieCta',
+//       manualEntryTypeText: 'Manual URL',
+//       modalActionText: 'Open a modal',
+//       contentRefTypeText: 'ContentReference',
+//       skipContentTypes: ['skipThisType'],
+//       syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client)
+//     });
+//   });
+
+//   it('loads data by id ', async () => {
+//     const out = await contentLoader.load(keyId);
+//     expect(out).toMatchObject(keyId);
+//   });
+
+//   it('loads data by slug correctly', async () => {
+//     const out = await contentLoader.load(keySlug);
+//     expect(out).toMatchObject(keySlug);
+//   });
+
+//   it('loads many items by ids correctly', async () => {
+//     const keys = [keyId, keyId2];
+//     const out = await contentLoader.loadMany(keys);
+//     expect({ out }).toMatchObject({ out: keys });
+//   });
+//   it('loads many items by slugs correctly', async () => {
+//     const keys = [keySlug, keySlug2];
+//     const out = await contentLoader.loadMany(keys);
+//     expect(out).toMatchObject(keys);
+//   });
+// });

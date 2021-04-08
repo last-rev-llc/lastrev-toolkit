@@ -1,6 +1,6 @@
 import { Asset, Entry } from 'contentful';
 import DataLoader from 'dataloader';
-import { keyBy, get } from 'lodash/fp';
+import { get } from 'lodash/fp';
 
 export type Item<T> = Entry<T> | Asset;
 export type FetchFunction<T> = (keys?: readonly any[]) => Promise<Array<Item<T>>>;
@@ -28,11 +28,7 @@ export const createLoader = async <T>({ fetch, key = 'sys.id', lazy = true, ...o
     async (keys: readonly any[]) => {
       // Fetch all items we can
       const items = await fetch(keys);
-      // primeLoader(loader, () => Promise.resolve(items), key);
-
-      const byKey = keyBy((x) => parseKey(key, x), items);
-      const result = keys.map((x: any) => byKey[parseKey(key, x)]);
-      return result;
+      return items;
     },
     {
       ...options,
