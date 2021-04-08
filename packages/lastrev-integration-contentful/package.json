@@ -59,5 +59,6 @@
     "dataloader": "^2.0.0",
     "deepdash": "^5.3.5",
     "lodash": "^4.17.19"
-  }
+  },
+  "gitHead": "eea2f84ed0893870a6232ac9d6f3c44e60f37c73"
 }

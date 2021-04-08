@@ -57,5 +57,6 @@
     "json-write": "^1.0.0",
     "lodash": "^4.17.19",
     "ora": "^5.2.0"
-  }
+  },
+  "gitHead": "eea2f84ed0893870a6232ac9d6f3c44e60f37c73"
 }
