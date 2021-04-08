@@ -16,7 +16,7 @@ const client = createClient({
   host: process.env.CONTENTFUL_HOST || 'preview.contentful.com'
 });
 
-describe('Content Loader with FetchAPI', () => {
+describe('Content Loader with FileCache', () => {
   let contentLoader;
   let keyId;
   let keySlug;
@@ -40,6 +40,7 @@ describe('Content Loader with FetchAPI', () => {
       modalActionText: 'Open a modal',
       contentRefTypeText: 'ContentReference',
       skipContentTypes: ['skipThisType'],
+      contentJsonDirectory: './mock/contentJson',
       syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client)
     });
   });
@@ -66,7 +67,7 @@ describe('Content Loader with FetchAPI', () => {
   });
 });
 
-describe('Content Loader with FileCache', () => {
+describe('Content Loader with FetchAPI', () => {
   let contentLoader;
   let keyId;
   let keySlug;
@@ -84,14 +85,13 @@ describe('Content Loader with FileCache', () => {
     };
     contentLoader = new ContentLoader({
       client,
+      disableFileCache: true,
       urlMap,
-      useFileCache: true,
       linkContentType: 'uieCta',
       manualEntryTypeText: 'Manual URL',
       modalActionText: 'Open a modal',
       contentRefTypeText: 'ContentReference',
       skipContentTypes: ['skipThisType'],
-      contentJsonDirectory: './mock/contentJson',
       syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client)
     });
   });
@@ -137,7 +137,8 @@ describe('Content Loader with Sync API', () => {
     contentLoader = new ContentLoader({
       client,
       urlMap,
-      useSyncAPI: true,
+      mode: 'SYNC',
+      disableFileCache: true,
       linkContentType: 'uieCta',
       manualEntryTypeText: 'Manual URL',
       modalActionText: 'Open a modal',

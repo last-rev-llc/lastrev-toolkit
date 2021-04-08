@@ -73,8 +73,8 @@ export type AdapterConfig = {
   skipContentTypes?: string[];
   contentJsonDirectory?: string;
   useAdapter?: boolean;
-  useSyncAPI?: boolean;
-  useFileCache?: boolean;
+  mode?: 'FETCH' | 'SYNC';
+  disableFileCache?: boolean;
   composers?: { [key: string]: (content: unknown) => unknown };
 };
 

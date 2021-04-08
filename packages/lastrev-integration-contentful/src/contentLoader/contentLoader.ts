@@ -40,25 +40,31 @@ const extractLocales = (content: any) =>
       []
     )
   );
+
+// Fetch entries by key from Contentful with FileCache in place
+// mode: 'SYNC' | 'FETCH';
 const fetchEntries = async ({
   client,
   contentTypeId,
   keys,
-  useSyncAPI,
-  useFileCache,
+  disableFileCache,
+  mode = 'FETCH',
   syncAllEntriesForContentType,
   contentJsonDirectory
 }) => {
   let entries = [];
-  if (useFileCache) {
-    // console.log('useFileCache');
+  try {
+    if (disableFileCache) throw new Error('FileCacheDisabled');
+    // console.log('Use FileCache');
     // Dynamic import to prevent fs dependency on client browsers
-    try {
-      const { default: readContentJSON } = await import('./readContentJSON');
-      entries = resolveSettled(await Promise.allSettled(keys.map(readContentJSON(contentJsonDirectory))));
-    } catch (error) {
-      if (useSyncAPI) {
-        // console.log('useSyncAPI');
+    const { default: readContentJSON } = await import('./readContentJSON');
+    // Any file not found means we are out of sync so fail early and fetch from API
+    entries = await Promise.all(keys.map(readContentJSON(contentJsonDirectory)));
+  } catch (error) {
+    // console.log(error);
+    // console.log(`use${mode}`);
+    switch (mode) {
+      case 'SYNC':
         entries = await syncAllEntriesForContentType({ contentTypeId })
           .then(({ entries }) =>
             // Extract all possible locales for each content
@@ -67,9 +73,11 @@ const fetchEntries = async ({
             )
           )
           .then(flatten);
-      }
-      // console.log('useFetchAPI');
-      entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
+
+        break;
+      case 'FETCH':
+        entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
+        break;
     }
   }
 
@@ -78,17 +86,17 @@ const fetchEntries = async ({
   return entries;
 };
 
-const DEFAULT_CONFIG = {
-  useSyncAPI: process.env.USE_SYNC_API === 'true' || false,
-  useFileCache: process.env.USE_FILE_CACHE === 'true' || false
+const DEFAULT_CONFIG: { mode: 'SYNC' | 'FETCH'; disableFileCache?: boolean } = {
+  mode: process.env.USE_SYNC_API === 'true' ? 'SYNC' : 'FETCH',
+  disableFileCache: !!process.env.DISABLE_FILE_CACHE && process.env.DISABLE_FILE_CACHE === 'true'
 };
 const loadContent = ({
   client,
   composers,
   transform,
   loader,
-  useSyncAPI,
-  useFileCache,
+  mode,
+  disableFileCache,
   syncAllEntriesForContentType,
   contentJsonDirectory
 }: ContentLoaderConfig & AdapterConfig & { loader: ContentLoader }) => async (keysAll: Array<Key>) => {
@@ -109,8 +117,8 @@ const loadContent = ({
         client,
         contentTypeId,
         keys,
-        useSyncAPI,
-        useFileCache,
+        mode,
+        disableFileCache,
         syncAllEntriesForContentType
       })
     )
