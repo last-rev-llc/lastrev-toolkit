@@ -1,4 +1,4 @@
-const compose = (composers = {}) => async ({
+const compose = ({ composers = {}, loader }) => async ({
   entry,
   displayType,
   locale = 'en-US'
@@ -7,14 +7,15 @@ const compose = (composers = {}) => async ({
   displayType?: string;
   locale?: string;
 }) => {
-  const contentTypeId = entry?._contentTypeId || displayType;
+  const contentTypeId = entry?._contentTypeId ?? entry?.contentTypeId ?? displayType;
   try {
     if (!entry) return entry;
 
     if (composers[contentTypeId]) {
       const composed = await composers[contentTypeId]({
         entry,
-        locale
+        locale,
+        loader
       });
       return composed;
     }
