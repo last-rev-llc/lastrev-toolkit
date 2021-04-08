@@ -76,7 +76,7 @@ const fetchEntries = async ({
 
         break;
       case 'FETCH':
-        entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client, contentTypeId }))));
+        entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
         break;
     }
   }
