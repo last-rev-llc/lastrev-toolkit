@@ -1,6 +1,6 @@
 {
   "name": "@last-rev/integration-contentful",
-  "version": "5.3.0-alpha.0",
+  "version": "5.3.0-alpha.1",
   "description": "Contentful integration for lastrev projects",
   "main": "dist/index.js",
   "files": [
