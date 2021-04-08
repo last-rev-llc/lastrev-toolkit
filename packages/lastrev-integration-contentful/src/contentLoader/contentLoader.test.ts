@@ -49,6 +49,30 @@ describe('Content Loader with FileCache', () => {
     const out = await contentLoader.load(keyId);
     expect(out).toMatchObject(keyId);
   });
+  it('loads data by id  and composes', async () => {
+    contentLoader = new ContentLoader({
+      client,
+      urlMap,
+      linkContentType: 'uieCta',
+      manualEntryTypeText: 'Manual URL',
+      modalActionText: 'Open a modal',
+      contentRefTypeText: 'ContentReference',
+      skipContentTypes: ['skipThisType'],
+      contentJsonDirectory: './mock/contentJson',
+      syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client),
+      composers: {
+        categoryPostTag: async ({ entry, loader, locale }) => {
+          console.log('Compose');
+          return {
+            ...entry,
+            composeTest: 'TEST'
+          };
+        }
+      }
+    });
+    const out = await contentLoader.load(keyId);
+    expect(out).toMatchObject({ ...keyId, composeTest: 'TEST' });
+  });
 
   it('loads data by slug correctly', async () => {
     const out = await contentLoader.load(keySlug);

@@ -20,7 +20,7 @@ interface Key {
   slug?: string;
   locale?: string;
 }
-// const logger = (...args: any) => console.log('ContentLoader', ...args);
+const logger = (...args: any) => (process.env.DEBUG ? console.log('ContentLoader', ...args) : null);
 // Produces the same key applied to load and when parsing an Entry
 const getKey = ({ locale, contentTypeId, slug, id }: Key) => (id ? { locale, id } : { locale, contentTypeId, slug });
 const getKeyString = (x: any) => JSON.stringify(getKey(x));
@@ -55,14 +55,14 @@ const fetchEntries = async ({
   let entries = [];
   try {
     if (disableFileCache) throw new Error('FileCacheDisabled');
-    // console.log('Use FileCache');
+    // logger('Use FileCache');
     // Dynamic import to prevent fs dependency on client browsers
     const { default: readContentJSON } = await import('./readContentJSON');
     // Any file not found means we are out of sync so fail early and fetch from API
     entries = await Promise.all(keys.map(readContentJSON(contentJsonDirectory)));
   } catch (error) {
-    // console.log(error);
-    // console.log(`use${mode}`);
+    // logger(error);
+    // logger(`use${mode}`);
     switch (mode) {
       case 'SYNC':
         entries = await syncAllEntriesForContentType({ contentTypeId })
@@ -81,7 +81,7 @@ const fetchEntries = async ({
     }
   }
 
-  // console.log('FetchEntries:entries', entries);
+  logger('FetchEntries:entries', entries);
 
   return entries;
 };
@@ -90,7 +90,8 @@ const DEFAULT_CONFIG: { mode: 'SYNC' | 'FETCH'; disableFileCache?: boolean } = {
   mode: process.env.USE_SYNC_API === 'true' ? 'SYNC' : 'FETCH',
   disableFileCache: !!process.env.DISABLE_FILE_CACHE && process.env.DISABLE_FILE_CACHE === 'true'
 };
-const loadContent = ({
+const loadContent = async ({
+  keysAll,
   client,
   composers,
   transform,
@@ -99,8 +100,8 @@ const loadContent = ({
   disableFileCache,
   syncAllEntriesForContentType,
   contentJsonDirectory
-}: ContentLoaderConfig & AdapterConfig & { loader: ContentLoader }) => async (keysAll: Array<Key>) => {
-  // logger('loadContent:keys', { loader, keysAll });
+}: ContentLoaderConfig & AdapterConfig & { loader: ContentLoader; keysAll: Array<Key> }) => {
+  logger('loadContent:keys', { composers, keysAll });
   const keysByContentType = groupBy(keysAll, get('contentTypeId'));
   // Initialize the results map for memory optimization
   const results = keysAll.reduce(
@@ -151,7 +152,7 @@ const loadContent = ({
           if (slug) loader.prime(getKey({ locale, contentTypeId, slug }), entry);
           loader.prime(getKey({ locale, contentTypeId, id }), entry);
         }
-        // console.log('Entry', { idKey, slugKey, entry });
+        // logger('Entry', { idKey, slugKey, entry });
       })
     );
 
@@ -159,7 +160,7 @@ const loadContent = ({
   const entries = keysAll.map((key) =>
     Object.keys(results[getKeyString(key)]).length == 1 ? null : results[getKeyString(key)]
   );
-  // console.log('Sync entries:items', { keysAll, results, entries });
+  // logger('Sync entries:items', { keysAll, results, entries });
   return entries;
 };
 
@@ -169,15 +170,16 @@ class ContentLoader {
   constructor(config: AdapterConfig & ContentLoaderConfig) {
     const { client, composers } = config;
     const transform = Adapter(config);
-    let loader;
-    const fetch = loadContent({
-      ...DEFAULT_CONFIG,
-      client,
-      composers,
-      transform,
-      loader,
-      ...config
-    });
+    const fetch = async (keysAll: Array<Key>) =>
+      loadContent({
+        ...DEFAULT_CONFIG,
+        client,
+        composers,
+        transform,
+        loader: this.loader,
+        ...config,
+        keysAll
+      });
     this.fetch = fetch;
     this.ready = createLoader<Key>({
       fetch,
