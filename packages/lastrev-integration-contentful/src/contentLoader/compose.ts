@@ -11,12 +11,14 @@ const compose = (composers = {}) => async ({
   try {
     if (!entry) throw Error(`Compose:${contentTypeId}: Need to provide entry`);
 
-    if (!composers[contentTypeId]) throw Error(`No composer for ${contentTypeId} content type`);
-    const composed = await composers[contentTypeId]({
-      entry,
-      locale
-    });
-    return composed;
+    if (composers[contentTypeId]) {
+      const composed = await composers[contentTypeId]({
+        entry,
+        locale
+      });
+      return composed;
+    }
+    return entry;
   } catch (e) {
     console.log(`Error: ${e.message}`);
     return entry;
