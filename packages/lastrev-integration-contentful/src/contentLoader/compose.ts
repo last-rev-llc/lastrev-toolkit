@@ -9,7 +9,7 @@ const compose = (composers = {}) => async ({
 }) => {
   const contentTypeId = entry?._contentTypeId || displayType;
   try {
-    if (!entry) throw Error(`Compose:${contentTypeId}: Need to provide entry`);
+    if (!entry) return entry;
 
     if (composers[contentTypeId]) {
       const composed = await composers[contentTypeId]({
