@@ -113,7 +113,7 @@ const loadContent = ({
   )
     .then(flatten)
     .then((entries) => (transform ? map(transform, entries) : entries))
-    .then((entries) => (composers ? map((entry) => compose(composers)({ entry }), entries) : entries))
+    .then((entries) => (composers ? Promise.all(map((entry) => compose(composers)({ entry }), entries)) : entries))
     .then(
       map((entry: any) => {
         if (!entry) return null;
