@@ -40,7 +40,6 @@ const keySlug2 = {
 describe('Content Loader with FileCache', () => {
   let contentLoader;
   beforeEach(() => {
-
     jest.setTimeout(30000);
     contentLoader = new ContentLoader({
       client,
