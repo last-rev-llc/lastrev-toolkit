@@ -51,28 +51,29 @@ const writeContentJson: BuildTask = async (
               await mkdirIfNotExists(pageContentTypeDir);
 
               await Promise.all(
-                map(slugToId, (pageContentId, slug) =>
-                  (async () => {
-                    const composed = compose({
-                      contentId: pageContentId,
-                      include,
-                      contentById: globalContentById,
-                      assetsById,
-                      locale,
-                      defaultLocale,
-                      rootOmitFields,
-                      childOmitFields
-                    });
+                map(slugToId, (pageContentId, slug) => async () => {
+                  const composed = compose({
+                    contentId: pageContentId,
+                    include,
+                    contentById: globalContentById,
+                    assetsById,
+                    locale,
+                    defaultLocale,
+                    rootOmitFields,
+                    childOmitFields
+                  });
 
-                    const transformed = transform(JSON.parse(jsonStringifySafe(composed)));
+                  const transformed = transform(JSON.parse(jsonStringifySafe(composed)));
 
-                    const filename = resolve(pageContentTypeDir, `${slug}.json`);
+                  const filename = resolve(pageContentTypeDir, `${slug}.json`);
+                  const filenameId = resolve(pageContentTypeDir, `${pageContentId}.json`);
 
-                    await unlinkIfExists(filename);
+                  await unlinkIfExists(filename);
+                  await unlinkIfExists(filenameId);
 
-                    writeJsonFile(filename, transformed);
-                  })()
-                )
+                  writeJsonFile(filename, transformed);
+                  writeJsonFile(filenameId, transformed);
+                })
               );
             })()
           )
