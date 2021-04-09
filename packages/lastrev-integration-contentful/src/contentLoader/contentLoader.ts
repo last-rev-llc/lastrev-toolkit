@@ -60,11 +60,7 @@ const fetchEntries = async ({
     const { default: readContentJSON } = await import('./readContentJSON');
     // Any file not found means we are out of sync so fail early and fetch from API
     entries = await Promise.all(
-      keys.map((key) =>
-        readContentJSON(contentJsonDirectory)(key).then((result) =>
-          key.displayType ? { ...result, displayType: key.displayType } : result
-        )
-      )
+      keys.map((key) => readContentJSON(contentJsonDirectory)(key).then(addDisplayType(key)))
     );
   } catch (error) {
     // logger(error);
@@ -82,7 +78,10 @@ const fetchEntries = async ({
 
         break;
       case 'FETCH':
-        entries = resolveSettled(await Promise.allSettled(keys.map(fetchEntry({ client }))));
+        entries = resolveSettled(
+          await Promise.allSettled(keys.map((key) => fetchEntry({ client })(key).then(addDisplayType(key))))
+        );
+
         break;
     }
   }
@@ -215,3 +214,6 @@ class ContentLoader {
 }
 
 export default ContentLoader;
+
+const addDisplayType = (key: any) => (result) =>
+  key.displayType ? { ...result, displayType: key.displayType } : result;
