@@ -1,7 +1,7 @@
 import removeCircularRefs from '../helpers/removeCircularRefs';
 import { head } from 'lodash';
 
-const fetchEntry = ({ client }) => async ({ contentTypeId, id, slug, locale, include = 2 }) => {
+const fetchEntry = ({ client }) => async ({ contentTypeId, id, slug, locale, include = 4 }) => {
   let entry;
   if (id) {
     entry = await client.getEntry(id, { include, locale });
