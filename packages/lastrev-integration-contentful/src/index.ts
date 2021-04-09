@@ -22,24 +22,17 @@ import {
 
 export * from './types';
 
-const client = createClient({
-  space: process.env.CONTENTFUL_SPACE_ID,
-  environment: process.env.CONTENTFUL_ENV || 'master',
-  accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
-  host: process.env.CONTENTFUL_HOST || 'preview.contentful.com'
-});
-
-export const getPageBySlug = getPageBySlugCreator(client);
-export const getFullContentById = getFullContentByIdCreator(client);
-export const getStaticSlugsForContentType = getStaticSlugsForContentTypeCreator(client);
-export const getLocales = getLocalesCreator(client);
-export const getLocalizationLookup = getLocalizationLookupCreator(client);
-export const getGlobalSettings = getGlobalSettingsCreator(client);
-export const getContentTypes = getContentTypesCreator(client);
-export const getContentType = getContentTypeCreator(client);
-export const getAllContentItemsForContentType = getAllContentItemsForContentTypeCreator(client);
-export const syncAllEntriesForContentType = syncAllEntriesForContentTypeCreator(client);
-export const syncAllAssets = syncAllAssetsCreator(client);
+export const getPageBySlug = (client) => getPageBySlugCreator(client);
+export const getFullContentById = (client) => getFullContentByIdCreator(client);
+export const getStaticSlugsForContentType = (client) => getStaticSlugsForContentTypeCreator(client);
+export const getLocales = (client) => getLocalesCreator(client);
+export const getLocalizationLookup = (client) => getLocalizationLookupCreator(client);
+export const getGlobalSettings = (client) => getGlobalSettingsCreator(client);
+export const getContentTypes = (client) => getContentTypesCreator(client);
+export const getContentType = (client) => getContentTypeCreator(client);
+export const getAllContentItemsForContentType = (client) => getAllContentItemsForContentTypeCreator(client);
+export const syncAllEntriesForContentType = (client) => syncAllEntriesForContentTypeCreator(client);
+export const syncAllAssets = (client) => syncAllAssetsCreator(client);
 
 export declare type WrappedContentful = {
   getPageBySlug(getPageBySlugConfig: GetPageBySlugConfig): Promise<Record<string, unknown>>;
@@ -53,16 +46,24 @@ export declare type WrappedContentful = {
 
 const Contentful = (config: AdapterConfig): WrappedContentful => {
   const transform = Adapter(config);
+  const client = createClient({
+    space: process.env.CONTENTFUL_SPACE_ID,
+    environment: process.env.CONTENTFUL_ENV || 'master',
+    accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
+    host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
+    ...config.contentful
+  });
+
   return {
     getPageBySlug: async (getPageBySlugConfig: GetPageBySlugConfig) =>
-      transform(await getPageBySlug(getPageBySlugConfig)),
+      transform(await getPageBySlug(client)(getPageBySlugConfig)),
     getFullContentById: async (getFullContentByIdConfig: GetFullContentByIdConfig) =>
-      transform(await getFullContentById(getFullContentByIdConfig)),
+      transform(await getFullContentById(client)(getFullContentByIdConfig)),
     getGlobalSettings: async (getGlobalSettingsConfig: GetGlobalSettingsConfig) =>
-      transform(await getGlobalSettings(getGlobalSettingsConfig)),
+      transform(await getGlobalSettings(client)(getGlobalSettingsConfig)),
     getAllContentItemsForContentType: async (
       getAllContentItemsForContentTypeConfig: GetAllContentItemsByContentTypeConfig
-    ) => transform(await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig)),
+    ) => transform(await getAllContentItemsForContentType(client)(getAllContentItemsForContentTypeConfig)),
     loader: new ContentLoader({
       ...config,
       client,

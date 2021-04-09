@@ -53,6 +53,13 @@ export type ContentUrlLookup = {
   };
 };
 
+type ContentfulConfig = {
+  space?: string;
+  environment?: string;
+  accessToken?: string;
+  host?: string;
+};
+
 export type AdapterConfig = {
   urlMap?: Record<
     string,
@@ -61,6 +68,7 @@ export type AdapterConfig = {
       key: string;
     }
   >;
+  contentful?: ContentfulConfig;
   linkContentType?: string;
   sameWindowActionText?: string;
   newWindowActionText?: string;
