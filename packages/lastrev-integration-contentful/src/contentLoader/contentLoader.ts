@@ -70,6 +70,7 @@ const fetchEntries = async ({
         entries = await syncAllEntriesForContentType({ contentTypeId })
           .then(({ entries }) =>
             // Extract all possible locales for each content
+            // TODO need to add displayType from keys
             entries.map((content) =>
               extractLocales(content).map((locale) => resolveFields({ content, locale, defaultLocale: 'en-US' }))
             )
@@ -97,7 +98,6 @@ const DEFAULT_CONFIG: { mode: 'SYNC' | 'FETCH'; disableFileCache?: boolean } = {
 const loadContent = async ({
   keysAll,
   client,
-  composers,
   transform,
   loader,
   mode,
@@ -130,9 +130,6 @@ const loadContent = async ({
   )
     .then(flatten)
     .then((entries) => (transform ? map(transform, entries) : entries))
-    .then((entries) =>
-      composers ? Promise.all(map((entry) => compose({ composers, loader })({ entry }), entries)) : entries
-    )
     .then(
       map((entry: any) => {
         // Save each result in memory and prime loader with extra results
@@ -141,7 +138,6 @@ const loadContent = async ({
         const contentTypeId = entry?._contentTypeId ?? entry?.contentTypeId;
         const id = entry?._id ?? entry?.id;
         // Resolve by id
-
         const idKey = getKeyString({ locale, contentTypeId, id });
         if (results[idKey]) {
           results[idKey] = entry;
@@ -157,7 +153,7 @@ const loadContent = async ({
           if (slug) loader.prime(getKey({ locale, contentTypeId, slug }), entry);
           loader.prime(getKey({ locale, contentTypeId, id }), entry);
         }
-        // logger('Entry', { idKey, slugKey, entry });
+        logger('Entry', { idKey, slugKey, entry });
       })
     );
 
@@ -172,14 +168,15 @@ const loadContent = async ({
 class ContentLoader {
   loader: any;
   ready: Promise<void>;
+  config: AdapterConfig & ContentLoaderConfig;
   constructor(config: AdapterConfig & ContentLoaderConfig) {
-    const { client, composers } = config;
+    this.config = config;
+    const { client } = this.config;
     const transform = Adapter(config);
     const fetch = async (keysAll: Array<Key>) =>
       loadContent({
         ...DEFAULT_CONFIG,
         client,
-        composers,
         transform,
         loader: this.loader,
         ...config,
@@ -198,11 +195,19 @@ class ContentLoader {
   }
   async load(key: Key) {
     await this.ready;
-    return this.loader?.load(key);
+    return this.loader
+      ?.load(key)
+      .then((entry) => compose({ composers: this.config.composers, loader: this.loader })({ entry }));
   }
-  async loadMany(key: Key[]) {
+  async loadMany(keys: Key[]) {
     await this.ready;
-    return this.loader?.loadMany(key);
+    return this.loader
+      ?.loadMany(keys)
+      .then((entries) =>
+        Promise.all(
+          entries.map((entry) => compose({ composers: this.config.composers, loader: this.loader })({ entry }))
+        )
+      );
   }
   async prime(key: Key, value: any) {
     await this.ready;
