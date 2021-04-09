@@ -104,6 +104,30 @@ describe('Content Loader with FileCache', () => {
     const out = await contentLoader.load({ ...keyId, displayType: 'mockDisplay' });
     expect(out).toMatchObject({ ...keyId, composeTest: 'MOCKDISPLAY' });
   });
+  it('loads many data by id and composes one to a different displayType', async () => {
+    contentLoader = new ContentLoader({
+      client,
+      urlMap,
+      linkContentType: 'uieCta',
+      manualEntryTypeText: 'Manual URL',
+      modalActionText: 'Open a modal',
+      contentRefTypeText: 'ContentReference',
+      skipContentTypes: ['skipThisType'],
+      contentJsonDirectory: './mock/contentJson',
+      syncAllEntriesForContentType: syncAllEntriesForContentTypeCreator(client),
+      composers: {
+        mockDisplay: async ({ entry, loader, locale }) => {
+          return {
+            ...entry,
+            composeTest: 'MOCKDISPLAY'
+          };
+        }
+      }
+    });
+    const keys = [keyId, { ...keyId, displayType: 'mockDisplay' }];
+    const out = await contentLoader.loadMany(keys);
+    expect({ out }).toMatchObject({ out: keys });
+  });
 
   it('loads data by slug correctly', async () => {
     const out = await contentLoader.load(keySlug);

@@ -20,6 +20,13 @@ interface Key {
   slug?: string;
   locale?: string;
 }
+interface ContentKey {
+  contentTypeId?: string;
+  id?: string;
+  slug?: string;
+  locale?: string;
+  displayType?: string;
+}
 const logger = (...args: any) => (process.env.DEBUG ? console.log('ContentLoader', ...args) : null);
 // Produces the same key applied to load and when parsing an Entry
 const getKey = ({ locale, contentTypeId, slug, id }: Key) => (id ? { locale, id } : { locale, contentTypeId, slug });
@@ -59,9 +66,7 @@ const fetchEntries = async ({
     // Dynamic import to prevent fs dependency on client browsers
     const { default: readContentJSON } = await import('./readContentJSON');
     // Any file not found means we are out of sync so fail early and fetch from API
-    entries = await Promise.all(
-      keys.map((key) => readContentJSON(contentJsonDirectory)(key).then(addDisplayType(key)))
-    );
+    entries = await Promise.all(keys.map((key) => readContentJSON(contentJsonDirectory)(key)));
   } catch (error) {
     // logger(error);
     // logger(`use${mode}`);
@@ -79,10 +84,7 @@ const fetchEntries = async ({
 
         break;
       case 'FETCH':
-        entries = resolveSettled(
-          await Promise.allSettled(keys.map((key) => fetchEntry({ client })(key).then(addDisplayType(key))))
-        );
-
+        entries = resolveSettled(await Promise.allSettled(keys.map((key) => fetchEntry({ client })(key))));
         break;
     }
   }
@@ -173,7 +175,7 @@ class ContentLoader {
     this.config = config;
     const { client } = this.config;
     const transform = Adapter(config);
-    const fetch = async (keysAll: Array<Key>) =>
+    const fetch = async (keysAll: Array<ContentKey>) =>
       loadContent({
         ...DEFAULT_CONFIG,
         client,
@@ -189,27 +191,32 @@ class ContentLoader {
     }).then((loader) => (this.loader = loader));
   }
 
-  async fetch(keys: Key[]) {
+  async fetch(keys: ContentKey[]) {
     await this.ready;
     return this.fetch(keys);
   }
-  async load(key: Key) {
+  async load(key: ContentKey) {
     await this.ready;
     return this.loader
       ?.load(key)
-      .then((entry) => compose({ composers: this.config.composers, loader: this.loader })({ entry }));
-  }
-  async loadMany(keys: Key[]) {
-    await this.ready;
-    return this.loader
-      ?.loadMany(keys)
-      .then((entries) =>
-        Promise.all(
-          entries.map((entry) => compose({ composers: this.config.composers, loader: this.loader })({ entry }))
-        )
+      .then((entry) =>
+        compose({ composers: this.config.composers, loader: this.loader })({ entry, displayType: key.displayType })
       );
   }
-  async prime(key: Key, value: any) {
+  async loadMany(keys: ContentKey[]) {
+    await this.ready;
+    return this.loader?.loadMany(keys).then((entries) =>
+      Promise.all(
+        entries.map((entry, i) =>
+          compose({ composers: this.config.composers, loader: this.loader })({
+            entry,
+            displayType: keys[i]?.displayType
+          })
+        )
+      )
+    );
+  }
+  async prime(key: ContentKey, value: any) {
     await this.ready;
     return this.loader?.prime(key, value);
   }
@@ -219,6 +226,3 @@ class ContentLoader {
 }
 
 export default ContentLoader;
-
-const addDisplayType = (key: any) => (result) =>
-  key.displayType ? { ...result, displayType: key.displayType } : result;
