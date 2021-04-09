@@ -1,13 +1,11 @@
 const compose = ({ composers = {}, loader }) => async ({
   entry,
-  displayType,
   locale = 'en-US'
 }: {
   entry: any;
-  displayType?: string;
   locale?: string;
 }) => {
-  const contentTypeId = entry?._contentTypeId ?? entry?.contentTypeId ?? displayType;
+  const contentTypeId = entry?.displayType ?? entry?._contentTypeId ?? entry?.contentTypeId;
   try {
     if (!entry) return entry;
 
@@ -17,6 +15,7 @@ const compose = ({ composers = {}, loader }) => async ({
         locale,
         loader
       });
+
       return composed;
     }
     return entry;

@@ -59,7 +59,13 @@ const fetchEntries = async ({
     // Dynamic import to prevent fs dependency on client browsers
     const { default: readContentJSON } = await import('./readContentJSON');
     // Any file not found means we are out of sync so fail early and fetch from API
-    entries = await Promise.all(keys.map(readContentJSON(contentJsonDirectory)));
+    entries = await Promise.all(
+      keys.map((key) =>
+        readContentJSON(contentJsonDirectory)(key).then((result) =>
+          key.displayType ? { ...result, displayType: key.displayType } : result
+        )
+      )
+    );
   } catch (error) {
     // logger(error);
     // logger(`use${mode}`);
