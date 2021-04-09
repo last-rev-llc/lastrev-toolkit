@@ -17,11 +17,12 @@ const compose = ({ composers = {}, loader }) => async ({
         locale,
         loader
       });
-
-      return {
-        ...composed,
-        displayType
-      };
+      if (displayType)
+        return {
+          ...composed,
+          displayType
+        };
+      return composed;
     }
     return entry;
   } catch (e) {
