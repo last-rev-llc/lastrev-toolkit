@@ -53,9 +53,8 @@ export declare type WrappedContentful = {
 
 const Contentful = (config: AdapterConfig): WrappedContentful => {
   const transform = Adapter(config);
-  if(config.contentful){
-
-   client = config.contentful ?  createClient({
+  if (config.contentful) {
+    client = createClient({
       space: process.env.CONTENTFUL_SPACE_ID,
       environment: process.env.CONTENTFUL_ENV || 'master',
       accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
