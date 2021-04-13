@@ -1,6 +1,6 @@
 {
   "name": "@last-rev/build-prefetch-content",
-  "version": "5.3.3",
+  "version": "5.3.4",
   "description": "Prefetches global settings, path, and content mapping data",
   "main": "dist/index.js",
   "bin": {
