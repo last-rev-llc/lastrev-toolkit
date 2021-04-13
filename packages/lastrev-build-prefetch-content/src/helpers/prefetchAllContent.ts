@@ -7,7 +7,7 @@ import {
   Entry
 } from '@last-rev/integration-contentful';
 
-import { join } from 'path';
+import urlJoin from 'url-join';
 
 import { each, map, get, keyBy, find, mapValues, isString, pickBy, identity, filter, includes, omitBy } from 'lodash';
 import trackProcess from './trackProcess';
@@ -214,8 +214,8 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
         });
 
         return {
-          href: join(currentConfig.root, `[...${currentConfig.paramName}]`),
-          as: join(currentConfig.root, slugs.join('/'))
+          href: urlJoin(currentConfig.root, `[...${currentConfig.paramName}]`),
+          as: urlJoin(currentConfig.root, slugs.join('/'))
         };
       });
       break;
