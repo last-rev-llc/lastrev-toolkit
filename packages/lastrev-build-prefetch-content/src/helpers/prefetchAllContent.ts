@@ -213,7 +213,7 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
             [currentConfig.paramName]: slugs
           }
         });
-        
+
         const rootPath = `${getRootDomain(entry, currentConfig)}${currentConfig.root}`;
 
         return {

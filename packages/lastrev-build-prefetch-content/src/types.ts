@@ -50,10 +50,10 @@ export type NestedParentPathItemConfig = {
   parentField?: string;
   root?: string;
   rootDomainFile?: string;
-}
+};
 
 export type NestedParentPathsConfig = {
-  [contentTypeId: string]: NestedParentPathItemConfig
+  [contentTypeId: string]: NestedParentPathItemConfig;
 };
 
 export type FileLocationsBuildConfig = {
