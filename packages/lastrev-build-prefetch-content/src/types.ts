@@ -43,14 +43,17 @@ export type WebsiteSectionPathsConfig = {
   pageContentTypes: string[];
 };
 
+export type NestedParentPathItemConfig = {
+  fieldName: string;
+  paramName?: string;
+  maxDepth?: number;
+  parentField?: string;
+  root?: string;
+  rootDomainFile?: string;
+}
+
 export type NestedParentPathsConfig = {
-  [contentTypeId: string]: {
-    fieldName: string;
-    paramName?: string;
-    maxDepth?: number;
-    parentField?: string;
-    root?: string;
-  };
+  [contentTypeId: string]: NestedParentPathItemConfig
 };
 
 export type FileLocationsBuildConfig = {
@@ -159,3 +162,5 @@ export type PreloadedContentfulContent = {
   contentUrlLookup: ContentUrlLookup;
   pathsByContentType: PathsOutput;
 };
+
+export type RootLogicFunc = (entry: any) => string | null;

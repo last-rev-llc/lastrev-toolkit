@@ -13,6 +13,7 @@ import { each, map, get, keyBy, find, mapValues, isString, pickBy, identity, fil
 import trackProcess from './trackProcess';
 import delay from './delay';
 import excludeContent from './excludeContent';
+import getRootDomain from './getRootDomain';
 
 const fetchContentTypes = async () => {
   const results = await getContentTypes();
@@ -212,10 +213,12 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
             [currentConfig.paramName]: slugs
           }
         });
+        
+        const rootPath = `${getRootDomain(entry, currentConfig)}${currentConfig.root}`;
 
         return {
-          href: urlJoin(currentConfig.root, `[...${currentConfig.paramName}]`),
-          as: urlJoin(currentConfig.root, slugs.join('/'))
+          href: urlJoin(rootPath, `[...${currentConfig.paramName}]`),
+          as: urlJoin(rootPath, slugs.join('/'))
         };
       });
       break;

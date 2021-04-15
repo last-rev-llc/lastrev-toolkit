@@ -300,30 +300,36 @@
       },
       "type": "object"
     },
+    "NestedParentPathItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "fieldName": {
+          "type": "string"
+        },
+        "maxDepth": {
+          "type": "number"
+        },
+        "paramName": {
+          "type": "string"
+        },
+        "parentField": {
+          "type": "string"
+        },
+        "root": {
+          "type": "string"
+        },
+        "rootDomainFile": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "fieldName"
+      ],
+      "type": "object"
+    },
     "NestedParentPathsConfig": {
       "additionalProperties": {
-        "additionalProperties": false,
-        "properties": {
-          "fieldName": {
-            "type": "string"
-          },
-          "maxDepth": {
-            "type": "number"
-          },
-          "paramName": {
-            "type": "string"
-          },
-          "parentField": {
-            "type": "string"
-          },
-          "root": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "fieldName"
-        ],
-        "type": "object"
+        "$ref": "#/definitions/NestedParentPathItemConfig"
       },
       "type": "object"
     },
