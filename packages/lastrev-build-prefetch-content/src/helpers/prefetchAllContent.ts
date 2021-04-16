@@ -67,15 +67,19 @@ const getPathSegments = (
   defaultLocale: string,
   shouldBeExcluded: (parent: Entry<any>) => boolean,
   pathSegments: string[] = []
-): string[] => {
-  // reached max depth, return current params
-  if (depth === 0) return pathSegments;
-
+): {
+  slugs: string[];
+  exclude: boolean;
+} => {
   const content = contentById[contentId];
 
-  if (shouldBeExcluded(content)) {
-    throw Error(`Parent excluded: ${contentId}`);
-  }
+  const exclude = shouldBeExcluded(content);
+  // reached max depth, return current params
+  if (depth === 0)
+    return {
+      slugs: pathSegments,
+      exclude
+    };
 
   // something went wrong, invalid path (this will happen if content is deleted but the reference not removed)
   if (!content) throw Error(`Invalid reference to nonexistent item: ${contentId}`);
@@ -112,7 +116,10 @@ const getPathSegments = (
   }
 
   // reached the end, return segments
-  return pathSegments;
+  return {
+    slugs: pathSegments,
+    exclude
+  };
 };
 
 export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedContentfulContent> => {
@@ -177,19 +184,12 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
         const currentConfig = nestedPaths[contentTypeId];
         if (!currentConfig) return null;
 
-        const { exclude, excludeIfParentIsExcluded } = excludeContent(buildConfig, entry, defaultLocale);
-
-        if (exclude) {
-          return {
-            href: null,
-            as: null
-          };
-        }
+        let { exclude, excludeIfParentIsExcluded } = excludeContent(buildConfig, entry, defaultLocale);
 
         let slugs: string[];
 
         try {
-          slugs = getPathSegments(
+          ({ slugs, exclude } = getPathSegments(
             globalContentById,
             id,
             nestedPaths,
@@ -199,20 +199,23 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
               if (!excludeIfParentIsExcluded) return false;
               return excludeContent(buildConfig, parent, defaultLocale).exclude;
             }
-          );
+          ));
         } catch (e) {
-          console.log(`did not generate path data. Reason: ${e.message}`);
+          console.log(`Did not generate path data. Reason: ${e.message}`);
+          
           return {
             href: null,
             as: null
           };
         }
 
-        pathsByContentType[contentTypeId].push({
-          params: {
-            [currentConfig.paramName]: slugs
-          }
-        });
+        if (!exclude) {
+          pathsByContentType[contentTypeId].push({
+            params: {
+              [currentConfig.paramName]: slugs
+            }
+          });
+        }
 
         const rootPath = `${getRootDomain(entry, currentConfig)}${currentConfig.root}`;
 
