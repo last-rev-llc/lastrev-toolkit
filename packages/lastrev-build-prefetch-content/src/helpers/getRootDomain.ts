@@ -6,7 +6,7 @@ import { NestedParentPathItemConfig, RootLogicFunc } from '../types';
 
 import { PROJECT_ROOT } from '../constants';
 
-export default (entry: any, config: NestedParentPathItemConfig): string => {
+export default (entry: any, config: NestedParentPathItemConfig, defaultLocale: string): string => {
   if (!config || !config.rootDomainFile) {
     return '';
   }
@@ -23,7 +23,7 @@ export default (entry: any, config: NestedParentPathItemConfig): string => {
 
     if (!rootLogic) return '';
 
-    const root = rootLogic(entry);
+    const root = rootLogic(entry, defaultLocale);
 
     if (!root || root.trim() === '') return '';
 

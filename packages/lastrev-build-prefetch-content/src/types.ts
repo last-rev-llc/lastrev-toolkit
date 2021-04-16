@@ -163,4 +163,4 @@ export type PreloadedContentfulContent = {
   pathsByContentType: PathsOutput;
 };
 
-export type RootLogicFunc = (entry: any) => string | null;
+export type RootLogicFunc = (entry: any, defaultLocale: string) => string | null;
