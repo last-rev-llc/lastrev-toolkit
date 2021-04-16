@@ -202,7 +202,7 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
           ));
         } catch (e) {
           console.log(`Did not generate path data. Reason: ${e.message}`);
-          
+
           return {
             href: null,
             as: null
