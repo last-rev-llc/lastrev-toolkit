@@ -217,7 +217,7 @@ export default async (buildConfig: ResolvedBuildConfig): Promise<PreloadedConten
           });
         }
 
-        const rootPath = `${getRootDomain(entry, currentConfig)}${currentConfig.root}`;
+        const rootPath = `${getRootDomain(entry, currentConfig, defaultLocale)}${currentConfig.root}`;
 
         return {
           href: urlJoin(rootPath, `[...${currentConfig.paramName}]`),
