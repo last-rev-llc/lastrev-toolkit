@@ -11,6 +11,7 @@ interface ContentLoaderConfig {
   client: ContentfulClientApi;
   composers?: any;
   syncAllEntriesForContentType: any;
+  preview?: boolean;
   transform?: (x: unknown) => unknown;
 }
 
@@ -210,7 +211,8 @@ class ContentLoader {
         entries.map((entry, i) =>
           compose({ composers: this.config.composers, loader: this.loader })({
             entry,
-            displayType: keys[i]?.displayType
+            displayType: keys[i]?.displayType,
+            preview: this.config.preview
           })
         )
       )

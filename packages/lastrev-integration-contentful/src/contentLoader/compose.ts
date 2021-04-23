@@ -1,11 +1,13 @@
 const compose = ({ composers = {}, loader }) => async ({
   entry,
   locale = 'en-US',
-  displayType
+  displayType,
+  preview
 }: {
   entry: any;
   locale?: string;
   displayType?: string;
+  preview?: boolean;
 }) => {
   const contentTypeId = displayType ?? entry?._contentTypeId ?? entry?.contentTypeId;
   try {
@@ -15,7 +17,8 @@ const compose = ({ composers = {}, loader }) => async ({
       const composed = await composers[contentTypeId]({
         entry,
         locale,
-        loader
+        loader,
+        preview
       });
       if (displayType)
         return {
