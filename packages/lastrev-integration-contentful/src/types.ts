@@ -38,6 +38,14 @@ export type GetAllContentItemsByContentTypeConfig = {
   omitFields: string[];
 };
 
+export type GetEntriesConfig = {
+  query: any;
+  paginate?: boolean;
+  skip?: number;
+  limit?: number;
+  omitFields?: string[];
+};
+
 export type SyncAllEntriesAndAssetsConfig = {
   contentTypeId: string;
 };
