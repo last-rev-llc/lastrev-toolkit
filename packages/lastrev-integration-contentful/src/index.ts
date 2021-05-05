@@ -11,12 +11,14 @@ import getContentTypeCreator from './getContentType';
 import getAllContentItemsForContentTypeCreator from './getAllContentItemsForContentType';
 import syncAllEntriesForContentTypeCreator from './syncAllEntriesForContentType';
 import syncAllAssetsCreator from './syncAllAssets';
+import getEntriesCreator from './getEntries';
 
 import {
   GetPageBySlugConfig,
   GetFullContentByIdConfig,
   GetGlobalSettingsConfig,
-  GetAllContentItemsByContentTypeConfig
+  GetAllContentItemsByContentTypeConfig,
+  GetEntriesConfig
 } from './types';
 
 export * from './types';
@@ -51,6 +53,7 @@ export const getContentType = getContentTypeCreator(client);
 export const getAllContentItemsForContentType = getAllContentItemsForContentTypeCreator(client);
 export const syncAllEntriesForContentType = syncAllEntriesForContentTypeCreator(client);
 export const syncAllAssets = syncAllAssetsCreator(client);
+export const getEntries = getEntriesCreator(client);
 
 export declare type WrappedContentful = {
   getPageBySlug(getPageBySlugConfig: GetPageBySlugConfig): Promise<Record<string, unknown>>;
@@ -59,6 +62,7 @@ export declare type WrappedContentful = {
   getAllContentItemsForContentType(
     getAllContentItemsByContentTypeConfig: GetAllContentItemsByContentTypeConfig
   ): Promise<Record<string, unknown>>;
+  getEntries(getEntriesConfig: GetEntriesConfig): Promise<Record<string, unknown>>;
 };
 
 const Contentful = (config: AdapterConfig): WrappedContentful => {
@@ -72,7 +76,8 @@ const Contentful = (config: AdapterConfig): WrappedContentful => {
       transform(await getGlobalSettings(getGlobalSettingsConfig)),
     getAllContentItemsForContentType: async (
       getAllContentItemsForContentTypeConfig: GetAllContentItemsByContentTypeConfig
-    ) => transform(await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig))
+    ) => transform(await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig)),
+    getEntries: async (getEntriesConfig: GetEntriesConfig) => transform(await getEntries(getEntriesConfig))
   };
 };
 
