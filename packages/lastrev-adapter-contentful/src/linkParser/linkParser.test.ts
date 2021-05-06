@@ -135,7 +135,7 @@ describe('linkParser', () => {
       expect(parsed.href).toBe(null);
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
-        'Bad content for elementLink: DestinationType is Manual text entry, but no URL has been entered'
+        `Bad content for elementLink with Content ID ${mock.fields.contentReference.sys.id}: DestinationType is Manual text entry, but no URL has been entered`
       );
     });
   });
@@ -420,7 +420,7 @@ describe('linkParser', () => {
       expect(parsed.href).toBe(null);
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
-        'Bad content for elementLink: DestinationType is Asset reference, but no asset is selected'
+        `Bad content for elementLink with Content ID ${mock.fields.contentReference.sys.id}: DestinationType is Asset reference, but no asset is selected`
       );
     });
   });

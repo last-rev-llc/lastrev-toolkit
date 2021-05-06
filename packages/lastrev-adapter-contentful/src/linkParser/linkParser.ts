@@ -47,7 +47,7 @@ export default ({
     case manualEntryTypeText:
       if (!manualUrl) {
         warn(
-          `Bad content for ${contentTypeId} with Content ID ${id}: DestinationType is ${manualEntryTypeText}, but no URL has been entered`
+          `Bad content for ${contentTypeId} with Content ID ${contentReference?.sys.id}: DestinationType is ${manualEntryTypeText}, but no URL has been entered`
         );
         break;
       }
@@ -56,7 +56,7 @@ export default ({
     case contentRefTypeText: {
       if (!contentReference) {
         warn(
-          `Bad content for ${contentTypeId} with Content ID ${id}: DestinationType is ${contentRefTypeText}, but no content reference is selected`
+          `Bad content for ${contentTypeId}: DestinationType is ${contentRefTypeText}, but no content reference is selected`
         );
         break;
       }
@@ -77,7 +77,7 @@ export default ({
     case assetRefTypeText:
       if (!assetReference) {
         console.warn(
-          `Bad content for ${contentTypeId} with Content ID ${id}: DestinationType is ${assetRefTypeText}, but no asset is selected`
+          `Bad content for ${contentTypeId} with Content ID ${contentReference?.sys.id}: DestinationType is ${assetRefTypeText}, but no asset is selected`
         );
         break;
       }
