@@ -135,7 +135,7 @@ describe('linkParser', () => {
       expect(parsed.href).toBe(null);
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
-        `Bad content for elementLink with Content ID ${mock.fields.contentReference.sys.id}: DestinationType is Manual text entry, but no URL has been entered`
+        `Bad content for elementLink ${baseData.id}: DestinationType is Manual text entry, but no URL has been entered`
       );
     });
   });
@@ -278,7 +278,7 @@ describe('linkParser', () => {
       expect(parsed.href).toBe(null);
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
-        'Bad content for elementLink: DestinationType is Content reference, but no content reference is selected'
+        `Bad content for elementLink ${baseData.id}: DestinationType is Content reference, but no content reference is selected`
       );
     });
 
@@ -295,7 +295,7 @@ describe('linkParser', () => {
       expect(parsed.href).toBe(null);
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
-        `Bad content for elementLink: Unable to parse href for ${mock.fields.contentReference.sys.id}: Possible causes: ${mock.fields.contentReference.sys.contentType.sys.id} does not have an entry in urlMap (in .lastrevrc file), slug field is not populated, or content has been archived or deleted.`
+        `Bad content for elementLink ${baseData.id}: Unable to parse href for ${mock.fields.contentReference.sys.id}: Possible causes: ${mock.fields.contentReference.sys.contentType.sys.id} does not have an entry in urlMap (in .lastrevrc file), slug field is not populated, or content has been archived or deleted.`
       );
     });
 
@@ -317,7 +317,7 @@ describe('linkParser', () => {
       expect(parsed.href).toBe(null);
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
-        `Bad content for elementLink: Unable to parse href for ${mock.fields.contentReference.sys.id}: Possible causes: ${mock.fields.contentReference.sys.contentType.sys.id} does not have an entry in urlMap (in .lastrevrc file), slug field is not populated, or content has been archived or deleted.`
+        `Bad content for elementLink ${baseData.id}: Unable to parse href for ${mock.fields.contentReference.sys.id}: Possible causes: ${mock.fields.contentReference.sys.contentType.sys.id} does not have an entry in urlMap (in .lastrevrc file), slug field is not populated, or content has been archived or deleted.`
       );
     });
   });
@@ -420,7 +420,7 @@ describe('linkParser', () => {
       expect(parsed.href).toBe(null);
       expect(parsed.as).toBe(null);
       expect(spyWarn).toHaveBeenCalledWith(
-        `Bad content for elementLink with Content ID ${mock.fields.contentReference.sys.id}: DestinationType is Asset reference, but no asset is selected`
+        `Bad content for elementLink ${baseData.id}: DestinationType is Asset reference, but no asset is selected`
       );
     });
   });
