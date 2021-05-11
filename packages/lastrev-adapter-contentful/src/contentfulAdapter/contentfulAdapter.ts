@@ -4,9 +4,9 @@ import parseLink from '../linkParser';
 import parseAsset from '../assetParser';
 import parseEntry from '../entryParser';
 import { isEntry, isAsset, isLink, isBadContentfulObject } from '../helpers';
-import { AdapterConfig, Transform, LinkFields, ParsedEntry } from '../types';
+import { AdapterConfig, Transform, LinkFields, ParsedEntry, TransformResult } from '../types';
 
-const Adapter = ({
+const Adapter = <T>({
   urlMap = {},
   linkContentType = 'elementLink',
   sameWindowActionText = 'Open in the same window',
@@ -68,7 +68,7 @@ const Adapter = ({
     return obj;
   };
 
-  return traverse(data) as Record<string, unknown>;
+  return traverse(data) as TransformResult<typeof data>;
 };
 
 export default Adapter;

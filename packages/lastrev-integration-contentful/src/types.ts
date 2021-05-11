@@ -46,6 +46,11 @@ export type GetEntriesConfig = {
   omitFields?: string[];
 };
 
+export type getEntriesResult = {
+  total: number;
+  items: Entry<any>[];
+};
+
 export type SyncAllEntriesAndAssetsConfig = {
   contentTypeId: string;
 };

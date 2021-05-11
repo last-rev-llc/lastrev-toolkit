@@ -1,5 +1,5 @@
 import { createClient } from 'contentful';
-import Adapter, { AdapterConfig } from '@last-rev/adapter-contentful';
+import Adapter, { AdapterConfig, TransformResult } from '@last-rev/adapter-contentful';
 import getPageBySlugCreator from './getPageBySlug';
 import getFullContentByIdCreator from './getFullContentById';
 import getStaticSlugsForContentTypeCreator from './getStaticSlugsForContentType';
@@ -18,7 +18,8 @@ import {
   GetFullContentByIdConfig,
   GetGlobalSettingsConfig,
   GetAllContentItemsByContentTypeConfig,
-  GetEntriesConfig
+  GetEntriesConfig,
+  getEntriesResult
 } from './types';
 
 export * from './types';
@@ -56,13 +57,13 @@ export const syncAllAssets = syncAllAssetsCreator(client);
 export const getEntries = getEntriesCreator(client);
 
 export declare type WrappedContentful = {
-  getPageBySlug(getPageBySlugConfig: GetPageBySlugConfig): Promise<Record<string, unknown>>;
-  getFullContentById(getFullContentByIdConfig: GetFullContentByIdConfig): Promise<Record<string, unknown>>;
-  getGlobalSettings(getGlobalSettingsConfig: GetGlobalSettingsConfig): Promise<Record<string, unknown>>;
+  getPageBySlug(getPageBySlugConfig: GetPageBySlugConfig): Promise<TransformResult<unknown>>;
+  getFullContentById(getFullContentByIdConfig: GetFullContentByIdConfig): Promise<TransformResult<unknown>>;
+  getGlobalSettings(getGlobalSettingsConfig: GetGlobalSettingsConfig): Promise<TransformResult<unknown>>;
   getAllContentItemsForContentType(
     getAllContentItemsByContentTypeConfig: GetAllContentItemsByContentTypeConfig
-  ): Promise<Record<string, unknown>>;
-  getEntries(getEntriesConfig: GetEntriesConfig): Promise<Record<string, unknown>>;
+  ): Promise<TransformResult<unknown[]>>;
+  getEntries(getEntriesConfig: GetEntriesConfig): Promise<{ total: number; items: TransformResult<unknown[]> }>;
 };
 
 const Contentful = (config: AdapterConfig): WrappedContentful => {
@@ -76,8 +77,11 @@ const Contentful = (config: AdapterConfig): WrappedContentful => {
       transform(await getGlobalSettings(getGlobalSettingsConfig)),
     getAllContentItemsForContentType: async (
       getAllContentItemsForContentTypeConfig: GetAllContentItemsByContentTypeConfig
-    ) => transform(await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig)),
-    getEntries: async (getEntriesConfig: GetEntriesConfig) => transform(await getEntries(getEntriesConfig))
+    ) => transform((await getAllContentItemsForContentType(getAllContentItemsForContentTypeConfig)) as any[]),
+    getEntries: async (getEntriesConfig: GetEntriesConfig) => {
+      const { total, items } = await getEntries(getEntriesConfig);
+      return { total, items: transform(items) };
+    }
   };
 };
 

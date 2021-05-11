@@ -91,4 +91,6 @@ export type LinkFields = {
   assetReference?: Asset;
 };
 
-export type Transform = (data: unknown) => Record<string, unknown>;
+export type TransformResult<T> = T extends any[] ? Record<string, unknown>[] : Record<string, unknown>[];
+
+export type Transform = (data: any | any[]) => TransformResult<typeof data>;
