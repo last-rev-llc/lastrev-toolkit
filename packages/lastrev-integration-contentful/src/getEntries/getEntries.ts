@@ -1,6 +1,6 @@
 import { ContentfulClientApi, Entry } from 'contentful';
 import removeCircularRefs from '../helpers/removeCircularRefs';
-import { GetEntriesConfig } from '../types';
+import { GetEntriesConfig, getEntriesResult } from '../types';
 
 const getEntries = (client: ContentfulClientApi) => async <T>({
   query,
@@ -8,7 +8,7 @@ const getEntries = (client: ContentfulClientApi) => async <T>({
   skip = 0,
   limit = 1000,
   omitFields = []
-}: GetEntriesConfig): Promise<Entry<T>[]> => {
+}: GetEntriesConfig): Promise<getEntriesResult> => {
   if (paginate) {
     const queryResults = await client.getEntries<T>({
       ...query,
@@ -16,13 +16,13 @@ const getEntries = (client: ContentfulClientApi) => async <T>({
       skip
     });
 
-    const { items } = removeCircularRefs(queryResults, omitFields);
-    return items;
+    const { items, total } = removeCircularRefs(queryResults, omitFields);
+    return { total, items };
   }
-  const entries: Entry<T>[] = [];
+  const entries: Entry<any>[] = [];
 
   let total;
-  let items: Entry<T>[] = [];
+  let items: Entry<any>[] = [];
   let count = 0;
   while (total === undefined || total > count) {
     // eslint-disable-next-line no-await-in-loop
@@ -42,7 +42,10 @@ const getEntries = (client: ContentfulClientApi) => async <T>({
 
     entries.push(...items);
   }
-  return entries;
+  return {
+    total,
+    items: entries
+  };
 };
 
 export default getEntries;
