@@ -47,7 +47,7 @@ export default ({
     case manualEntryTypeText:
       if (!manualUrl) {
         warn(
-          `Bad content for ${contentTypeId}: DestinationType is ${manualEntryTypeText}, but no URL has been entered`
+          `Bad content for ${contentTypeId} ${id}: DestinationType is ${manualEntryTypeText}, but no URL has been entered`
         );
         break;
       }
@@ -56,7 +56,7 @@ export default ({
     case contentRefTypeText: {
       if (!contentReference) {
         warn(
-          `Bad content for ${contentTypeId}: DestinationType is ${contentRefTypeText}, but no content reference is selected`
+          `Bad content for ${contentTypeId} ${id}: DestinationType is ${contentRefTypeText}, but no content reference is selected`
         );
         break;
       }
@@ -67,7 +67,7 @@ export default ({
 
       if (!_href || !_as) {
         warn(
-          `Bad content for ${contentTypeId}: Unable to parse href for ${_id}: Possible causes: ${_contentTypeId} does not have an entry in urlMap (in .lastrevrc file), slug field is not populated, or content has been archived or deleted.`
+          `Bad content for ${contentTypeId} ${id}: Unable to parse href for ${_id}: Possible causes: ${_contentTypeId} does not have an entry in urlMap (in .lastrevrc file), slug field is not populated, or content has been archived or deleted.`
         );
         break;
       }
@@ -77,7 +77,7 @@ export default ({
     case assetRefTypeText:
       if (!assetReference) {
         console.warn(
-          `Bad content for ${contentTypeId}: DestinationType is ${assetRefTypeText}, but no asset is selected`
+          `Bad content for ${contentTypeId} ${id}: DestinationType is ${assetRefTypeText}, but no asset is selected`
         );
         break;
       }
