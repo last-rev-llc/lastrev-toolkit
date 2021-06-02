@@ -26,41 +26,40 @@ const getErrors = ({ schema, props }) => {
 export const withContentValidation = ({ logLevel, schema }: Args) => <P extends ContentValidationProps>(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
-  // Only run in the client if it's development
-  if (typeof window === 'undefined' && process.env.NODE_ENV === 'production') {
-    const [id] = React.useState(uniqueId());
-    const { handleError = () => {} } = React.useContext(ValidationContext);
-    const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
-    const errors = React.useMemo(() => getErrors({ props, schema }), [props, schema]);
-    React.useEffect(() => {
-      if (errors) {
-        handleError({
-          contentId: props._id,
-          id,
-          errors,
-          componentName: WrappedComponent.name,
-          logLevel
-        });
-      }
-    }, [errors]);
+  // TODO Only run in the client if it's development
+  const [id] = React.useState(uniqueId());
+  const { handleError = () => {} } = React.useContext(ValidationContext);
+  const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
+  const errors = React.useMemo(() => getErrors({ props, schema }), [props, schema]);
+  React.useEffect(() => {
     if (errors) {
-      let cmp: React.ReactElement;
-      try {
-        cmp = WrappedComponent(
-          fillRequiredProps<P & ContentValidationProps>({ props, propTypes })
-        );
-      } catch (error) {
-        console.log('ErrorRenderingPlaceholder', error);
-      }
-
-      return (
-        <React.Fragment>
-          <span data-csk-error="true" data-csk-error-id={id} />
-          {cmp}
-        </React.Fragment>
-      );
+      handleError({
+        contentId: props._id,
+        id,
+        errors,
+        componentName: WrappedComponent.name,
+        logLevel
+      });
     }
+  }, [errors]);
+  if (errors) {
+    let cmp: React.ReactElement;
+    try {
+      cmp = WrappedComponent(
+        fillRequiredProps<P & ContentValidationProps>({ props, propTypes })
+      );
+    } catch (error) {
+      console.log('ErrorRenderingPlaceholder', error);
+    }
+
+    return (
+      <React.Fragment>
+        <span data-csk-error="true" data-csk-error-id={id} />
+        {cmp}
+      </React.Fragment>
+    );
   }
+
   return <WrappedComponent {...props} />;
 };
 
