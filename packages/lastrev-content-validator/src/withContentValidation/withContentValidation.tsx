@@ -50,7 +50,7 @@ export const withContentValidation = ({ logLevel, schema }: Args) => <P extends 
           fillRequiredProps<P & ContentValidationProps>({ props, propTypes })
         );
       } catch (error) {
-        console.log(error);
+        console.log('ErrorRenderingPlaceholder', error);
       }
 
       return (
