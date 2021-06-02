@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 interface ErrorInstance {
+  contentId: string;
   errors: {
     [key: string]: string;
   };
@@ -44,8 +45,8 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
     }
   }, [errorsById]);
 
-  const handleError = ({ errors, componentName, id, logLevel: instanceLogLevel }: ErrorInstance) => {
-    setErrors((state) => [...state, { errors, componentName, id, instanceLogLevel }]);
+  const handleError = ({ contentId, errors, componentName, id, logLevel: instanceLogLevel }: ErrorInstance) => {
+    setErrors((state) => [...state, { contentId, errors, componentName, id, instanceLogLevel }]);
   };
 
   return <ValidationContext.Provider value={{ handleError }}>{children}</ValidationContext.Provider>;
