@@ -46,6 +46,7 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
   }, [errorsById]);
 
   const handleError = ({ contentId, errors, componentName, id, logLevel: instanceLogLevel }: ErrorInstance) => {
+    console.log('HandleError', { contentId, errors, componentName, id, instanceLogLevel });
     setErrors((state) => [...state, { contentId, errors, componentName, id, instanceLogLevel }]);
   };
 
