@@ -22,7 +22,7 @@ export const ValidationContext = React.createContext<Partial<ValidationContextIn
 
 export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
   const [errors, setErrors] = React.useState<ErrorInstance[]>([]);
-  const errorsById = React.useMemo(() => errors.reduce((accum, error) => ({ accum, [error.id]: error }), {}), [
+  const errorsById = React.useMemo(() => errors.reduce((accum, error) => ({ ...accum, [error.id]: error }), {}), [
     errors.join('')
   ]);
   React.useEffect(() => {
@@ -38,10 +38,10 @@ export const ContentValidationProvider = ({ children, logLevel = 'DEBUG' }) => {
     });
     switch (logLevel) {
       case 'DEBUG':
-        console.log('ContentErrors', errors);
+        console.log('ContentErrors', Object.values(errorsById));
         break;
       default:
-        throw new Error(JSON.stringify(errors));
+        throw new Error(JSON.stringify(Object.values(errorsById)));
     }
   }, [errorsById]);
 
