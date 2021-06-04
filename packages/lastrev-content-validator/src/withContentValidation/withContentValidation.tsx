@@ -26,7 +26,10 @@ const getErrors = ({ schema, props }) => {
 export const withContentValidation = ({ logLevel, schema }: Args) => <P extends ContentValidationProps>(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
-  // TODO Only run in the client if it's development
+  // Only run in the client if it's development
+  if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
+    return <WrappedComponent {...props} />;
+  }
   const [id] = React.useState(uniqueId());
   const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
@@ -41,7 +44,7 @@ export const withContentValidation = ({ logLevel, schema }: Args) => <P extends 
         logLevel
       });
     }
-  }, [errors]);
+  }, []);
   if (errors) {
     let cmp: React.ReactElement;
     try {
