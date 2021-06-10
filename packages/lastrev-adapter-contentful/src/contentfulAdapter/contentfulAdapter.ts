@@ -17,16 +17,19 @@ const Adapter = <T>({
   contentRefTypeText = 'Content reference',
   assetRefTypeText = 'Asset reference',
   contentUrlLookup,
-  skipContentTypes
+  skipContentTypes,
+  maxTraverseDepth = 10
 }: AdapterConfig): Transform => (data) => {
   const parsedEntries: Record<string, ParsedEntry> = {};
 
-  const traverse = (obj: unknown) => {
+  const traverse = (obj: unknown, maxDepth: number = maxTraverseDepth) => {
+    if (maxDepth == 0) return null;
+
     if (isBadContentfulObject(obj)) {
       return null;
     }
     if (isArray(obj)) {
-      return compact(map(obj, traverse)) as unknown[];
+      return compact(map(obj, (x) => traverse(x, maxDepth - 1))) as unknown[];
     }
     if (isLink(obj, linkContentType)) {
       return parseLink({
@@ -52,7 +55,9 @@ const Adapter = <T>({
       }
       const parsed = parseEntry(obj as Entry<Record<string, unknown>>, urlMap, contentUrlLookup);
       parsedEntries[parsed._id] = parsed;
-      const parsedFields: Record<string, unknown> = mapValues((obj as Entry<Record<string, unknown>>).fields, traverse);
+      const parsedFields: Record<string, unknown> = mapValues((obj as Entry<Record<string, unknown>>).fields, (x) =>
+        traverse(x, maxDepth - 1)
+      );
       return {
         ...parsed,
         ...parsedFields
@@ -62,13 +67,13 @@ const Adapter = <T>({
       return parseAsset(obj as Asset);
     }
     if (isObject(obj)) {
-      return mapValues(obj, traverse);
+      return mapValues(obj, (x) => traverse(x, maxDepth - 1));
     }
     // most likely a simple value field
     return obj;
   };
 
-  return traverse(data) as TransformResult<typeof data>;
+  return traverse(data, maxTraverseDepth) as TransformResult<typeof data>;
 };
 
 export default Adapter;
