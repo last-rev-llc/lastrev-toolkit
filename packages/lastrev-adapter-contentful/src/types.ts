@@ -71,6 +71,7 @@ export type AdapterConfig = {
   assetRefTypeText?: string;
   contentUrlLookup?: ContentUrlLookup;
   skipContentTypes?: string[];
+  maxTraverseDepth?: number;
 };
 
 export type CircularReference = {
