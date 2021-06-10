@@ -11,9 +11,6 @@ interface Args {
 }
 const getErrors = ({ schema, props }) => {
   try {
-    const uuid = Date.now().toString();
-    console.log('getErrors' + uuid, { props, schema });
-    console.time('getErrors' + uuid);
     schema.validateSync(props, { abortEarly: false });
   } catch (error) {
     const errors = {};
@@ -22,7 +19,6 @@ const getErrors = ({ schema, props }) => {
         const prop = e.path.split('.')[e.path.split('.').length - 1];
         errors[prop] = e;
       });
-      console.log('Errors', { error, errors });
       return errors;
     }
   }
@@ -30,20 +26,25 @@ const getErrors = ({ schema, props }) => {
 export const withContentValidation = ({ logLevel, schema }: Args) => <P extends ContentValidationProps>(
   WrappedComponent: React.FunctionComponent<P>
 ): React.FC<P & ContentValidationProps> => (props: P & ContentValidationProps) => {
+  // Only run in the client if it's development
+  if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
+    return <WrappedComponent {...props} />;
+  }
   const [id] = React.useState(uniqueId());
   const { handleError = () => {} } = React.useContext(ValidationContext);
   const propTypes = React.useMemo(() => parsePropTypes(WrappedComponent), []);
-  const errors = React.useMemo(() => getErrors({ props, schema }), [props, schema]);
+  const errors = React.useMemo(() => getErrors({ props, schema }), []);
   React.useEffect(() => {
     if (errors) {
       handleError({
+        contentId: props._id,
         id,
         errors,
         componentName: WrappedComponent.name,
         logLevel
       });
     }
-  }, [errors]);
+  }, []);
   if (errors) {
     let cmp: React.ReactElement;
     try {
@@ -51,7 +52,7 @@ export const withContentValidation = ({ logLevel, schema }: Args) => <P extends 
         fillRequiredProps<P & ContentValidationProps>({ props, propTypes })
       );
     } catch (error) {
-      console.log(error);
+      console.log('ErrorRenderingPlaceholder', error);
     }
 
     return (
@@ -61,6 +62,7 @@ export const withContentValidation = ({ logLevel, schema }: Args) => <P extends 
       </React.Fragment>
     );
   }
+
   return <WrappedComponent {...props} />;
 };
 
