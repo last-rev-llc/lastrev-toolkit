@@ -67,7 +67,8 @@ const Adapter = <T>({
       return parseAsset(obj as Asset);
     }
     if (isObject(obj)) {
-      return mapValues(obj, (x) => traverse(x, maxDepth - 1));
+      // No need to reduce maxDepth as we're not following a reference
+      return mapValues(obj, (x) => traverse(x, maxDepth));
     }
     // most likely a simple value field
     return obj;
