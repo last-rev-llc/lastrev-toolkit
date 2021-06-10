@@ -23,7 +23,7 @@ const Adapter = <T>({
   const parsedEntries: Record<string, ParsedEntry> = {};
 
   const traverse = (obj: unknown, maxDepth: number = maxTraverseDepth) => {
-    if (maxDepth == 0) return null;
+    if (maxDepth < 0) return null;
 
     if (isBadContentfulObject(obj)) {
       return null;
