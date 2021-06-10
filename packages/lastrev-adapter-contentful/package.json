@@ -1,6 +1,6 @@
 {
   "name": "@last-rev/adapter-contentful",
-  "version": "4.3.1",
+  "version": "4.3.2-alpha.0",
   "description": "Transforms data from contentful's structure to one which is expected by LastRev components",
   "main": "dist/index.js",
   "files": [
