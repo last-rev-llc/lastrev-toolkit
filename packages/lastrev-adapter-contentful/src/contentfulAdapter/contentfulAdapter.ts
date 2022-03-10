@@ -29,7 +29,7 @@ const Adapter = <T>({
       return null;
     }
     if (isArray(obj)) {
-      return compact(map(obj, (x) => traverse(x, maxDepth - 1))) as unknown[];
+      return compact(map(obj, (x) => traverse(x, maxDepth))) as unknown[];
     }
     if (isLink(obj, linkContentType)) {
       return parseLink({
